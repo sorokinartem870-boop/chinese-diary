@@ -215,13 +215,24 @@
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px;
     }
     .dl-subject { font-size: 18.5px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+    .dl-hw-box {
+      background: var(--surface-soft); border: 1px solid var(--border);
+      border-radius: 14px; padding: 11px 13px; margin-top: 8px;
+    }
     .dl-hw-status {
-      display: flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600;
-      color: var(--text-sec); margin-bottom: 6px; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 7px;
+      font-size: 13px; font-weight: 700; color: var(--text-sec); margin-bottom: 6px;
     }
     .dl-hw-status.done { color: var(--green); }
     .dl-hw-text { font-size: 14.5px; color: var(--text); line-height: 1.45; }
-    .dl-hw-sub { font-size: 13px; color: var(--text-sec); margin-top: 4px; }
+    .dl-add-hw-btn {
+      width: 100%; padding: 10px; border-radius: 12px; border: 1.5px dashed var(--accent);
+      background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 700;
+      cursor: pointer; margin-top: 8px; text-align: center;
+    }
+    .inline-hw-editor {
+      margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+    }
     .recess-row {
       display: flex; justify-content: space-between; align-items: center;
       padding: 6px 10px; margin: 4px 0 10px; color: var(--text-sec); font-size: 13px; font-weight: 500;
@@ -451,19 +462,18 @@
           <div id="monthPickerBox" class="month-picker-grid pop-in hidden"></div>
         </div>
 
-        <!-- Удобное добавление урока и ДЗ в 2 клика (для учителя) -->
+        <!-- Добавление урока в расписание (для учителя) -->
         <div id="teacherQuickAddBar" class="hidden" style="margin-bottom:12px;">
-          <button type="button" class="btn-main" style="padding:11px; font-size:13.5px;" onclick="toggleInlineLessonForm()">+ Добавить урок и ДЗ</button>
+          <button type="button" class="btn-main" style="padding:11px; font-size:13.5px;" onclick="toggleInlineLessonForm()">+ Добавить урок в расписание</button>
           <div id="inlineLessonForm" class="card pop-in hidden" style="margin-top:10px;">
             <div class="card-head">
-              <h3 class="card-title">Новый урок и задание</h3>
+              <h3 class="card-title">Новый урок</h3>
               <button type="button" class="del-btn" onclick="toggleInlineLessonForm()">Закрыть</button>
             </div>
 
             <select id="tLesClass" class="field"></select>
             <input id="tLesTopic" class="field" placeholder="Предмет / тема (напр. Китайский язык: Урок 5)" />
 
-            <!-- Быстрые кнопки времени -->
             <div class="time-presets">
               <button type="button" class="t-preset-btn" onclick="applyTimePreset('08:30','09:15','1')">1 ур (08:30)</button>
               <button type="button" class="t-preset-btn" onclick="applyTimePreset('09:30','10:15','2')">2 ур (09:30)</button>
@@ -487,12 +497,12 @@
               </select>
             </div>
 
-            <textarea id="tLesTask" class="field" rows="3" placeholder="Домашнее задание (прописи, слова, ссылка)..."></textarea>
+            <textarea id="tLesTask" class="field" rows="2" placeholder="Домашнее задание (можно оставить пустым и добавить позже)..."></textarea>
             <label class="file-attach-btn">
-              <span>📎 <span id="tFileLabel">Прикрепить файл или фото (до 1.5 МБ)</span></span>
+              <span>📎 <span id="tFileLabel">Прикрепить файл или фото к ДЗ (до 1.5 МБ)</span></span>
               <input type="file" id="tFileInput" style="display:none;" onchange="handleFilePick(this, 'teacher')" />
             </label>
-            <button type="button" class="btn-main" onclick="teacherCreateLesson()">Опубликовать урок и ДЗ</button>
+            <button type="button" class="btn-main" onclick="teacherCreateLesson()">Сохранить урок</button>
           </div>
         </div>
 
@@ -580,7 +590,7 @@
         </div>
       </div>
 
-      <!-- ВКЛАДКА 5: ПОНЯТНОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ (ПРИВЯЗАНО К ВЫБРАННОМУ КЛАССУ НАВЕРХУ) -->
+      <!-- ВКЛАДКА 5: ПОНЯТНОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ -->
       <div id="sec-teacher" class="hidden">
         <div class="seg-control">
           <button type="button" class="seg-btn active" onclick="switchTeacherSub('t-classes', this)">👥 Класс и ученики</button>
@@ -590,7 +600,6 @@
 
         <!-- Экран 1: Управление выбранным классом и учениками -->
         <div id="t-classes" class="anim-in">
-          <!-- Карточка создания / удаления класса -->
           <div class="card">
             <div class="card-head" style="margin-bottom:8px;">
               <h3 class="card-title" id="tActiveClassHeader">Управление классами</h3>
@@ -602,7 +611,6 @@
             </div>
           </div>
 
-          <!-- Блок новых заявок -->
           <div class="card">
             <div class="card-head" style="margin-bottom:8px;">
               <h3 class="card-title">⏳ Новые заявки (<span id="tReqCountBadge">0</span>)</h3>
@@ -611,7 +619,6 @@
             <div id="tPendingRequestsList"></div>
           </div>
 
-          <!-- Блок учеников текущего выбранного класса -->
           <div class="card">
             <div class="card-head" style="margin-bottom:10px;">
               <h3 class="card-title" id="tEnrolledTitle">Ученики класса</h3>
@@ -627,7 +634,7 @@
           </div>
         </div>
 
-        <!-- Экран 2: Проверка ДЗ (фильтруется по выбранному классу наверху) -->
+        <!-- Экран 2: Проверка ДЗ -->
         <div id="t-inbox" class="hidden anim-in">
           <div class="card-head">
             <h3 class="section-title" style="margin:0;" id="tInboxHeaderTitle">Проверка ДЗ</h3>
@@ -702,6 +709,8 @@
     let myProfile = null;
     let teacherPickedFile = null;
     let studentPickedFile = null;
+    let inlineCardFiles = {};
+    let editingLessonKey = null;
     let completedLessons = JSON.parse(localStorage.getItem('diary_done_lessons') || '[]');
     let activeDmStudentId = null;
     let firedReminders = JSON.parse(localStorage.getItem('diary_fired_reminds') || '[]');
@@ -791,6 +800,16 @@
       } catch (e) {}
     }
 
+    async function patchNode(path, payload) {
+      try {
+        await fetchWithTimeout(`${DB_URL}/${path}.json`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {}
+    }
+
     async function deleteNode(path) {
       try {
         await fetchWithTimeout(`${DB_URL}/${path}.json`, { method: 'DELETE' });
@@ -834,9 +853,14 @@
         if (who === 'teacher') {
           teacherPickedFile = payload;
           document.getElementById('tFileLabel').innerText = `Прикреплено: ${file.name}`;
-        } else {
+        } else if (who === 'student') {
           studentPickedFile = payload;
           document.getElementById('stFileLabel').innerText = `Прикреплено: ${file.name}`;
+        } else if (who.startsWith('card_')) {
+          const lesKey = who.replace('card_', '');
+          inlineCardFiles[lesKey] = payload;
+          const lbl = document.getElementById(`cardFileLbl_${lesKey}`);
+          if (lbl) lbl.innerText = `Прикреплено: ${file.name}`;
         }
       };
       reader.readAsDataURL(file);
@@ -1012,18 +1036,17 @@
       }
     }
 
-    // ЖИВОЕ АВТООБНОВЛЕНИЕ ЧАТА И ДАННЫХ КАЖДЫЕ 3 СЕКУНДЫ
     let liveSyncTimer = null;
     function startLiveSync() {
       if (liveSyncTimer) clearInterval(liveSyncTimer);
       liveSyncTimer = setInterval(async () => {
+        if (editingLessonKey) return; // не перерисовываем карточку, пока учитель пишет в ней ДЗ
         const prevMsgLen = db.messages.length;
         const prevStLen = db.students.length;
         const prevSubLen = db.submissions.length;
 
         await loadCloudDB();
 
-        // Если открыт чат — обновляем переписку автоматически при новых сообщениях
         if (db.messages.length !== prevMsgLen) {
           const msgSec = document.getElementById('sec-messages');
           if (msgSec && !msgSec.classList.contains('hidden')) {
@@ -1031,7 +1054,6 @@
           }
         }
 
-        // Если открыта панель учителя и пришли новые заявки или ДЗ
         if (isTeacher && (db.students.length !== prevStLen || db.submissions.length !== prevSubLen)) {
           renderTopClasses();
           renderTeacherControls();
@@ -1097,6 +1119,7 @@
     }
 
     function switchTab(tab, btn) {
+      editingLessonKey = null;
       ['lessons', 'submit', 'messages', 'student-settings', 'teacher'].forEach(t => {
         const el = document.getElementById('sec-' + t);
         if (el) {
@@ -1340,6 +1363,7 @@
     }
 
     function selectCalendarDate(isoStr) {
+      editingLessonKey = null;
       selectedDateStr = isoStr;
       const dateInp = document.getElementById('tLesDate');
       if (dateInp) dateInp.value = isoStr;
@@ -1358,6 +1382,7 @@
     }
 
     function toggleLessonDone(key) {
+      if (isTeacher) return; // Для учителя клик по тексту ДЗ не ставит галочку выполнения
       if (completedLessons.includes(key)) {
         completedLessons = completedLessons.filter(k => k !== key);
       } else {
@@ -1367,15 +1392,44 @@
       renderWeekCalendarAndLessons();
     }
 
-    async function editLessonHwQuick(lesKey) {
+    // Открытие и сохранение ДЗ прямо внутри карточки урока для учителя
+    function openCardHwEditor(lesKey) {
+      editingLessonKey = lesKey;
+      renderWeekCalendarAndLessons();
+      setTimeout(() => {
+        const ta = document.getElementById(`cardHwTxt_${lesKey}`);
+        if (ta) ta.focus();
+      }, 50);
+    }
+
+    function closeCardHwEditor() {
+      editingLessonKey = null;
+      renderWeekCalendarAndLessons();
+    }
+
+    async function saveCardHw(lesKey) {
       const les = db.lessons.find(l => l._key === lesKey);
       if (!les) return;
-      const newTask = prompt(`Домашнее задание (${les.topic}):`, les.task || '');
-      if (newTask === null) return;
-      const cleanTask = newTask.trim() || 'Без задания';
-      await writeNode(`lessons/${lesKey}/task`, cleanTask);
+      const ta = document.getElementById(`cardHwTxt_${lesKey}`);
+      const newTask = ta ? ta.value.trim() : '';
+      const pickedFile = inlineCardFiles[lesKey] || les.file || null;
+
+      const patchData = {
+        task: newTask,
+        file: pickedFile
+      };
+      await patchNode(`lessons/${lesKey}`, patchData);
+
       const cls = db.classes.find(c => c.id === les.classId);
-      await notifyClassStudents(les.classId, `📝 Обновлено ДЗ (${cls ? cls.name : 'Класс'})\nПредмет: ${les.topic}\n🏠 Задание: ${cleanTask}`);
+      if (newTask || pickedFile) {
+        await notifyClassStudents(
+          les.classId,
+          `🏠 Домашнее задание (${cls ? cls.name : 'Класс'})\nПредмет: ${les.topic}\nЗадание: ${newTask || 'Прикреплён файл с заданием'}`
+        );
+      }
+
+      delete inlineCardFiles[lesKey];
+      editingLessonKey = null;
       await loadCloudDB();
       renderWeekCalendarAndLessons();
     }
@@ -1427,6 +1481,63 @@
         const isDone = completedLessons.includes(key);
         const hasFile = l.file && l.file.data;
         const clsObj = db.classes.find(c => c.id === l.classId);
+        const cleanTask = (l.task && l.task !== 'Без задания') ? l.task : '';
+        const hasAnyHw = Boolean(cleanTask || hasFile);
+        const isEditingThis = isTeacher && editingLessonKey === l._key;
+
+        let hwSectionHtml = '';
+
+        if (isEditingThis) {
+          hwSectionHtml = `
+            <div class="inline-hw-editor pop-in">
+              <div style="font-weight:700; font-size:13px; margin-bottom:6px; color:var(--accent);">📝 Домашнее задание к уроку:</div>
+              <textarea id="cardHwTxt_${l._key}" class="field" rows="3" placeholder="Напишите домашнее задание для учеников...">${cleanTask}</textarea>
+              <label class="file-attach-btn" style="margin-bottom:8px;">
+                <span>📎 <span id="cardFileLbl_${l._key}">${hasFile ? `Файл: ${l.file.name} (заменить)` : 'Прикрепить фото или файл (до 1.5 МБ)'}</span></span>
+                <input type="file" style="display:none;" onchange="handleFilePick(this, 'card_${l._key}')" />
+              </label>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn-main" style="padding:10px; font-size:13px;" onclick="saveCardHw('${l._key}')">💾 Сохранить ДЗ</button>
+                <button type="button" class="btn-sec" style="width:auto; padding:10px 14px; font-size:13px;" onclick="closeCardHwEditor()">Отмена</button>
+              </div>
+            </div>
+          `;
+        } else if (isTeacher) {
+          if (hasAnyHw) {
+            hwSectionHtml = `
+              <div class="dl-hw-box">
+                <div class="dl-hw-status">
+                  <span>🏠 Домашнее задание</span>
+                  <button type="button" class="mini-btn" style="padding:3px 9px; font-size:11.5px;" onclick="openCardHwEditor('${l._key}')">✏️ Изменить</button>
+                </div>
+                ${cleanTask ? `<div class="dl-hw-text">${formatLinks(cleanTask)}</div>` : ''}
+                ${renderFileAttachment(l.file)}
+              </div>
+            `;
+          } else {
+            hwSectionHtml = `
+              <button type="button" class="dl-add-hw-btn" onclick="openCardHwEditor('${l._key}')">
+                ➕ Добавить ДЗ к этому уроку
+              </button>
+            `;
+          }
+        } else {
+          // Отображение для ученика
+          if (hasAnyHw) {
+            hwSectionHtml = `
+              <div class="dl-hw-box">
+                <div class="dl-hw-status ${isDone ? 'done' : ''}" style="cursor:pointer;" onclick="toggleLessonDone('${key.replace(/'/g, '')}')">
+                  <span>${isDone ? '✅ Домашнее задание выполнено' : '🏠 Домашнее задание'}</span>
+                  <span style="font-size:11px; opacity:0.8;">${isDone ? 'Снять отметку' : 'Отметить'}</span>
+                </div>
+                ${cleanTask ? `<div class="dl-hw-text">${formatLinks(cleanTask)}</div>` : ''}
+                ${renderFileAttachment(l.file)}
+              </div>
+            `;
+          } else {
+            hwSectionHtml = `<div class="muted" style="font-size:13px;">Домашнее задание не задано</div>`;
+          }
+        }
 
         html += `
           <div class="diary-lesson-card" style="animation-delay:${i * 0.04}s;">
@@ -1434,18 +1545,11 @@
               <span>${lessonNumber} урок  ${timeRange}  ${roomText}</span>
               <div style="display:flex; align-items:center; gap:6px;">
                 ${isTeacher && clsObj ? `<span class="chip" style="padding:2px 8px; font-size:11px;">${clsObj.name}</span>` : ''}
-                ${isTeacher ? `<button type="button" class="mini-btn" style="padding:3px 8px; font-size:11px;" onclick="editLessonHwQuick('${l._key}')">✏️ ДЗ</button>` : ''}
                 ${isTeacher ? `<button type="button" class="del-btn" style="padding:3px 8px;" onclick="deleteLesson('${l._key}')">✕</button>` : ''}
               </div>
             </div>
             <div class="dl-subject">${l.topic}</div>
-            <div class="dl-hw-status ${isDone ? 'done' : ''}" onclick="toggleLessonDone('${key.replace(/'/g, '')}')">
-              <span>${isDone ? '✅' : '🏠'}</span>
-              <span>${isDone ? 'Домашнее задание выполнено' : 'Домашнее задание'}</span>
-            </div>
-            <div class="dl-hw-text">${formatLinks(l.task)}</div>
-            ${hasFile ? `<div class="dl-hw-sub">1 файл для выполнения</div>` : ''}
-            ${renderFileAttachment(l.file)}
+            ${hwSectionHtml}
           </div>
         `;
 
@@ -1470,6 +1574,7 @@
     }
 
     async function deleteLesson(key) {
+      if (!confirm('Удалить этот урок из расписания?')) return;
       await deleteNode(`lessons/${key}`);
       await loadCloudDB();
       renderWeekCalendarAndLessons();
@@ -1697,7 +1802,7 @@
       }
     }
 
-    // --- ПОНЯТНОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ (ПРИВЯЗАНО К ВЫБРАННОМУ КЛАССУ НАВЕРХУ) ---
+    // --- УПРАВЛЕНИЕ УЧИТЕЛЯ ---
     function switchTeacherSub(subId, btn) {
       ['t-classes', 't-inbox', 't-settings'].forEach(s => {
         const el = document.getElementById(s);
@@ -1791,7 +1896,6 @@
         delClassBtn.classList.add('hidden');
       }
 
-      // 1. Новые заявки
       const pendingStudents = db.students.filter(s => !s.classes || s.classes.length === 0);
       document.getElementById('tReqCountBadge').innerText = pendingStudents.length;
       const reqBox = document.getElementById('tPendingRequestsList');
@@ -1819,7 +1923,6 @@
         }).join('');
       }
 
-      // 2. Ученики выбранного класса (или всех классов)
       const enrolledAll = db.students.filter(s => s.classes && s.classes.length > 0);
       const filteredEnrolled = activeClsObj
         ? enrolledAll.filter(s => s.classes.includes(activeClsObj.id))
@@ -1858,7 +1961,6 @@
         }).join('');
       }
 
-      // 3. Проверка ДЗ (с учётом выбранного класса наверху!)
       const filteredSubs = activeClsObj
         ? db.submissions.filter(s => s.classId === activeClsObj.id || s.className === activeClsObj.name)
         : db.submissions;
@@ -1894,7 +1996,6 @@
         </div>
       `).join('') : '<div class="card muted">Сданных работ по этому классу пока нет.</div>';
 
-      // Выпадающие списки классов для форм
       const clsOptions = db.classes.length
         ? db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('')
         : '<option value="">Сначала создайте класс</option>';
@@ -1983,7 +2084,7 @@
       const repeatMode = document.getElementById('tLesRepeatMode').value;
       const cls = db.classes.find(c => c.id === classId);
       const topic = document.getElementById('tLesTopic').value.trim() || (cls ? cls.name : 'Урок');
-      const task = document.getElementById('tLesTask').value.trim() || (teacherPickedFile ? 'Выполнить задания из прикрепленных материалов' : 'Без задания');
+      const task = document.getElementById('tLesTask').value.trim();
       if (!classId) return alert('Сначала создайте класс во вкладке «Управление»!');
 
       const dObj = parseISODate(date);
@@ -2005,15 +2106,17 @@
       });
 
       const whenTxt = repeatDay ? `каждую неделю (${repeatDay})` : `на ${date}`;
-      await notifyClassStudents(
-        classId,
-        `📚 Новый урок и ДЗ (${cls ? cls.name : 'Класс'})\nПредмет: ${topic} (${whenTxt}, ${startTime})\n🏠 Задание: ${task}`
-      );
+      if (task || teacherPickedFile) {
+        await notifyClassStudents(
+          classId,
+          `📚 Новый урок и ДЗ (${cls ? cls.name : 'Класс'})\nПредмет: ${topic} (${whenTxt}, ${startTime})\n🏠 Задание: ${task || 'Прикреплён файл с заданием'}`
+        );
+      }
 
       ['tLesTopic', 'tLesTask'].forEach(id => document.getElementById(id).value = '');
       teacherPickedFile = null;
       document.getElementById('tFileInput').value = '';
-      document.getElementById('tFileLabel').innerText = 'Прикрепить файл или фото (до 1.5 МБ)';
+      document.getElementById('tFileLabel').innerText = 'Прикрепить файл или фото к ДЗ (до 1.5 МБ)';
       document.getElementById('inlineLessonForm').classList.add('hidden');
       selectedDateStr = date;
       await loadCloudDB();
