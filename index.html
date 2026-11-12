@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Мой Дневник — Китайский язык</title>
+  <title>Дневник Китайского</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -12,9 +12,7 @@
       --text: #1c1e21;
       --muted: #65676b;
       --primary: #d93829;
-      --primary-light: #fdecea;
       --border: #e4e6eb;
-      --success: #2e7d32;
     }
     body.dark {
       --bg: #121212;
@@ -22,7 +20,6 @@
       --text: #f1f1f1;
       --muted: #a0a0a0;
       --primary: #ff5242;
-      --primary-light: #331917;
       --border: #2e2e2e;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -48,6 +45,9 @@
     .btn-outline {
       background: transparent; color: var(--primary); border: 1px solid var(--primary);
       border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .btn-del {
+      background: none; border: none; color: #c62828; font-size: 12px; cursor: pointer; padding: 4px 8px;
     }
     input, select, textarea {
       width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
@@ -78,7 +78,7 @@
   <header>
     <div>
       <h1>🀄️ Дневник Китайского</h1>
-      <div id="userGreeting" style="font-size:12px; opacity:0.9;">Добро пожаловать!</div>
+      <div id="userGreeting" style="font-size:12px; opacity:0.9;">Синхронизация с облаком...</div>
     </div>
     <span class="badge" id="roleBadge">Ученик</span>
   </header>
@@ -95,7 +95,7 @@
           </select>
         </div>
       </div>
-      <div id="scheduleList"></div>
+      <div id="scheduleList"><div class="card muted">Загрузка расписания...</div></div>
     </div>
 
     <!-- ТЕСТЫ -->
@@ -108,14 +108,14 @@
     <div id="tab-hw" class="hidden">
       <div class="card">
         <h3>📤 Сдать домашнее задание</h3>
-        <p class="muted">Напишите перевод, текст иероглифами или прикрепите ссылку на аудио/фото тетради.</p>
+        <p class="muted">Напишите перевод, текст иероглифами или ссылку на выполненную работу.</p>
         <input id="hwStudentName" placeholder="Ваше имя и фамилия" />
-        <textarea id="hwText" rows="4" placeholder="Например: 你好！我叫安东。 (Прикрепляю ответ на урок 3)"></textarea>
+        <textarea id="hwText" rows="4" placeholder="Введите ваш ответ..."></textarea>
         <button class="btn" onclick="submitHW()">Отправить учителю</button>
       </div>
       <div class="card">
         <h3>⚠️ Предупредить о пропуске</h3>
-        <input id="skipReason" placeholder="Причина пропуска (болезнь, олимпиада...)" />
+        <input id="skipReason" placeholder="Причина пропуска..." />
         <button class="btn-outline" style="width:100%;" onclick="sendSkip()">Отправить предупреждение</button>
       </div>
     </div>
@@ -124,12 +124,18 @@
     <div id="tab-teacher" class="hidden">
       <div id="teacherLock" class="card">
         <h3>🔐 Вход для учителя</h3>
-        <p class="muted">Введите ПИН-код преподавателя для управления уроками и генерации тестов.</p>
-        <input id="pinInput" type="password" placeholder="ПИН-код (по умолчанию 43415)" />
+        <p class="muted">Введите ПИН-код преподавателя для управления дневником.</p>
+        <input id="pinInput" type="password" placeholder="ПИН-код" />
         <button class="btn" onclick="unlockTeacher()">Войти</button>
       </div>
 
       <div id="teacherPanel" class="hidden">
+        <div class="card">
+          <h3>🔔 Уведомления в Telegram</h3>
+          <p class="muted" id="tgStatusText">Привяжите свой аккаунт, чтобы получать ДЗ учеников прямо в личку от бота.</p>
+          <button class="btn-outline" style="width:100%;" onclick="bindTeacherTelegram()">Привязать мой Telegram</button>
+        </div>
+
         <div class="card">
           <h3>➕ Добавить урок в расписание</h3>
           <select id="newLessonClass">
@@ -137,23 +143,26 @@
             <option value="2">Группа HSK 2</option>
           </select>
           <input id="newLessonDay" placeholder="День и время (напр. Понедельник, 16:00)" />
-          <input id="newLessonTopic" placeholder="Тема урока (напр. Числа от 1 до 100)" />
-          <input id="newLessonTask" placeholder="Домашнее задание (напр. Прописи стр. 12)" />
-          <button class="btn" onclick="addLesson()">Сохранить урок</button>
+          <input id="newLessonTopic" placeholder="Тема урока" />
+          <input id="newLessonTask" placeholder="Домашнее задание" />
+          <button class="btn" onclick="addLesson()">Опубликовать для всех</button>
         </div>
 
         <div class="card">
-          <h3>✨ Генератор тестов HSK</h3>
-          <select id="genTopic">
-            <option value="greetings">Тема: Приветствия и знакомство (HSK 1)</option>
-            <option value="numbers">Тема: Числа и время (HSK 1)</option>
-            <option value="family">Тема: Семья и люди (HSK 1)</option>
-          </select>
-          <button class="btn" onclick="generateTest()">Создать тест</button>
+          <h3>📝 Создать свой тест</h3>
+          <input id="customTestTitle" placeholder="Название теста (напр. Урок 1: Тоны)" />
+          <input id="customQ" placeholder="Вопрос (напр. Как переводится 你好?)" />
+          <input id="customOpt1" placeholder="Вариант 1 (ПРАВИЛЬНЫЙ ответ)" />
+          <input id="customOpt2" placeholder="Вариант 2 (неправильный)" />
+          <input id="customOpt3" placeholder="Вариант 3 (неправильный)" />
+          <button class="btn" onclick="addCustomTest()">Добавить тест в список</button>
         </div>
 
         <div class="card">
-          <h3>📥 Сданные работы и пропуски</h3>
+          <div class="row">
+            <h3>📥 Сданные работы и пропуски</h3>
+            <button class="btn-del" onclick="clearSubmissions()">Очистить</button>
+          </div>
           <div id="teacherSubmissions" class="muted">Пока нет новых записей.</div>
         </div>
       </div>
@@ -168,79 +177,126 @@
   </nav>
 
   <script>
+    const DB_URL = "https://chinese-diary-1ea47-default-rtdb.firebaseio.com";
+    const BOT_TOKEN = "9227625709:AAEEV7aCPq3vW_mb7GmAVi_hpEOQuOFSuDQ";
+    const TEACHER_PIN = "43415";
+
     const tg = window.Telegram && window.Telegram.WebApp;
+    let currentTgUserId = null;
+
     if (tg) {
       tg.ready();
       tg.expand();
       if (tg.colorScheme === 'dark') document.body.classList.add('dark');
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const u = tg.initDataUnsafe.user;
+        currentTgUserId = u.id;
         const name = [u.first_name, u.last_name].filter(Boolean).join(' ');
-        document.getElementById('userGreeting').innerText = 'Ученик: ' + name;
+        document.getElementById('userGreeting').innerText = name;
         document.getElementById('hwStudentName').value = name;
+      } else {
+        document.getElementById('userGreeting').innerText = 'Онлайн-режим';
       }
     }
 
-    const defaultData = {
-      lessons: [
-        { cls: '1', day: 'Понедельник, 16:30', topic: 'Фонетика: 4 тона и пиньинь', task: 'Прописать инициалы b, p, m, f' },
-        { cls: '1', day: 'Четверг, 16:30', topic: 'Приветствия: 你好 (Nǐ hǎo)', task: 'Выучить 6 новых иероглифов' },
-        { cls: '2', day: 'Вторник, 18:00', topic: 'Модальный глагол 想 (xiǎng)', task: 'Составить 5 предложений о планах' }
-      ],
-      tests: [
-        {
-          id: 1, title: 'Базовые приветствия (HSK 1)',
-          questions: [
-            { q: 'Как переводится «你好» (nǐ hǎo)?', options: ['Привет', 'Спасибо', 'До свидания', 'Извините'], ans: 0 },
-            { q: 'Выберите пиньинь для иероглифа «谢谢»:', options: ['zàijiàn', 'xièxie', 'duìbuqǐ', 'méi guānxi'], ans: 1 },
-            { q: 'Что означает «再见» (zàijiàn)?', options: ['Доброе утро', 'Как дела?', 'До свидания', 'Меня зовут...'], ans: 2 }
-          ]
-        }
-      ],
-      submissions: []
-    };
+    let db = { lessons: [], tests: [], submissions: [], teacherChatId: null };
+    let isTeacher = false;
 
-    let db = JSON.parse(localStorage.getItem('cn_diary_db')) || defaultData;
-    function saveDB() { localStorage.setItem('cn_diary_db', JSON.stringify(db)); }
+    async function loadCloudDB() {
+      try {
+        const res = await fetch(`${DB_URL}/diary.json`);
+        const data = await res.json();
+        if (data) {
+          db.lessons = data.lessons || [];
+          db.tests = data.tests || [];
+          db.submissions = data.submissions || [];
+          db.teacherChatId = data.teacherChatId || null;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      renderSchedule();
+      if (!document.getElementById('tab-tests').classList.contains('hidden')) renderTests();
+      if (isTeacher) {
+        renderSubmissions();
+        updateTgStatus();
+      }
+    }
+
+    async function saveCloudDB() {
+      await fetch(`${DB_URL}/diary.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(db)
+      });
+    }
+
+    async function notifyTeacher(text) {
+      if (!db.teacherChatId) return;
+      try {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: db.teacherChatId, text: text })
+        });
+      } catch (e) {}
+    }
 
     function switchTab(name, btn) {
       ['schedule', 'tests', 'hw', 'teacher'].forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
       document.getElementById('tab-' + name).classList.remove('hidden');
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      if (name === 'tests') renderTests();
-      if (name === 'teacher') renderSubmissions();
+      loadCloudDB();
     }
 
     function renderSchedule() {
       const cls = document.getElementById('classSelect').value;
       const list = document.getElementById('scheduleList');
-      const items = db.lessons.filter(l => l.cls === cls);
+      const items = db.lessons.map((l, idx) => ({ ...l, idx })).filter(l => l.cls === cls);
       list.innerHTML = items.length ? items.map(l => `
         <div class="card">
-          <div class="muted">${l.day}</div>
+          <div class="row">
+            <div class="muted">${l.day}</div>
+            ${isTeacher ? `<button class="btn-del" onclick="deleteLesson(${l.idx})">Удалить</button>` : ''}
+          </div>
           <h3>${l.topic}</h3>
           <div>📝 <b>ДЗ:</b> ${l.task}</div>
         </div>
-      `).join('') : '<div class="card muted">Для этой группы уроков пока нет.</div>';
+      `).join('') : '<div class="card muted">Для этой группы уроков пока нет. Учитель скоро добавит расписание.</div>';
+    }
+
+    async function deleteLesson(idx) {
+      db.lessons.splice(idx, 1);
+      await saveCloudDB();
+      renderSchedule();
     }
 
     function renderTests() {
       document.getElementById('testRunner').classList.add('hidden');
       const cat = document.getElementById('testsCatalog');
       cat.classList.remove('hidden');
-      cat.innerHTML = db.tests.map(t => `
+      cat.innerHTML = db.tests.length ? db.tests.map((t, idx) => `
         <div class="card">
-          <h3>🀄️ ${t.title}</h3>
+          <div class="row">
+            <h3>🀄️ ${t.title}</h3>
+            ${isTeacher ? `<button class="btn-del" onclick="deleteTest(${idx})">Удалить</button>` : ''}
+          </div>
           <p class="muted">Вопросов: ${t.questions.length}</p>
-          <button class="btn" onclick="startTest(${t.id})">Пройти тест</button>
+          <button class="btn" onclick="startTest(${idx})">Пройти тест</button>
         </div>
-      `).join('');
+      `).join('') : '<div class="card muted">Тестов пока нет.</div>';
+    }
+
+    async function deleteTest(idx) {
+      db.tests.splice(idx, 1);
+      await saveCloudDB();
+      renderTests();
     }
 
     let currentTest = null, qIdx = 0, score = 0;
-    function startTest(id) {
-      currentTest = db.tests.find(t => t.id === id);
+    function startTest(idx) {
+      currentTest = db.tests[idx];
       qIdx = 0; score = 0;
       document.getElementById('testsCatalog').classList.add('hidden');
       document.getElementById('testRunner').classList.remove('hidden');
@@ -273,78 +329,97 @@
       setTimeout(() => { qIdx++; renderQuestion(); }, 900);
     }
 
-    function submitHW() {
+    async function submitHW() {
       const name = document.getElementById('hwStudentName').value.trim() || 'Ученик';
       const text = document.getElementById('hwText').value.trim();
       if (!text) return alert('Введите текст задания!');
-      db.submissions.unshift({ type: 'ДЗ', name, text, time: new Date().toLocaleTimeString().slice(0,5) });
-      saveDB();
+      const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      db.submissions.unshift({ type: 'ДЗ', name, text, time });
+      await saveCloudDB();
+      await notifyTeacher(`📥 Новое ДЗ от ${name}:\n\n${text}`);
       document.getElementById('hwText').value = '';
-      alert('✅ Домашнее задание отправлено!');
+      alert('✅ Домашнее задание отправлено учителю!');
     }
 
-    function sendSkip() {
+    async function sendSkip() {
       const name = document.getElementById('hwStudentName').value.trim() || 'Ученик';
       const text = document.getElementById('skipReason').value.trim();
       if (!text) return alert('Укажите причину пропуска!');
-      db.submissions.unshift({ type: 'Пропуск', name, text, time: new Date().toLocaleTimeString().slice(0,5) });
-      saveDB();
+      const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      db.submissions.unshift({ type: 'Пропуск', name, text, time });
+      await saveCloudDB();
+      await notifyTeacher(`⚠️ Предупреждение о пропуске от ${name}:\n${text}`);
       document.getElementById('skipReason').value = '';
       alert('⚠️ Предупреждение передано учителю.');
     }
 
     function unlockTeacher() {
-      if (document.getElementById('pinInput').value === '43415') {
+      if (document.getElementById('pinInput').value === TEACHER_PIN) {
+        isTeacher = true;
         document.getElementById('teacherLock').classList.add('hidden');
         document.getElementById('teacherPanel').classList.remove('hidden');
         document.getElementById('roleBadge').innerText = 'Учитель';
+        renderSchedule();
         renderSubmissions();
+        updateTgStatus();
       } else {
         alert('❌ Неверный ПИН-код');
       }
     }
 
-    function addLesson() {
+    function updateTgStatus() {
+      const el = document.getElementById('tgStatusText');
+      el.innerText = db.teacherChatId
+        ? `✅ Привязано (ID: ${db.teacherChatId}). Уведомления приходят в Telegram.`
+        : 'Нажмите кнопку ниже из Telegram, чтобы бот присылал вам ДЗ учеников в личку.';
+    }
+
+    async function bindTeacherTelegram() {
+      if (!currentTgUserId) return alert('Откройте приложение через кнопку в Telegram, чтобы определить ваш ID.');
+      db.teacherChatId = currentTgUserId;
+      await saveCloudDB();
+      updateTgStatus();
+      await notifyTeacher('✅ Уведомления дневника успешно подключены!');
+      alert('✅ Ваш Telegram привязан! Проверьте сообщение от бота.');
+    }
+
+    async function addLesson() {
       const cls = document.getElementById('newLessonClass').value;
       const day = document.getElementById('newLessonDay').value.trim();
       const topic = document.getElementById('newLessonTopic').value.trim();
       const task = document.getElementById('newLessonTask').value.trim();
       if (!day || !topic) return alert('Заполните день и тему урока!');
       db.lessons.push({ cls, day, topic, task: task || 'Без задания' });
-      saveDB();
+      await saveCloudDB();
+      document.getElementById('newLessonDay').value = '';
+      document.getElementById('newLessonTopic').value = '';
+      document.getElementById('newLessonTask').value = '';
       renderSchedule();
-      alert('✅ Урок добавлен в расписание!');
+      alert('✅ Урок опубликован! Теперь его видят все ученики.');
     }
 
-    function generateTest() {
-      const topic = document.getElementById('genTopic').value;
-      const bank = {
-        greetings: {
-          title: 'Приветствия и знакомство (HSK 1)',
-          questions: [
-            { q: 'Как сказать «Меня зовут...» по-китайски?', options: ['我叫... (wǒ jiào)', '我是... (wǒ shì)', '你好吗 (nǐ hǎo ma)', '谢谢 (xièxie)'], ans: 0 },
-            { q: 'Переведите «对不起» (duìbuqǐ):', options: ['Пожалуйста', 'Извините', 'Не за что', 'Привет'], ans: 1 }
-          ]
-        },
-        numbers: {
-          title: 'Числа и счёт (HSK 1)',
-          questions: [
-            { q: 'Какое число обозначает иероглиф «八» (bā)?', options: ['5', '8', '10', '3'], ans: 1 },
-            { q: 'Как пишется число 10 по-китайски?', options: ['一 (yī)', '五 (wǔ)', '十 (shí)', '九 (jiǔ)'], ans: 2 }
-          ]
-        },
-        family: {
-          title: 'Семья (HSK 1)',
-          questions: [
-            { q: 'Кто такой «爸爸» (bàba)?', options: ['Мама', 'Папа', 'Старший брат', 'Дедушка'], ans: 1 },
-            { q: 'Как переводится «妈妈» (māma)?', options: ['Мама', 'Сестра', 'Бабушка', 'Тётя'], ans: 0 }
-          ]
-        }
-      };
-      const tpl = bank[topic];
-      db.tests.push({ id: Date.now(), title: tpl.title, questions: tpl.questions });
-      saveDB();
-      alert('✅ Новый тест создан и добавлен во вкладку «Тесты»!');
+    async function addCustomTest() {
+      const title = document.getElementById('customTestTitle').value.trim();
+      const q = document.getElementById('customQ').value.trim();
+      const o1 = document.getElementById('customOpt1').value.trim();
+      const o2 = document.getElementById('customOpt2').value.trim();
+      const o3 = document.getElementById('customOpt3').value.trim();
+      if (!title || !q || !o1 || !o2) return alert('Заполните название, вопрос и минимум 2 варианта ответа!');
+      const opts = [o1, o2];
+      if (o3) opts.push(o3);
+      // Перемешиваем варианты, сохраняя индекс правильного
+      const paired = opts.map((text, idx) => ({ text, isCorrect: idx === 0 })).sort(() => Math.random() - 0.5);
+      const ans = paired.findIndex(p => p.isCorrect);
+      const existing = db.tests.find(t => t.title.toLowerCase() === title.toLowerCase());
+      const newQuestion = { q, options: paired.map(p => p.text), ans };
+      if (existing) {
+        existing.questions.push(newQuestion);
+      } else {
+        db.tests.push({ title, questions: [newQuestion] });
+      }
+      await saveCloudDB();
+      ['customQ', 'customOpt1', 'customOpt2', 'customOpt3'].forEach(id => document.getElementById(id).value = '');
+      alert('✅ Вопрос добавлен в тест «' + title + '»! (Чтобы добавить ещё вопрос в этот же тест, оставьте то же название).');
     }
 
     function renderSubmissions() {
@@ -356,7 +431,14 @@
       `).join('') : 'Пока нет новых записей.';
     }
 
-    renderSchedule();
+    async function clearSubmissions() {
+      if (!confirm('Очистить список сданных работ?')) return;
+      db.submissions = [];
+      await saveCloudDB();
+      renderSubmissions();
+    }
+
+    loadCloudDB();
   </script>
 </body>
 </html>
