@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Мой Дневник — Китайский язык</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1c1e21;
+      --muted: #65676b;
+      --primary: #d93829;
+      --primary-light: #fdecea;
+      --border: #e4e6eb;
+      --success: #2e7d32;
+    }
+    body.dark {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --text: #f1f1f1;
+      --muted: #a0a0a0;
+      --primary: #ff5242;
+      --primary-light: #331917;
+      --border: #2e2e2e;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 76px; }
+    header {
+      background: var(--primary); color: #fff; padding: 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    header h1 { margin: 0; font-size: 18px; }
+    .badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-size: 12px; }
+    .container { padding: 14px; max-width: 600px; margin: 0 auto; }
+    .card {
+      background: var(--card); border-radius: 14px; padding: 14px;
+      margin-bottom: 12px; border: 1px solid var(--border);
+    }
+    .card h3 { margin: 0 0 8px; font-size: 16px; }
+    .muted { color: var(--muted); font-size: 13px; }
+    .btn {
+      background: var(--primary); color: #fff; border: none; border-radius: 10px;
+      padding: 10px 14px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
+    }
+    .btn-outline {
+      background: transparent; color: var(--primary); border: 1px solid var(--primary);
+      border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    input, select, textarea {
+      width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); margin-bottom: 10px; font-size: 14px;
+    }
+    nav {
+      position: fixed; bottom: 0; left: 0; right: 0; background: var(--card);
+      border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0;
+    }
+    nav button {
+      background: none; border: none; color: var(--muted); font-size: 11px;
+      display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
+    }
+    nav button.active { color: var(--primary); font-weight: 700; }
+    nav span { font-size: 20px; }
+    .hidden { display: none; }
+    .option {
+      display: block; width: 100%; text-align: left; padding: 10px 12px;
+      margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); cursor: pointer; font-size: 14px;
+    }
+    .option.correct { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; }
+    .option.wrong { background: #ffebee; border-color: #c62828; color: #b71c1c; }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>🀄️ Дневник Китайского</h1>
+      <div id="userGreeting" style="font-size:12px; opacity:0.9;">Добро пожаловать!</div>
+    </div>
+    <span class="badge" id="roleBadge">Ученик</span>
+  </header>
+
+  <div class="container">
+    <!-- РАСПИСАНИЕ -->
+    <div id="tab-schedule">
+      <div class="card">
+        <div class="row">
+          <h3>📅 Расписание и ДЗ</h3>
+          <select id="classSelect" style="width:auto; margin:0; padding:6px 10px;" onchange="renderSchedule()">
+            <option value="1">Группа HSK 1</option>
+            <option value="2">Группа HSK 2</option>
+          </select>
+        </div>
+      </div>
+      <div id="scheduleList"></div>
+    </div>
+
+    <!-- ТЕСТЫ -->
+    <div id="tab-tests" class="hidden">
+      <div id="testsCatalog"></div>
+      <div id="testRunner" class="hidden card"></div>
+    </div>
+
+    <!-- СДАЧА ДЗ -->
+    <div id="tab-hw" class="hidden">
+      <div class="card">
+        <h3>📤 Сдать домашнее задание</h3>
+        <p class="muted">Напишите перевод, текст иероглифами или прикрепите ссылку на аудио/фото тетради.</p>
+        <input id="hwStudentName" placeholder="Ваше имя и фамилия" />
+        <textarea id="hwText" rows="4" placeholder="Например: 你好！我叫安东。 (Прикрепляю ответ на урок 3)"></textarea>
+        <button class="btn" onclick="submitHW()">Отправить учителю</button>
+      </div>
+      <div class="card">
+        <h3>⚠️ Предупредить о пропуске</h3>
+        <input id="skipReason" placeholder="Причина пропуска (болезнь, олимпиада...)" />
+        <button class="btn-outline" style="width:100%;" onclick="sendSkip()">Отправить предупреждение</button>
+      </div>
+    </div>
+
+    <!-- УЧИТЕЛЬ -->
+    <div id="tab-teacher" class="hidden">
+      <div id="teacherLock" class="card">
+        <h3>🔐 Вход для учителя</h3>
+        <p class="muted">Введите ПИН-код преподавателя для управления уроками и генерации тестов.</p>
+        <input id="pinInput" type="password" placeholder="ПИН-код (по умолчанию 43415)" />
+        <button class="btn" onclick="unlockTeacher()">Войти</button>
+      </div>
+
+      <div id="teacherPanel" class="hidden">
+        <div class="card">
+          <h3>➕ Добавить урок в расписание</h3>
+          <select id="newLessonClass">
+            <option value="1">Группа HSK 1</option>
+            <option value="2">Группа HSK 2</option>
+          </select>
+          <input id="newLessonDay" placeholder="День и время (напр. Понедельник, 16:00)" />
+          <input id="newLessonTopic" placeholder="Тема урока (напр. Числа от 1 до 100)" />
+          <input id="newLessonTask" placeholder="Домашнее задание (напр. Прописи стр. 12)" />
+          <button class="btn" onclick="addLesson()">Сохранить урок</button>
+        </div>
+
+        <div class="card">
+          <h3>✨ Генератор тестов HSK</h3>
+          <select id="genTopic">
+            <option value="greetings">Тема: Приветствия и знакомство (HSK 1)</option>
+            <option value="numbers">Тема: Числа и время (HSK 1)</option>
+            <option value="family">Тема: Семья и люди (HSK 1)</option>
+          </select>
+          <button class="btn" onclick="generateTest()">Создать тест</button>
+        </div>
+
+        <div class="card">
+          <h3>📥 Сданные работы и пропуски</h3>
+          <div id="teacherSubmissions" class="muted">Пока нет новых записей.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <button class="active" onclick="switchTab('schedule', this)"><span>📅</span>Уроки</button>
+    <button onclick="switchTab('tests', this)"><span>🀄️</span>Тесты</button>
+    <button onclick="switchTab('hw', this)"><span>📤</span>Сдать ДЗ</button>
+    <button onclick="switchTab('teacher', this)"><span>🎓</span>Учитель</button>
+  </nav>
+
+  <script>
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      if (tg.colorScheme === 'dark') document.body.classList.add('dark');
+      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const u = tg.initDataUnsafe.user;
+        const name = [u.first_name, u.last_name].filter(Boolean).join(' ');
+        document.getElementById('userGreeting').innerText = 'Ученик: ' + name;
+        document.getElementById('hwStudentName').value = name;
+      }
+    }
+
+    const defaultData = {
+      lessons: [
+        { cls: '1', day: 'Понедельник, 16:30', topic: 'Фонетика: 4 тона и пиньинь', task: 'Прописать инициалы b, p, m, f' },
+        { cls: '1', day: 'Четверг, 16:30', topic: 'Приветствия: 你好 (Nǐ hǎo)', task: 'Выучить 6 новых иероглифов' },
+        { cls: '2', day: 'Вторник, 18:00', topic: 'Модальный глагол 想 (xiǎng)', task: 'Составить 5 предложений о планах' }
+      ],
+      tests: [
+        {
+          id: 1, title: 'Базовые приветствия (HSK 1)',
+          questions: [
+            { q: 'Как переводится «你好» (nǐ hǎo)?', options: ['Привет', 'Спасибо', 'До свидания', 'Извините'], ans: 0 },
+            { q: 'Выберите пиньинь для иероглифа «谢谢»:', options: ['zàijiàn', 'xièxie', 'duìbuqǐ', 'méi guānxi'], ans: 1 },
+            { q: 'Что означает «再见» (zàijiàn)?', options: ['Доброе утро', 'Как дела?', 'До свидания', 'Меня зовут...'], ans: 2 }
+          ]
+        }
+      ],
+      submissions: []
+    };
+
+    let db = JSON.parse(localStorage.getItem('cn_diary_db')) || defaultData;
+    function saveDB() { localStorage.setItem('cn_diary_db', JSON.stringify(db)); }
+
+    function switchTab(name, btn) {
+      ['schedule', 'tests', 'hw', 'teacher'].forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
+      document.getElementById('tab-' + name).classList.remove('hidden');
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (name === 'tests') renderTests();
+      if (name === 'teacher') renderSubmissions();
+    }
+
+    function renderSchedule() {
+      const cls = document.getElementById('classSelect').value;
+      const list = document.getElementById('scheduleList');
+      const items = db.lessons.filter(l => l.cls === cls);
+      list.innerHTML = items.length ? items.map(l => `
+        <div class="card">
+          <div class="muted">${l.day}</div>
+          <h3>${l.topic}</h3>
+          <div>📝 <b>ДЗ:</b> ${l.task}</div>
+        </div>
+      `).join('') : '<div class="card muted">Для этой группы уроков пока нет.</div>';
+    }
+
+    function renderTests() {
+      document.getElementById('testRunner').classList.add('hidden');
+      const cat = document.getElementById('testsCatalog');
+      cat.classList.remove('hidden');
+      cat.innerHTML = db.tests.map(t => `
+        <div class="card">
+          <h3>🀄️ ${t.title}</h3>
+          <p class="muted">Вопросов: ${t.questions.length}</p>
+          <button class="btn" onclick="startTest(${t.id})">Пройти тест</button>
+        </div>
+      `).join('');
+    }
+
+    let currentTest = null, qIdx = 0, score = 0;
+    function startTest(id) {
+      currentTest = db.tests.find(t => t.id === id);
+      qIdx = 0; score = 0;
+      document.getElementById('testsCatalog').classList.add('hidden');
+      document.getElementById('testRunner').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const box = document.getElementById('testRunner');
+      if (qIdx >= currentTest.questions.length) {
+        box.innerHTML = `
+          <h3>🎉 Тест завершён!</h3>
+          <p>Ваш результат: <b>${score} из ${currentTest.questions.length}</b></p>
+          <button class="btn" onclick="renderTests()">К списку тестов</button>
+        `;
+        return;
+      }
+      const q = currentTest.questions[qIdx];
+      box.innerHTML = `
+        <div class="muted">Вопрос ${qIdx + 1} из ${currentTest.questions.length}</div>
+        <h3>${q.q}</h3>
+        ${q.options.map((opt, i) => `<button class="option" onclick="answer(${i}, this)">${opt}</button>`).join('')}
+      `;
+    }
+
+    function answer(idx, el) {
+      const q = currentTest.questions[qIdx];
+      document.querySelectorAll('.option').forEach(b => b.disabled = true);
+      if (idx === q.ans) { el.classList.add('correct'); score++; }
+      else { el.classList.add('wrong'); document.querySelectorAll('.option')[q.ans].classList.add('correct'); }
+      setTimeout(() => { qIdx++; renderQuestion(); }, 900);
+    }
+
+    function submitHW() {
+      const name = document.getElementById('hwStudentName').value.trim() || 'Ученик';
+      const text = document.getElementById('hwText').value.trim();
+      if (!text) return alert('Введите текст задания!');
+      db.submissions.unshift({ type: 'ДЗ', name, text, time: new Date().toLocaleTimeString().slice(0,5) });
+      saveDB();
+      document.getElementById('hwText').value = '';
+      alert('✅ Домашнее задание отправлено!');
+    }
+
+    function sendSkip() {
+      const name = document.getElementById('hwStudentName').value.trim() || 'Ученик';
+      const text = document.getElementById('skipReason').value.trim();
+      if (!text) return alert('Укажите причину пропуска!');
+      db.submissions.unshift({ type: 'Пропуск', name, text, time: new Date().toLocaleTimeString().slice(0,5) });
+      saveDB();
+      document.getElementById('skipReason').value = '';
+      alert('⚠️ Предупреждение передано учителю.');
+    }
+
+    function unlockTeacher() {
+      if (document.getElementById('pinInput').value === '43415') {
+        document.getElementById('teacherLock').classList.add('hidden');
+        document.getElementById('teacherPanel').classList.remove('hidden');
+        document.getElementById('roleBadge').innerText = 'Учитель';
+        renderSubmissions();
+      } else {
+        alert('❌ Неверный ПИН-код');
+      }
+    }
+
+    function addLesson() {
+      const cls = document.getElementById('newLessonClass').value;
+      const day = document.getElementById('newLessonDay').value.trim();
+      const topic = document.getElementById('newLessonTopic').value.trim();
+      const task = document.getElementById('newLessonTask').value.trim();
+      if (!day || !topic) return alert('Заполните день и тему урока!');
+      db.lessons.push({ cls, day, topic, task: task || 'Без задания' });
+      saveDB();
+      renderSchedule();
+      alert('✅ Урок добавлен в расписание!');
+    }
+
+    function generateTest() {
+      const topic = document.getElementById('genTopic').value;
+      const bank = {
+        greetings: {
+          title: 'Приветствия и знакомство (HSK 1)',
+          questions: [
+            { q: 'Как сказать «Меня зовут...» по-китайски?', options: ['我叫... (wǒ jiào)', '我是... (wǒ shì)', '你好吗 (nǐ hǎo ma)', '谢谢 (xièxie)'], ans: 0 },
+            { q: 'Переведите «对不起» (duìbuqǐ):', options: ['Пожалуйста', 'Извините', 'Не за что', 'Привет'], ans: 1 }
+          ]
+        },
+        numbers: {
+          title: 'Числа и счёт (HSK 1)',
+          questions: [
+            { q: 'Какое число обозначает иероглиф «八» (bā)?', options: ['5', '8', '10', '3'], ans: 1 },
+            { q: 'Как пишется число 10 по-китайски?', options: ['一 (yī)', '五 (wǔ)', '十 (shí)', '九 (jiǔ)'], ans: 2 }
+          ]
+        },
+        family: {
+          title: 'Семья (HSK 1)',
+          questions: [
+            { q: 'Кто такой «爸爸» (bàba)?', options: ['Мама', 'Папа', 'Старший брат', 'Дедушка'], ans: 1 },
+            { q: 'Как переводится «妈妈» (māma)?', options: ['Мама', 'Сестра', 'Бабушка', 'Тётя'], ans: 0 }
+          ]
+        }
+      };
+      const tpl = bank[topic];
+      db.tests.push({ id: Date.now(), title: tpl.title, questions: tpl.questions });
+      saveDB();
+      alert('✅ Новый тест создан и добавлен во вкладку «Тесты»!');
+    }
+
+    function renderSubmissions() {
+      const box = document.getElementById('teacherSubmissions');
+      box.innerHTML = db.submissions.length ? db.submissions.map(s => `
+        <div style="border-bottom:1px solid var(--border); padding:8px 0;">
+          <b>[${s.type}] ${s.name}</b> <span class="muted">(${s.time})</span><br/>${s.text}
+        </div>
+      `).join('') : 'Пока нет новых записей.';
+    }
+
+    renderSchedule();
+  </script>
+</body>
+</html>
