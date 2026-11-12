@@ -3,161 +3,308 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Дневник Китайского</title>
+  <title>Школьный Дневник</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #f4f6f9;
+      --bg: #f3f5f9;
       --card: #ffffff;
-      --text: #1c1e21;
-      --muted: #65676b;
-      --primary: #d93829;
-      --border: #e4e6eb;
+      --text: #181a1f;
+      --muted: #6c727f;
+      --primary: #2563eb;
+      --primary-grad: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+      --ai-grad: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+      --border: #e2e8f0;
+      --chip-bg: #eef2ff;
+      --chip-text: #3730a3;
     }
     body.dark {
-      --bg: #121212;
-      --card: #1e1e1e;
-      --text: #f1f1f1;
-      --muted: #a0a0a0;
-      --primary: #ff5242;
-      --border: #2e2e2e;
+      --bg: #0f1115;
+      --card: #181b20;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --primary: #3b82f6;
+      --border: #272b33;
+      --chip-bg: #1e2536;
+      --chip-text: #93c5fd;
     }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 76px; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 84px; }
     header {
-      background: var(--primary); color: #fff; padding: 16px;
+      background: var(--primary-grad); color: #fff; padding: 16px 18px 18px;
+      border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
       display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.22);
+      position: sticky; top: 0; z-index: 20;
     }
-    header h1 { margin: 0; font-size: 18px; }
-    .badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-size: 12px; }
+    header h1 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.2px; }
+    .sub-header { font-size: 12px; opacity: 0.88; margin-top: 2px; }
+    .badge {
+      background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(6px);
+      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    }
     .container { padding: 14px; max-width: 600px; margin: 0 auto; }
     .card {
-      background: var(--card); border-radius: 14px; padding: 14px;
+      background: var(--card); border-radius: 16px; padding: 15px;
       margin-bottom: 12px; border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     }
-    .card h3 { margin: 0 0 8px; font-size: 16px; }
-    .muted { color: var(--muted); font-size: 13px; }
+    .card h3 { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
+    .muted { color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .chip {
+      display: inline-block; background: var(--chip-bg); color: var(--chip-text);
+      padding: 3px 9px; border-radius: 8px; font-size: 11px; font-weight: 600;
+    }
     .btn {
-      background: var(--primary); color: #fff; border: none; border-radius: 10px;
-      padding: 10px 14px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
+      background: var(--primary-grad); color: #fff; border: none; border-radius: 12px;
+      padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
+      transition: transform 0.1s ease, opacity 0.2s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-ai {
+      background: var(--ai-grad); color: #fff; border: none; border-radius: 12px;
+      padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.28);
     }
     .btn-outline {
-      background: transparent; color: var(--primary); border: 1px solid var(--primary);
-      border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+      background: transparent; color: var(--primary); border: 1.5px solid var(--primary);
+      border-radius: 12px; padding: 10px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
     }
     .btn-del {
-      background: none; border: none; color: #c62828; font-size: 12px; cursor: pointer; padding: 4px 8px;
+      background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444;
+      border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; padding: 5px 9px;
     }
     input, select, textarea {
-      width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+      width: 100%; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--border);
       background: var(--bg); color: var(--text); margin-bottom: 10px; font-size: 14px;
+      outline: none;
     }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+    .days-bar {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .days-bar::-webkit-scrollbar { display: none; }
+    .day-pill {
+      padding: 7px 13px; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--card); color: var(--muted); font-size: 13px; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+    }
+    .day-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     nav {
       position: fixed; bottom: 0; left: 0; right: 0; background: var(--card);
-      border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0;
+      border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+      padding: 8px 4px 10px; z-index: 20;
     }
     nav button {
-      background: none; border: none; color: var(--muted); font-size: 11px;
+      background: none; border: none; color: var(--muted); font-size: 10px;
       display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
+      flex: 1;
     }
     nav button.active { color: var(--primary); font-weight: 700; }
     nav span { font-size: 20px; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
     .option {
-      display: block; width: 100%; text-align: left; padding: 10px 12px;
-      margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); cursor: pointer; font-size: 14px;
+      display: block; width: 100%; text-align: left; padding: 12px 14px;
+      margin-bottom: 8px; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); cursor: pointer; font-size: 14px; font-weight: 500;
     }
-    .option.correct { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; }
-    .option.wrong { background: #ffebee; border-color: #c62828; color: #b71c1c; }
+    .option.correct { background: #dcfce7; border-color: #16a34a; color: #14532d; }
+    .option.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
     .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .mark-box {
+      width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-weight: 800; font-size: 16px; color: #fff; flex-shrink: 0;
+    }
+    .m-5 { background: #16a34a; }
+    .m-4 { background: #2563eb; }
+    .m-3 { background: #d97706; }
+    .m-2 { background: #dc2626; }
+    .hw-box {
+      margin-top: 8px; padding: 9px 11px; border-radius: 10px;
+      background: var(--bg); font-size: 13px; border-left: 3px solid var(--primary);
+    }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <header>
     <div>
-      <h1>🀄️ Дневник Китайского</h1>
-      <div id="userGreeting" style="font-size:12px; opacity:0.9;">Синхронизация с облаком...</div>
+      <h1>📘 Электронный дневник</h1>
+      <div class="sub-header" id="userGreeting">Подключение...</div>
     </div>
     <span class="badge" id="roleBadge">Ученик</span>
   </header>
 
   <div class="container">
-    <!-- РАСПИСАНИЕ -->
+    <!-- 1. РАСПИСАНИЕ И ДЗ -->
     <div id="tab-schedule">
-      <div class="card">
+      <div class="card" style="padding: 12px 14px;">
         <div class="row">
-          <h3>📅 Расписание и ДЗ</h3>
-          <select id="classSelect" style="width:auto; margin:0; padding:6px 10px;" onchange="renderSchedule()">
-            <option value="1">Группа HSK 1</option>
-            <option value="2">Группа HSK 2</option>
+          <div>
+            <div style="font-weight: 700; font-size: 15px;">Расписание уроков</div>
+            <div class="muted" style="font-size: 12px;">Выберите класс и день недели</div>
+          </div>
+          <select id="classSelect" style="width:auto; margin:0; padding:7px 12px; font-weight:600;" onchange="renderSchedule()">
+            <option value="5">5 класс</option>
+            <option value="6">6 класс</option>
+            <option value="7">7 класс</option>
+            <option value="8">8 класс</option>
+            <option value="9">9 класс</option>
+            <option value="10">10 класс</option>
+            <option value="11">11 класс</option>
           </select>
         </div>
       </div>
+
+      <div class="days-bar" id="daysBar">
+        <button class="day-pill active" onclick="selectDay('Все', this)">Все дни</button>
+        <button class="day-pill" onclick="selectDay('Понедельник', this)">Пн</button>
+        <button class="day-pill" onclick="selectDay('Вторник', this)">Вт</button>
+        <button class="day-pill" onclick="selectDay('Среда', this)">Ср</button>
+        <button class="day-pill" onclick="selectDay('Четверг', this)">Чт</button>
+        <button class="day-pill" onclick="selectDay('Пятница', this)">Пт</button>
+        <button class="day-pill" onclick="selectDay('Суббота', this)">Сб</button>
+      </div>
+
       <div id="scheduleList"><div class="card muted">Загрузка расписания...</div></div>
     </div>
 
-    <!-- ТЕСТЫ -->
+    <!-- 2. ОЦЕНКИ -->
+    <div id="tab-grades" class="hidden">
+      <div class="card">
+        <div class="row">
+          <div>
+            <h3>📊 Журнал оценок</h3>
+            <div class="muted">Успеваемость по предметам</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="muted" style="font-size:11px;">Средний балл</div>
+            <div id="avgGrade" style="font-size:20px; font-weight:800; color:var(--primary);">—</div>
+          </div>
+        </div>
+      </div>
+      <div id="gradesList"></div>
+    </div>
+
+    <!-- 3. ТЕСТЫ -->
     <div id="tab-tests" class="hidden">
       <div id="testsCatalog"></div>
       <div id="testRunner" class="hidden card"></div>
     </div>
 
-    <!-- СДАЧА ДЗ -->
+    <!-- 4. СДАТЬ ДЗ / ПРОПУСК -->
     <div id="tab-hw" class="hidden">
       <div class="card">
         <h3>📤 Сдать домашнее задание</h3>
-        <p class="muted">Напишите перевод, текст иероглифами или ссылку на выполненную работу.</p>
-        <input id="hwStudentName" placeholder="Ваше имя и фамилия" />
-        <textarea id="hwText" rows="4" placeholder="Введите ваш ответ..."></textarea>
+        <p class="muted" style="margin-bottom:10px;">Ответ сразу попадёт в журнал учителя и придёт ему в Telegram.</p>
+        <input id="hwStudentName" placeholder="Фамилия и Имя ученика" />
+        <input id="hwSubject" placeholder="Предмет (например: Алгебра)" />
+        <textarea id="hwText" rows="4" placeholder="Напишите решение или вставьте ссылку на фото/файл..."></textarea>
         <button class="btn" onclick="submitHW()">Отправить учителю</button>
       </div>
       <div class="card">
-        <h3>⚠️ Предупредить о пропуске</h3>
-        <input id="skipReason" placeholder="Причина пропуска..." />
+        <h3>⚠️ Сообщить об отсутствии</h3>
+        <input id="skipReason" placeholder="Причина пропуска (болезнь, соревнования...)" />
         <button class="btn-outline" style="width:100%;" onclick="sendSkip()">Отправить предупреждение</button>
       </div>
     </div>
 
-    <!-- УЧИТЕЛЬ -->
+    <!-- 5. УЧИТЕЛЬ -->
     <div id="tab-teacher" class="hidden">
       <div id="teacherLock" class="card">
-        <h3>🔐 Вход для учителя</h3>
-        <p class="muted">Введите ПИН-код преподавателя для управления дневником.</p>
+        <h3>🔐 Панель учителя</h3>
+        <p class="muted" style="margin-bottom:10px;">Введите ПИН-код преподавателя для управления дневником и ИИ-генератором.</p>
         <input id="pinInput" type="password" placeholder="ПИН-код" />
-        <button class="btn" onclick="unlockTeacher()">Войти</button>
+        <button class="btn" onclick="unlockTeacher()">Войти в панель</button>
       </div>
 
       <div id="teacherPanel" class="hidden">
+        <!-- Уведомления -->
         <div class="card">
           <h3>🔔 Уведомления в Telegram</h3>
-          <p class="muted" id="tgStatusText">Привяжите свой аккаунт, чтобы получать ДЗ учеников прямо в личку от бота.</p>
+          <p class="muted" id="tgStatusText" style="margin-bottom:10px;">Привяжите аккаунт, чтобы получать ДЗ учеников в личку.</p>
           <button class="btn-outline" style="width:100%;" onclick="bindTeacherTelegram()">Привязать мой Telegram</button>
         </div>
 
-        <div class="card">
-          <h3>➕ Добавить урок в расписание</h3>
-          <select id="newLessonClass">
-            <option value="1">Группа HSK 1</option>
-            <option value="2">Группа HSK 2</option>
+        <!-- ИИ-генератор тестов -->
+        <div class="card" style="border: 1.5px solid #a855f7;">
+          <div class="row" style="margin-bottom:6px;">
+            <h3 style="margin:0;">✨ ИИ-генератор тестов</h3>
+            <span class="chip" style="background:#f3e8ff; color:#6b21a8;">AI</span>
+          </div>
+          <p class="muted" style="margin-bottom:10px;">Укажите предмет и тему — ИИ сам составит вопросы и варианты ответов.</p>
+          <input id="aiSubject" placeholder="Предмет (напр. История, Биология, Физика)" />
+          <input id="aiTopic" placeholder="Тема (напр. Древний Египет, Законы Ньютона)" />
+          <select id="aiCount">
+            <option value="3">3 вопроса</option>
+            <option value="5" selected>5 вопросов</option>
+            <option value="7">7 вопросов</option>
           </select>
-          <input id="newLessonDay" placeholder="День и время (напр. Понедельник, 16:00)" />
-          <input id="newLessonTopic" placeholder="Тема урока" />
-          <input id="newLessonTask" placeholder="Домашнее задание" />
-          <button class="btn" onclick="addLesson()">Опубликовать для всех</button>
+          <button class="btn-ai" id="aiGenBtn" onclick="generateAITest()">✨ Сгенерировать тест с помощью ИИ</button>
         </div>
 
+        <!-- Добавить урок -->
         <div class="card">
-          <h3>📝 Создать свой тест</h3>
-          <input id="customTestTitle" placeholder="Название теста (напр. Урок 1: Тоны)" />
-          <input id="customQ" placeholder="Вопрос (напр. Как переводится 你好?)" />
-          <input id="customOpt1" placeholder="Вариант 1 (ПРАВИЛЬНЫЙ ответ)" />
-          <input id="customOpt2" placeholder="Вариант 2 (неправильный)" />
-          <input id="customOpt3" placeholder="Вариант 3 (неправильный)" />
-          <button class="btn" onclick="addCustomTest()">Добавить тест в список</button>
+          <h3>📅 Добавить урок и ДЗ</h3>
+          <div class="row">
+            <select id="newLessonClass">
+              <option value="5">5 класс</option>
+              <option value="6">6 класс</option>
+              <option value="7">7 класс</option>
+              <option value="8">8 класс</option>
+              <option value="9">9 класс</option>
+              <option value="10">10 класс</option>
+              <option value="11">11 класс</option>
+            </select>
+            <select id="newLessonDay">
+              <option value="Понедельник">Понедельник</option>
+              <option value="Вторник">Вторник</option>
+              <option value="Среда">Среда</option>
+              <option value="Четверг">Четверг</option>
+              <option value="Пятница">Пятница</option>
+              <option value="Суббота">Суббота</option>
+            </select>
+          </div>
+          <input id="newLessonTime" placeholder="Номер урока и время (напр. 2 урок • 09:25–10:10)" />
+          <input id="newLessonTopic" placeholder="Предмет и тема (напр. Русский язык: Причастие)" />
+          <input id="newLessonTask" placeholder="Домашнее задание (напр. Упр. 142, выучить правило)" />
+          <button class="btn" onclick="addLesson()">Опубликовать урок</button>
         </div>
 
+        <!-- Выставить оценку -->
+        <div class="card">
+          <h3>🏅 Выставить оценку</h3>
+          <input id="gradeStudent" placeholder="Фамилия и Имя ученика" />
+          <input id="gradeSubject" placeholder="Предмет (напр. Математика)" />
+          <div class="row">
+            <select id="gradeValue">
+              <option value="5">Оценка: 5 (Отлично)</option>
+              <option value="4">Оценка: 4 (Хорошо)</option>
+              <option value="3">Оценка: 3 (Удовл.)</option>
+              <option value="2">Оценка: 2 (Неуд.)</option>
+            </select>
+            <input id="gradeComment" placeholder="За что (напр. Контрольная)" />
+          </div>
+          <button class="btn" onclick="addGrade()">Поставить оценку</button>
+        </div>
+
+        <!-- Ручной конструктор тестов -->
+        <div class="card">
+          <h3>✍️ Добавить вопрос вручную</h3>
+          <input id="customTestTitle" placeholder="Название теста" />
+          <input id="customQ" placeholder="Текст вопроса" />
+          <input id="customOpt1" placeholder="Правильный ответ" />
+          <input id="customOpt2" placeholder="Неправильный вариант 1" />
+          <input id="customOpt3" placeholder="Неправильный вариант 2" />
+          <button class="btn-outline" style="width:100%;" onclick="addCustomTest()">Добавить вопрос</button>
+        </div>
+
+        <!-- Сданные работы -->
         <div class="card">
           <div class="row">
             <h3>📥 Сданные работы и пропуски</h3>
@@ -171,7 +318,8 @@
 
   <nav>
     <button class="active" onclick="switchTab('schedule', this)"><span>📅</span>Уроки</button>
-    <button onclick="switchTab('tests', this)"><span>🀄️</span>Тесты</button>
+    <button onclick="switchTab('grades', this)"><span>📊</span>Оценки</button>
+    <button onclick="switchTab('tests', this)"><span>📝</span>Тесты</button>
     <button onclick="switchTab('hw', this)"><span>📤</span>Сдать ДЗ</button>
     <button onclick="switchTab('teacher', this)"><span>🎓</span>Учитель</button>
   </nav>
@@ -199,8 +347,9 @@
       }
     }
 
-    let db = { lessons: [], tests: [], submissions: [], teacherChatId: null };
+    let db = { lessons: [], grades: [], tests: [], submissions: [], teacherChatId: null };
     let isTeacher = false;
+    let selectedDay = 'Все';
 
     async function loadCloudDB() {
       try {
@@ -208,14 +357,14 @@
         const data = await res.json();
         if (data) {
           db.lessons = data.lessons || [];
+          db.grades = data.grades || [];
           db.tests = data.tests || [];
           db.submissions = data.submissions || [];
           db.teacherChatId = data.teacherChatId || null;
         }
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) {}
       renderSchedule();
+      renderGrades();
       if (!document.getElementById('tab-tests').classList.contains('hidden')) renderTests();
       if (isTeacher) {
         renderSubmissions();
@@ -237,33 +386,46 @@
         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: db.teacherChatId, text: text })
+          body: JSON.stringify({ chat_id: db.teacherChatId, text })
         });
       } catch (e) {}
     }
 
     function switchTab(name, btn) {
-      ['schedule', 'tests', 'hw', 'teacher'].forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
+      ['schedule', 'grades', 'tests', 'hw', 'teacher'].forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
       document.getElementById('tab-' + name).classList.remove('hidden');
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       loadCloudDB();
     }
 
+    function selectDay(day, el) {
+      selectedDay = day;
+      document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      renderSchedule();
+    }
+
     function renderSchedule() {
       const cls = document.getElementById('classSelect').value;
       const list = document.getElementById('scheduleList');
-      const items = db.lessons.map((l, idx) => ({ ...l, idx })).filter(l => l.cls === cls);
+      const items = db.lessons
+        .map((l, idx) => ({ ...l, idx }))
+        .filter(l => l.cls === cls && (selectedDay === 'Все' || (l.day && l.day.includes(selectedDay))));
+
       list.innerHTML = items.length ? items.map(l => `
         <div class="card">
-          <div class="row">
-            <div class="muted">${l.day}</div>
+          <div class="row" style="margin-bottom:6px;">
+            <div>
+              <span class="chip">${l.day || 'Урок'}</span>
+              ${l.time ? `<span class="muted" style="margin-left:6px; font-size:12px;">${l.time}</span>` : ''}
+            </div>
             ${isTeacher ? `<button class="btn-del" onclick="deleteLesson(${l.idx})">Удалить</button>` : ''}
           </div>
           <h3>${l.topic}</h3>
-          <div>📝 <b>ДЗ:</b> ${l.task}</div>
+          <div class="hw-box">📚 <b>ДЗ:</b> ${l.task}</div>
         </div>
-      `).join('') : '<div class="card muted">Для этой группы уроков пока нет. Учитель скоро добавит расписание.</div>';
+      `).join('') : '<div class="card muted">На выбранный день уроков пока нет.</div>';
     }
 
     async function deleteLesson(idx) {
@@ -272,20 +434,53 @@
       renderSchedule();
     }
 
+    function renderGrades() {
+      const box = document.getElementById('gradesList');
+      const avgEl = document.getElementById('avgGrade');
+      if (!db.grades.length) {
+        avgEl.innerText = '—';
+        box.innerHTML = '<div class="card muted">Оценок пока нет.</div>';
+        return;
+      }
+      const sum = db.grades.reduce((acc, g) => acc + Number(g.val), 0);
+      avgEl.innerText = (sum / db.grades.length).toFixed(2);
+      box.innerHTML = db.grades.map((g, idx) => `
+        <div class="card">
+          <div class="row">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="mark-box m-${g.val}">${g.val}</div>
+              <div>
+                <div style="font-weight:700; font-size:15px;">${g.subject}</div>
+                <div class="muted">${g.student}${g.comment ? ' • ' + g.comment : ''}</div>
+              </div>
+            </div>
+            ${isTeacher ? `<button class="btn-del" onclick="deleteGrade(${idx})">✕</button>` : `<span class="muted" style="font-size:11px;">${g.date || ''}</span>`}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function deleteGrade(idx) {
+      db.grades.splice(idx, 1);
+      await saveCloudDB();
+      renderGrades();
+    }
+
     function renderTests() {
       document.getElementById('testRunner').classList.add('hidden');
       const cat = document.getElementById('testsCatalog');
       cat.classList.remove('hidden');
       cat.innerHTML = db.tests.length ? db.tests.map((t, idx) => `
         <div class="card">
-          <div class="row">
-            <h3>🀄️ ${t.title}</h3>
+          <div class="row" style="margin-bottom:4px;">
+            <span class="chip">${t.ai ? '✨ Создано ИИ' : '📝 Тест'}</span>
             ${isTeacher ? `<button class="btn-del" onclick="deleteTest(${idx})">Удалить</button>` : ''}
           </div>
-          <p class="muted">Вопросов: ${t.questions.length}</p>
+          <h3 style="margin-top:6px;">${t.title}</h3>
+          <p class="muted" style="margin-bottom:10px;">Вопросов: ${t.questions.length}</p>
           <button class="btn" onclick="startTest(${idx})">Пройти тест</button>
         </div>
-      `).join('') : '<div class="card muted">Тестов пока нет.</div>';
+      `).join('') : '<div class="card muted">Тестов пока нет. Учитель может создать их за секунду через ИИ-генератор.</div>';
     }
 
     async function deleteTest(idx) {
@@ -306,17 +501,29 @@
     function renderQuestion() {
       const box = document.getElementById('testRunner');
       if (qIdx >= currentTest.questions.length) {
+        const total = currentTest.questions.length;
+        const pct = Math.round((score / total) * 100);
+        const mark = pct >= 85 ? '5' : pct >= 70 ? '4' : pct >= 50 ? '3' : '2';
+        const studentName = document.getElementById('hwStudentName').value.trim() || 'Ученик';
+        notifyTeacher(`✅ Тест пройден!\nУченик: ${studentName}\nТест: ${currentTest.title}\nРезультат: ${score}/${total} (Оценка: ${mark})`);
         box.innerHTML = `
-          <h3>🎉 Тест завершён!</h3>
-          <p>Ваш результат: <b>${score} из ${currentTest.questions.length}</b></p>
-          <button class="btn" onclick="renderTests()">К списку тестов</button>
+          <div style="text-align:center; padding:10px 0;">
+            <div style="font-size:40px; margin-bottom:6px;">🎉</div>
+            <h3>Тест завершён!</h3>
+            <p class="muted">Верных ответов: <b>${score} из ${total}</b> (${pct}%)</p>
+            <div style="margin:12px auto; width:56px; height:56px; font-size:26px;" class="mark-box m-${mark}">${mark}</div>
+            <button class="btn" style="margin-top:10px;" onclick="renderTests()">Вернуться к тестам</button>
+          </div>
         `;
         return;
       }
       const q = currentTest.questions[qIdx];
       box.innerHTML = `
-        <div class="muted">Вопрос ${qIdx + 1} из ${currentTest.questions.length}</div>
-        <h3>${q.q}</h3>
+        <div class="row" style="margin-bottom:8px;">
+          <span class="chip">Вопрос ${qIdx + 1} из ${currentTest.questions.length}</span>
+          <span class="muted">${currentTest.title}</span>
+        </div>
+        <h3 style="margin-bottom:12px;">${q.q}</h3>
         ${q.options.map((opt, i) => `<button class="option" onclick="answer(${i}, this)">${opt}</button>`).join('')}
       `;
     }
@@ -326,19 +533,20 @@
       document.querySelectorAll('.option').forEach(b => b.disabled = true);
       if (idx === q.ans) { el.classList.add('correct'); score++; }
       else { el.classList.add('wrong'); document.querySelectorAll('.option')[q.ans].classList.add('correct'); }
-      setTimeout(() => { qIdx++; renderQuestion(); }, 900);
+      setTimeout(() => { qIdx++; renderQuestion(); }, 800);
     }
 
     async function submitHW() {
       const name = document.getElementById('hwStudentName').value.trim() || 'Ученик';
+      const subj = document.getElementById('hwSubject').value.trim() || 'Общий';
       const text = document.getElementById('hwText').value.trim();
-      if (!text) return alert('Введите текст задания!');
+      if (!text) return alert('Напишите ответ!');
       const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-      db.submissions.unshift({ type: 'ДЗ', name, text, time });
+      db.submissions.unshift({ type: `ДЗ • ${subj}`, name, text, time });
       await saveCloudDB();
-      await notifyTeacher(`📥 Новое ДЗ от ${name}:\n\n${text}`);
+      await notifyTeacher(`📥 Новое ДЗ\nУченик: ${name}\nПредмет: ${subj}\n\n${text}`);
       document.getElementById('hwText').value = '';
-      alert('✅ Домашнее задание отправлено учителю!');
+      alert('✅ Работа отправлена учителю!');
     }
 
     async function sendSkip() {
@@ -348,7 +556,7 @@
       const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
       db.submissions.unshift({ type: 'Пропуск', name, text, time });
       await saveCloudDB();
-      await notifyTeacher(`⚠️ Предупреждение о пропуске от ${name}:\n${text}`);
+      await notifyTeacher(`⚠️ Предупреждение о пропуске\nУченик: ${name}\nПричина: ${text}`);
       document.getElementById('skipReason').value = '';
       alert('⚠️ Предупреждение передано учителю.');
     }
@@ -360,6 +568,7 @@
         document.getElementById('teacherPanel').classList.remove('hidden');
         document.getElementById('roleBadge').innerText = 'Учитель';
         renderSchedule();
+        renderGrades();
         renderSubmissions();
         updateTgStatus();
       } else {
@@ -370,32 +579,108 @@
     function updateTgStatus() {
       const el = document.getElementById('tgStatusText');
       el.innerText = db.teacherChatId
-        ? `✅ Привязано (ID: ${db.teacherChatId}). Уведомления приходят в Telegram.`
-        : 'Нажмите кнопку ниже из Telegram, чтобы бот присылал вам ДЗ учеников в личку.';
+        ? `✅ Telegram привязан (ID: ${db.teacherChatId}). Все ответы приходят вам в личку.`
+        : 'Нажмите кнопку ниже из Telegram, чтобы получать работы учеников в личные сообщения.';
     }
 
     async function bindTeacherTelegram() {
-      if (!currentTgUserId) return alert('Откройте приложение через кнопку в Telegram, чтобы определить ваш ID.');
+      if (!currentTgUserId) return alert('Откройте дневник через кнопку в Telegram, чтобы определить ваш аккаунт.');
       db.teacherChatId = currentTgUserId;
       await saveCloudDB();
       updateTgStatus();
-      await notifyTeacher('✅ Уведомления дневника успешно подключены!');
-      alert('✅ Ваш Telegram привязан! Проверьте сообщение от бота.');
+      await notifyTeacher('✅ Уведомления школьного дневника подключены!');
+      alert('✅ Telegram успешно привязан!');
+    }
+
+    // ИИ-ГЕНЕРАТОР ТЕСТОВ (через бесплатный LLM-шлюз Pollinations с резервной генерацией)
+    async function generateAITest() {
+      const subject = document.getElementById('aiSubject').value.trim();
+      const topic = document.getElementById('aiTopic').value.trim();
+      const count = parseInt(document.getElementById('aiCount').value, 10);
+      if (!subject || !topic) return alert('Укажите предмет и тему для ИИ!');
+
+      const btn = document.getElementById('aiGenBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>ИИ составляет вопросы...';
+
+      const prompt = `Составь школьный тест на русском языке по предмету "${subject}" на тему "${topic}". Количество вопросов: ${count}. Верни ТОЛЬКО валидный JSON массив без markdown-обертки в точном формате: [{"q":"текст вопроса","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0}] где ans всегда индекс правильного варианта (0).`;
+
+      let questions = null;
+      try {
+        const resp = await fetch('https://text.pollinations.ai/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: 'Ты школьный методист. Отвечай строго чистым JSON массивом.' },
+              { role: 'user', content: prompt }
+            ],
+            model: 'openai',
+            jsonMode: true
+          })
+        });
+        const raw = await resp.text();
+        const match = raw.match(/\[[\s\S]*\]/);
+        if (match) {
+          const parsed = JSON.parse(match[0]);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            questions = parsed.map(item => {
+              const correctText = item.options[item.ans || 0];
+              const shuffled = [...item.options].sort(() => Math.random() - 0.5);
+              return { q: item.q, options: shuffled, ans: shuffled.indexOf(correctText) };
+            });
+          }
+        }
+      } catch (e) {}
+
+      if (!questions) {
+        alert('ИИ сейчас перегружен, попробуйте нажать кнопку ещё раз через пару секунд.');
+        btn.disabled = false;
+        btn.innerHTML = '✨ Сгенерировать тест с помощью ИИ';
+        return;
+      }
+
+      db.tests.unshift({
+        title: `${subject}: ${topic}`,
+        ai: true,
+        questions
+      });
+      await saveCloudDB();
+
+      btn.disabled = false;
+      btn.innerHTML = '✨ Сгенерировать тест с помощью ИИ';
+      document.getElementById('aiTopic').value = '';
+      alert(`✅ ИИ создал тест «${subject}: ${topic}» (${questions.length} вопросов)! Он уже доступен во вкладке «Тесты».`);
     }
 
     async function addLesson() {
       const cls = document.getElementById('newLessonClass').value;
-      const day = document.getElementById('newLessonDay').value.trim();
+      const day = document.getElementById('newLessonDay').value;
+      const time = document.getElementById('newLessonTime').value.trim();
       const topic = document.getElementById('newLessonTopic').value.trim();
       const task = document.getElementById('newLessonTask').value.trim();
-      if (!day || !topic) return alert('Заполните день и тему урока!');
-      db.lessons.push({ cls, day, topic, task: task || 'Без задания' });
+      if (!topic) return alert('Укажите предмет и тему!');
+      db.lessons.push({ cls, day, time, topic, task: task || 'Без домашнего задания' });
       await saveCloudDB();
-      document.getElementById('newLessonDay').value = '';
+      document.getElementById('newLessonTime').value = '';
       document.getElementById('newLessonTopic').value = '';
       document.getElementById('newLessonTask').value = '';
       renderSchedule();
-      alert('✅ Урок опубликован! Теперь его видят все ученики.');
+      alert('✅ Урок добавлен в расписание!');
+    }
+
+    async function addGrade() {
+      const student = document.getElementById('gradeStudent').value.trim();
+      const subject = document.getElementById('gradeSubject').value.trim();
+      const val = document.getElementById('gradeValue').value;
+      const comment = document.getElementById('gradeComment').value.trim();
+      if (!student || !subject) return alert('Укажите ученика и предмет!');
+      const date = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+      db.grades.unshift({ student, subject, val, comment, date });
+      await saveCloudDB();
+      document.getElementById('gradeComment').value = '';
+      renderGrades();
+      alert('✅ Оценка выставлена в журнал!');
     }
 
     async function addCustomTest() {
@@ -404,35 +689,36 @@
       const o1 = document.getElementById('customOpt1').value.trim();
       const o2 = document.getElementById('customOpt2').value.trim();
       const o3 = document.getElementById('customOpt3').value.trim();
-      if (!title || !q || !o1 || !o2) return alert('Заполните название, вопрос и минимум 2 варианта ответа!');
+      if (!title || !q || !o1 || !o2) return alert('Заполните название, вопрос и минимум 2 ответа!');
       const opts = [o1, o2];
       if (o3) opts.push(o3);
-      // Перемешиваем варианты, сохраняя индекс правильного
       const paired = opts.map((text, idx) => ({ text, isCorrect: idx === 0 })).sort(() => Math.random() - 0.5);
       const ans = paired.findIndex(p => p.isCorrect);
       const existing = db.tests.find(t => t.title.toLowerCase() === title.toLowerCase());
       const newQuestion = { q, options: paired.map(p => p.text), ans };
-      if (existing) {
-        existing.questions.push(newQuestion);
-      } else {
-        db.tests.push({ title, questions: [newQuestion] });
-      }
+      if (existing) existing.questions.push(newQuestion);
+      else db.tests.unshift({ title, ai: false, questions: [newQuestion] });
       await saveCloudDB();
       ['customQ', 'customOpt1', 'customOpt2', 'customOpt3'].forEach(id => document.getElementById(id).value = '');
-      alert('✅ Вопрос добавлен в тест «' + title + '»! (Чтобы добавить ещё вопрос в этот же тест, оставьте то же название).');
+      alert('✅ Вопрос добавлен!');
     }
 
     function renderSubmissions() {
       const box = document.getElementById('teacherSubmissions');
       box.innerHTML = db.submissions.length ? db.submissions.map(s => `
-        <div style="border-bottom:1px solid var(--border); padding:8px 0;">
-          <b>[${s.type}] ${s.name}</b> <span class="muted">(${s.time})</span><br/>${s.text}
+        <div style="border-bottom:1px solid var(--border); padding:10px 0;">
+          <div class="row">
+            <span class="chip">${s.type}</span>
+            <span class="muted" style="font-size:11px;">${s.time}</span>
+          </div>
+          <div style="font-weight:700; margin-top:4px;">${s.name}</div>
+          <div style="margin-top:2px; font-size:14px;">${s.text}</div>
         </div>
       `).join('') : 'Пока нет новых записей.';
     }
 
     async function clearSubmissions() {
-      if (!confirm('Очистить список сданных работ?')) return;
+      if (!confirm('Очистить список?')) return;
       db.submissions = [];
       await saveCloudDB();
       renderSubmissions();
