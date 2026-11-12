@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>EduSpace — Электронный дневник</title>
+  <title>Мой дневник</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -48,11 +48,12 @@
     }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .brand-logo {
-      width: 68px; height: 68px; border-radius: 22px; background: var(--accent-grad);
-      color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px; box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+      width: 76px; height: 76px; border-radius: 24px;
+      background: var(--surface-soft); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px; box-shadow: 0 10px 24px rgba(37, 99, 235, 0.14);
     }
-    .gate-card h1 { margin: 0 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+    .gate-card h1 { margin: 0 0 8px; font-size: 23px; font-weight: 800; letter-spacing: -0.4px; }
     .gate-card p { margin: 0 0 22px; color: var(--text-sec); font-size: 14px; line-height: 1.5; }
     .field {
       width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--border);
@@ -94,8 +95,9 @@
     .topbar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .user-meta { display: flex; align-items: center; gap: 11px; }
     .user-ava {
-      width: 40px; height: 40px; border-radius: 14px; background: var(--accent-grad);
-      color: #fff; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center;
+      width: 42px; height: 42px; border-radius: 14px;
+      background: var(--accent-soft); border: 1px solid rgba(37, 99, 235, 0.2);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .user-name { font-weight: 800; font-size: 16px; letter-spacing: -0.2px; }
     .user-sub { font-size: 12px; color: var(--text-sec); }
@@ -298,8 +300,25 @@
   <!-- 1. ЭКРАН ВВОДА ИМЕНИ И ФАМИЛИИ -->
   <div id="viewRegister" class="gate-wrap">
     <div class="gate-card">
-      <div class="brand-logo">🎓</div>
-      <h1>EduSpace Дневник</h1>
+      <div class="brand-logo">
+        <!-- Логотип: книга и настольная лампа -->
+        <svg width="46" height="46" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Лучи света -->
+          <line x1="25" y1="22" x2="21" y2="25" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="29" y1="24" x2="27" y2="28" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="33" y1="23" x2="34" y2="27" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+          <!-- Лампа -->
+          <path d="M26 17L33 10L38 15L31 22Z" fill="#2563eb"/>
+          <circle cx="36" cy="9" r="3" fill="#2563eb"/>
+          <path d="M36 12L46 18L42 29" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="46" cy="18" r="2.6" fill="#2563eb"/>
+          <!-- Книга -->
+          <path d="M12 31V49H28C30 49 32 50.5 32 52C32 50.5 34 49 36 49H52V31" stroke="#2563eb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 28C22 28 28 29.5 32 33C36 29.5 42 28 48 28V45C42 45 36 46.5 32 50C28 46.5 22 45 16 45V28Z" fill="#ffffff" stroke="#2563eb" stroke-width="3.2" stroke-linejoin="round"/>
+          <line x1="32" y1="33" x2="32" y2="50" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1>Мой дневник</h1>
       <p>Введите ваши <b>Имя и Фамилию</b>, чтобы отправить заявку и получить доступ к своим классам.</p>
       <input id="inpRegName" type="text" class="field" placeholder="Например: Артём Сорокин" />
       <button type="button" id="btnRegSubmit" class="btn-main" onclick="registerStudent()">Продолжить</button>
@@ -310,8 +329,21 @@
   <!-- 2. ЭКРАН ОЖИДАНИЯ -->
   <div id="viewWaiting" class="gate-wrap hidden">
     <div class="gate-card">
-      <div class="brand-logo">⏳</div>
-      <h1>Ожидание подтверждения</h1>
+      <div class="brand-logo">
+        <svg width="46" height="46" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="25" y1="22" x2="21" y2="25" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="29" y1="24" x2="27" y2="28" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="33" y1="23" x2="34" y2="27" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M26 17L33 10L38 15L31 22Z" fill="#2563eb"/>
+          <circle cx="36" cy="9" r="3" fill="#2563eb"/>
+          <path d="M36 12L46 18L42 29" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="46" cy="18" r="2.6" fill="#2563eb"/>
+          <path d="M12 31V49H28C30 49 32 50.5 32 52C32 50.5 34 49 36 49H52V31" stroke="#2563eb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 28C22 28 28 29.5 32 33C36 29.5 42 28 48 28V45C42 45 36 46.5 32 50C28 46.5 22 45 16 45V28Z" fill="#ffffff" stroke="#2563eb" stroke-width="3.2" stroke-linejoin="round"/>
+          <line x1="32" y1="33" x2="32" y2="50" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1>Мой дневник</h1>
       <p id="waitDesc">Ваша заявка отправлена преподавателю. Как только вас добавят в класс, откроется доступ ко всем материалам.</p>
       <div class="status-badge"><span class="dot-pulse"></span>Ожидает добавления в класс</div>
       <button type="button" id="btnRefreshAccess" class="btn-main" onclick="refreshAccess()">Обновить статус</button>
@@ -325,10 +357,23 @@
     <div class="topbar">
       <div class="topbar-head">
         <div class="user-meta">
-          <div class="user-ava" id="avaLetter">У</div>
+          <div class="user-ava">
+            <svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="25" y1="22" x2="21" y2="25" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+              <line x1="29" y1="24" x2="27" y2="28" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+              <line x1="33" y1="23" x2="34" y2="27" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+              <path d="M26 17L33 10L38 15L31 22Z" fill="#2563eb"/>
+              <circle cx="36" cy="9" r="3.2" fill="#2563eb"/>
+              <path d="M36 12L46 18L42 29" stroke="#2563eb" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="46" cy="18" r="2.8" fill="#2563eb"/>
+              <path d="M12 31V49H28C30 49 32 50.5 32 52C32 50.5 34 49 36 49H52V31" stroke="#2563eb" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 28C22 28 28 29.5 32 33C36 29.5 42 28 48 28V45C42 45 36 46.5 32 50C28 46.5 22 45 16 45V28Z" fill="#ffffff" stroke="#2563eb" stroke-width="3.5" stroke-linejoin="round"/>
+              <line x1="32" y1="33" x2="32" y2="50" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round"/>
+            </svg>
+          </div>
           <div>
-            <div class="user-name" id="topUserName">Ученик</div>
-            <div class="user-sub" id="topClassHint">Ваши классы</div>
+            <div class="user-name">Мой дневник</div>
+            <div class="user-sub" id="topUserName">Ученик</div>
           </div>
         </div>
         <button type="button" class="role-tag" id="topRoleTag" onclick="toggleTeacherRole()">Ученик</button>
@@ -787,7 +832,7 @@
         else db.students.push({ id: myStudentId, name, classes: [], tgId: currentTgUserId });
         myProfile = db.students.find(s => s.id === myStudentId);
         await saveCloudDB();
-        notifyTeacher(`🆕 Новая заявка в дневник:\n👤 ${name}\n\nОткройте «Учитель» -> «Ученики и классы», чтобы добавить в класс.`);
+        notifyTeacher(`🆕 Новая заявка в «Мой дневник»:\n👤 ${name}\n\nОткройте «Учитель» -> «Ученики и классы», чтобы добавить в класс.`);
       } finally {
         btn.disabled = false;
         btn.innerText = 'Продолжить';
@@ -845,9 +890,8 @@
 
     function enterService() {
       showView('viewService');
-      const displayName = isTeacher ? 'Преподаватель' : (myProfile ? myProfile.name : 'Ученик');
+      const displayName = isTeacher ? 'Режим преподавателя' : (myProfile ? myProfile.name : 'Ученик');
       document.getElementById('topUserName').innerText = displayName;
-      document.getElementById('avaLetter').innerText = displayName.charAt(0).toUpperCase();
       document.getElementById('topRoleTag').innerText = isTeacher ? 'Учитель (Выйти)' : 'Ученик';
       document.getElementById('navTeacherBtn').classList.toggle('hidden', !isTeacher);
 
@@ -1135,7 +1179,7 @@
         const pct = Math.round((curScore / total) * 100);
         const mark = pct >= 85 ? '5' : pct >= 70 ? '4' : pct >= 50 ? '3' : '2';
         const stName = myProfile ? myProfile.name : 'Преподаватель';
-        notifyTeacher(`✅ Тест завершён\nУченик: ${stName}\nТест: ${curTest.title}\nРезультат: ${curScore}/${total} (Оценка: ${mark})`);
+        notifyTeacher(`✅ Тест завершён («Мой дневник»)\nУченик: ${stName}\nТест: ${curTest.title}\nРезультат: ${curScore}/${total} (Оценка: ${mark})`);
         box.innerHTML = `
           <div style="text-align:center; padding:12px 0;">
             <div style="font-size:44px; margin-bottom:8px;">🏆</div>
@@ -1625,7 +1669,7 @@
       if (!currentTgUserId) return alert('Откройте приложение через Telegram.');
       db.teacherChatId = currentTgUserId;
       await saveCloudDB();
-      await notifyTeacher('✅ Уведомления EduSpace успешно подключены!');
+      await notifyTeacher('✅ Уведомления сервиса «Мой дневник» успешно подключены!');
       renderTeacherControls();
     }
 
