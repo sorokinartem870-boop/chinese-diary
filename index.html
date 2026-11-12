@@ -3,326 +3,152 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Школьный Дневник</title>
+  <title>Школьный Бот — Дневник</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #f3f5f9;
-      --card: #ffffff;
+      --bg: #e7ebf0;
+      --chat-bg: #dbe3ec;
+      --bot-msg: #ffffff;
+      --user-msg: #effdde;
       --text: #181a1f;
-      --muted: #6c727f;
-      --primary: #2563eb;
-      --primary-grad: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-      --ai-grad: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
-      --border: #e2e8f0;
-      --chip-bg: #eef2ff;
-      --chip-text: #3730a3;
+      --muted: #687382;
+      --accent: #2481cc;
+      --inline-bg: rgba(36, 129, 204, 0.11);
+      --inline-text: #1b6eb2;
+      --panel: #ffffff;
+      --border: #d5dce4;
+      --ai-grad: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
     }
     body.dark {
-      --bg: #0f1115;
-      --card: #181b20;
-      --text: #f3f4f6;
-      --muted: #9ca3af;
-      --primary: #3b82f6;
-      --border: #272b33;
-      --chip-bg: #1e2536;
-      --chip-text: #93c5fd;
+      --bg: #0e1621;
+      --chat-bg: #0e1621;
+      --bot-msg: #182533;
+      --user-msg: #2b5278;
+      --text: #f5f5f5;
+      --muted: #8a9ba8;
+      --accent: #52a8ec;
+      --inline-bg: rgba(82, 168, 236, 0.16);
+      --inline-text: #7cc0f8;
+      --panel: #17212b;
+      --border: #232e3c;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 84px; }
+    body { margin: 0; background: var(--chat-bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* Шапка как в Telegram */
     header {
-      background: var(--primary-grad); color: #fff; padding: 16px 18px 18px;
-      border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.22);
-      position: sticky; top: 0; z-index: 20;
+      background: var(--panel); border-bottom: 1px solid var(--border);
+      padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+      z-index: 10; flex-shrink: 0;
     }
-    header h1 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.2px; }
-    .sub-header { font-size: 12px; opacity: 0.88; margin-top: 2px; }
-    .badge {
-      background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(6px);
-      padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    .bot-info { display: flex; align-items: center; gap: 10px; }
+    .avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, #2481cc, #4f46e5);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
     }
-    .container { padding: 14px; max-width: 600px; margin: 0 auto; }
-    .card {
-      background: var(--card); border-radius: 16px; padding: 15px;
-      margin-bottom: 12px; border: 1px solid var(--border);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    .bot-title { font-weight: 700; font-size: 15px; }
+    .bot-status { font-size: 12px; color: var(--accent); }
+    .role-pill {
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 12px;
+      background: var(--inline-bg); color: var(--inline-text);
     }
-    .card h3 { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
-    .muted { color: var(--muted); font-size: 13px; line-height: 1.4; }
-    .chip {
-      display: inline-block; background: var(--chip-bg); color: var(--chip-text);
-      padding: 3px 9px; border-radius: 8px; font-size: 11px; font-weight: 600;
+
+    /* Лента чата */
+    #chatFeed {
+      flex: 1; overflow-y: auto; padding: 12px 12px 18px;
+      display: flex; flex-direction: column; gap: 10px;
     }
-    .btn {
-      background: var(--primary-grad); color: #fff; border: none; border-radius: 12px;
-      padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
-      transition: transform 0.1s ease, opacity 0.2s;
+    .msg-wrap { display: flex; flex-direction: column; max-width: 88%; animation: fadeIn 0.18s ease; }
+    .msg-wrap.bot { align-self: flex-start; }
+    .msg-wrap.user { align-self: flex-end; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .bubble {
+      padding: 10px 13px; border-radius: 16px; font-size: 14px; line-height: 1.42;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08); word-wrap: break-word;
     }
-    .btn:active { transform: scale(0.98); }
-    .btn-ai {
-      background: var(--ai-grad); color: #fff; border: none; border-radius: 12px;
-      padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%;
-      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.28);
+    .bot .bubble { background: var(--bot-msg); border-bottom-left-radius: 4px; }
+    .user .bubble { background: var(--user-msg); border-bottom-right-radius: 4px; }
+    .msg-time { font-size: 10px; color: var(--muted); text-align: right; margin-top: 4px; }
+
+    /* Inline-кнопки под сообщением бота */
+    .inline-kb { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
+    .inline-row { display: flex; gap: 5px; }
+    .inline-btn {
+      flex: 1; background: var(--bot-msg); color: var(--inline-text);
+      border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer; text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-    .btn-outline {
-      background: transparent; color: var(--primary); border: 1.5px solid var(--primary);
-      border-radius: 12px; padding: 10px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+    .inline-btn:active { opacity: 0.7; }
+    .inline-btn.ai { background: var(--ai-grad); color: #fff; border: none; }
+    .inline-btn.correct { background: #16a34a; color: #fff; border-color: #16a34a; }
+    .inline-btn.wrong { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+    /* Формы внутри пузыря */
+    .bot-form input, .bot-form select, .bot-form textarea {
+      width: 100%; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); margin-top: 6px; font-size: 13px; outline: none;
     }
-    .btn-del {
-      background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444;
-      border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; padding: 5px 9px;
+
+    /* Нижняя клавиатура команд (Reply Keyboard) */
+    .bottom-dock {
+      background: var(--panel); border-top: 1px solid var(--border);
+      padding: 8px 10px 12px; flex-shrink: 0;
     }
-    input, select, textarea {
-      width: 100%; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); margin-bottom: 10px; font-size: 14px;
-      outline: none;
+    .input-bar { display: flex; gap: 8px; margin-bottom: 8px; }
+    .input-bar input {
+      flex: 1; padding: 9px 14px; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-size: 14px; outline: none;
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
-    .days-bar {
-      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px;
-      scrollbar-width: none;
+    .send-btn {
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: var(--accent); color: #fff; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .days-bar::-webkit-scrollbar { display: none; }
-    .day-pill {
-      padding: 7px 13px; border-radius: 20px; border: 1px solid var(--border);
-      background: var(--card); color: var(--muted); font-size: 13px; font-weight: 600;
-      cursor: pointer; white-space: nowrap;
+    .reply-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
     }
-    .day-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    nav {
-      position: fixed; bottom: 0; left: 0; right: 0; background: var(--card);
-      border-top: 1px solid var(--border); display: flex; justify-content: space-around;
-      padding: 8px 4px 10px; z-index: 20;
+    .reply-btn {
+      background: var(--bg); color: var(--text); border: 1px solid var(--border);
+      border-radius: 10px; padding: 9px 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; text-align: center;
     }
-    nav button {
-      background: none; border: none; color: var(--muted); font-size: 10px;
-      display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
-      flex: 1;
-    }
-    nav button.active { color: var(--primary); font-weight: 700; }
-    nav span { font-size: 20px; }
-    .hidden { display: none !important; }
-    .option {
-      display: block; width: 100%; text-align: left; padding: 12px 14px;
-      margin-bottom: 8px; border-radius: 12px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); cursor: pointer; font-size: 14px; font-weight: 500;
-    }
-    .option.correct { background: #dcfce7; border-color: #16a34a; color: #14532d; }
-    .option.wrong { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
-    .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .mark-box {
-      width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center;
-      justify-content: center; font-weight: 800; font-size: 16px; color: #fff; flex-shrink: 0;
-    }
-    .m-5 { background: #16a34a; }
-    .m-4 { background: #2563eb; }
-    .m-3 { background: #d97706; }
-    .m-2 { background: #dc2626; }
-    .hw-box {
-      margin-top: 8px; padding: 9px 11px; border-radius: 10px;
-      background: var(--bg); font-size: 13px; border-left: 3px solid var(--primary);
-    }
-    .spinner {
-      display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4);
-      border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .reply-btn:active { background: var(--inline-bg); }
+    .reply-btn.span2 { grid-column: span 2; }
   </style>
 </head>
 <body>
   <header>
-    <div>
-      <h1>📘 Электронный дневник</h1>
-      <div class="sub-header" id="userGreeting">Подключение...</div>
+    <div class="bot-info">
+      <div class="avatar">📘</div>
+      <div>
+        <div class="bot-title">Школьный Дневник</div>
+        <div class="bot-status" id="syncStatus">бот • в сети</div>
+      </div>
     </div>
-    <span class="badge" id="roleBadge">Ученик</span>
+    <span class="role-pill" id="roleBadge">Ученик</span>
   </header>
 
-  <div class="container">
-    <!-- 1. РАСПИСАНИЕ И ДЗ -->
-    <div id="tab-schedule">
-      <div class="card" style="padding: 12px 14px;">
-        <div class="row">
-          <div>
-            <div style="font-weight: 700; font-size: 15px;">Расписание уроков</div>
-            <div class="muted" style="font-size: 12px;">Выберите класс и день недели</div>
-          </div>
-          <select id="classSelect" style="width:auto; margin:0; padding:7px 12px; font-weight:600;" onchange="renderSchedule()">
-            <option value="5">5 класс</option>
-            <option value="6">6 класс</option>
-            <option value="7">7 класс</option>
-            <option value="8">8 класс</option>
-            <option value="9">9 класс</option>
-            <option value="10">10 класс</option>
-            <option value="11">11 класс</option>
-          </select>
-        </div>
-      </div>
+  <div id="chatFeed"></div>
 
-      <div class="days-bar" id="daysBar">
-        <button class="day-pill active" onclick="selectDay('Все', this)">Все дни</button>
-        <button class="day-pill" onclick="selectDay('Понедельник', this)">Пн</button>
-        <button class="day-pill" onclick="selectDay('Вторник', this)">Вт</button>
-        <button class="day-pill" onclick="selectDay('Среда', this)">Ср</button>
-        <button class="day-pill" onclick="selectDay('Четверг', this)">Чт</button>
-        <button class="day-pill" onclick="selectDay('Пятница', this)">Пт</button>
-        <button class="day-pill" onclick="selectDay('Суббота', this)">Сб</button>
-      </div>
-
-      <div id="scheduleList"><div class="card muted">Загрузка расписания...</div></div>
+  <div class="bottom-dock">
+    <div class="input-bar">
+      <input id="chatInput" placeholder="Напишите команду или тему для теста..." onkeydown="if(event.key==='Enter') handleFreeText()" />
+      <button class="send-btn" onclick="handleFreeText()">➤</button>
     </div>
-
-    <!-- 2. ОЦЕНКИ -->
-    <div id="tab-grades" class="hidden">
-      <div class="card">
-        <div class="row">
-          <div>
-            <h3>📊 Журнал оценок</h3>
-            <div class="muted">Успеваемость по предметам</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="muted" style="font-size:11px;">Средний балл</div>
-            <div id="avgGrade" style="font-size:20px; font-weight:800; color:var(--primary);">—</div>
-          </div>
-        </div>
-      </div>
-      <div id="gradesList"></div>
-    </div>
-
-    <!-- 3. ТЕСТЫ -->
-    <div id="tab-tests" class="hidden">
-      <div id="testsCatalog"></div>
-      <div id="testRunner" class="hidden card"></div>
-    </div>
-
-    <!-- 4. СДАТЬ ДЗ / ПРОПУСК -->
-    <div id="tab-hw" class="hidden">
-      <div class="card">
-        <h3>📤 Сдать домашнее задание</h3>
-        <p class="muted" style="margin-bottom:10px;">Ответ сразу попадёт в журнал учителя и придёт ему в Telegram.</p>
-        <input id="hwStudentName" placeholder="Фамилия и Имя ученика" />
-        <input id="hwSubject" placeholder="Предмет (например: Алгебра)" />
-        <textarea id="hwText" rows="4" placeholder="Напишите решение или вставьте ссылку на фото/файл..."></textarea>
-        <button class="btn" onclick="submitHW()">Отправить учителю</button>
-      </div>
-      <div class="card">
-        <h3>⚠️ Сообщить об отсутствии</h3>
-        <input id="skipReason" placeholder="Причина пропуска (болезнь, соревнования...)" />
-        <button class="btn-outline" style="width:100%;" onclick="sendSkip()">Отправить предупреждение</button>
-      </div>
-    </div>
-
-    <!-- 5. УЧИТЕЛЬ -->
-    <div id="tab-teacher" class="hidden">
-      <div id="teacherLock" class="card">
-        <h3>🔐 Панель учителя</h3>
-        <p class="muted" style="margin-bottom:10px;">Введите ПИН-код преподавателя для управления дневником и ИИ-генератором.</p>
-        <input id="pinInput" type="password" placeholder="ПИН-код" />
-        <button class="btn" onclick="unlockTeacher()">Войти в панель</button>
-      </div>
-
-      <div id="teacherPanel" class="hidden">
-        <!-- Уведомления -->
-        <div class="card">
-          <h3>🔔 Уведомления в Telegram</h3>
-          <p class="muted" id="tgStatusText" style="margin-bottom:10px;">Привяжите аккаунт, чтобы получать ДЗ учеников в личку.</p>
-          <button class="btn-outline" style="width:100%;" onclick="bindTeacherTelegram()">Привязать мой Telegram</button>
-        </div>
-
-        <!-- ИИ-генератор тестов -->
-        <div class="card" style="border: 1.5px solid #a855f7;">
-          <div class="row" style="margin-bottom:6px;">
-            <h3 style="margin:0;">✨ ИИ-генератор тестов</h3>
-            <span class="chip" style="background:#f3e8ff; color:#6b21a8;">AI</span>
-          </div>
-          <p class="muted" style="margin-bottom:10px;">Укажите предмет и тему — ИИ сам составит вопросы и варианты ответов.</p>
-          <input id="aiSubject" placeholder="Предмет (напр. История, Биология, Физика)" />
-          <input id="aiTopic" placeholder="Тема (напр. Древний Египет, Законы Ньютона)" />
-          <select id="aiCount">
-            <option value="3">3 вопроса</option>
-            <option value="5" selected>5 вопросов</option>
-            <option value="7">7 вопросов</option>
-          </select>
-          <button class="btn-ai" id="aiGenBtn" onclick="generateAITest()">✨ Сгенерировать тест с помощью ИИ</button>
-        </div>
-
-        <!-- Добавить урок -->
-        <div class="card">
-          <h3>📅 Добавить урок и ДЗ</h3>
-          <div class="row">
-            <select id="newLessonClass">
-              <option value="5">5 класс</option>
-              <option value="6">6 класс</option>
-              <option value="7">7 класс</option>
-              <option value="8">8 класс</option>
-              <option value="9">9 класс</option>
-              <option value="10">10 класс</option>
-              <option value="11">11 класс</option>
-            </select>
-            <select id="newLessonDay">
-              <option value="Понедельник">Понедельник</option>
-              <option value="Вторник">Вторник</option>
-              <option value="Среда">Среда</option>
-              <option value="Четверг">Четверг</option>
-              <option value="Пятница">Пятница</option>
-              <option value="Суббота">Суббота</option>
-            </select>
-          </div>
-          <input id="newLessonTime" placeholder="Номер урока и время (напр. 2 урок • 09:25–10:10)" />
-          <input id="newLessonTopic" placeholder="Предмет и тема (напр. Русский язык: Причастие)" />
-          <input id="newLessonTask" placeholder="Домашнее задание (напр. Упр. 142, выучить правило)" />
-          <button class="btn" onclick="addLesson()">Опубликовать урок</button>
-        </div>
-
-        <!-- Выставить оценку -->
-        <div class="card">
-          <h3>🏅 Выставить оценку</h3>
-          <input id="gradeStudent" placeholder="Фамилия и Имя ученика" />
-          <input id="gradeSubject" placeholder="Предмет (напр. Математика)" />
-          <div class="row">
-            <select id="gradeValue">
-              <option value="5">Оценка: 5 (Отлично)</option>
-              <option value="4">Оценка: 4 (Хорошо)</option>
-              <option value="3">Оценка: 3 (Удовл.)</option>
-              <option value="2">Оценка: 2 (Неуд.)</option>
-            </select>
-            <input id="gradeComment" placeholder="За что (напр. Контрольная)" />
-          </div>
-          <button class="btn" onclick="addGrade()">Поставить оценку</button>
-        </div>
-
-        <!-- Ручной конструктор тестов -->
-        <div class="card">
-          <h3>✍️ Добавить вопрос вручную</h3>
-          <input id="customTestTitle" placeholder="Название теста" />
-          <input id="customQ" placeholder="Текст вопроса" />
-          <input id="customOpt1" placeholder="Правильный ответ" />
-          <input id="customOpt2" placeholder="Неправильный вариант 1" />
-          <input id="customOpt3" placeholder="Неправильный вариант 2" />
-          <button class="btn-outline" style="width:100%;" onclick="addCustomTest()">Добавить вопрос</button>
-        </div>
-
-        <!-- Сданные работы -->
-        <div class="card">
-          <div class="row">
-            <h3>📥 Сданные работы и пропуски</h3>
-            <button class="btn-del" onclick="clearSubmissions()">Очистить</button>
-          </div>
-          <div id="teacherSubmissions" class="muted">Пока нет новых записей.</div>
-        </div>
-      </div>
+    <div class="reply-grid" id="replyKeyboard">
+      <button class="reply-btn" onclick="cmdSchedule()">📅 Расписание и ДЗ</button>
+      <button class="reply-btn" onclick="cmdGrades()">📊 Оценки</button>
+      <button class="reply-btn" onclick="cmdTests()">📝 Тесты (ИИ)</button>
+      <button class="reply-btn" onclick="cmdSubmitHW()">📤 Сдать ДЗ</button>
+      <button class="reply-btn" onclick="cmdSkip()">⚠️ Пропуск урока</button>
+      <button class="reply-btn" onclick="cmdTeacher()">🎓 Режим учителя</button>
     </div>
   </div>
-
-  <nav>
-    <button class="active" onclick="switchTab('schedule', this)"><span>📅</span>Уроки</button>
-    <button onclick="switchTab('grades', this)"><span>📊</span>Оценки</button>
-    <button onclick="switchTab('tests', this)"><span>📝</span>Тесты</button>
-    <button onclick="switchTab('hw', this)"><span>📤</span>Сдать ДЗ</button>
-    <button onclick="switchTab('teacher', this)"><span>🎓</span>Учитель</button>
-  </nav>
 
   <script>
     const DB_URL = "https://chinese-diary-1ea47-default-rtdb.firebaseio.com";
@@ -331,6 +157,7 @@
 
     const tg = window.Telegram && window.Telegram.WebApp;
     let currentTgUserId = null;
+    let userName = "Ученик";
 
     if (tg) {
       tg.ready();
@@ -339,19 +166,52 @@
       if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const u = tg.initDataUnsafe.user;
         currentTgUserId = u.id;
-        const name = [u.first_name, u.last_name].filter(Boolean).join(' ');
-        document.getElementById('userGreeting').innerText = name;
-        document.getElementById('hwStudentName').value = name;
-      } else {
-        document.getElementById('userGreeting').innerText = 'Онлайн-режим';
+        userName = [u.first_name, u.last_name].filter(Boolean).join(' ');
       }
     }
 
     let db = { lessons: [], grades: [], tests: [], submissions: [], teacherChatId: null };
     let isTeacher = false;
-    let selectedDay = 'Все';
+    let selectedClass = "7";
+
+    function nowTime() {
+      return new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function scrollToBottom() {
+      const feed = document.getElementById('chatFeed');
+      setTimeout(() => { feed.scrollTop = feed.scrollHeight; }, 40);
+    }
+
+    function addUserMsg(text) {
+      const feed = document.getElementById('chatFeed');
+      const div = document.createElement('div');
+      div.className = 'msg-wrap user';
+      div.innerHTML = `<div class="bubble">${text}<div class="msg-time">${nowTime()}</div></div>`;
+      feed.appendChild(div);
+      scrollToBottom();
+    }
+
+    function addBotMsg(html, inlineRows = []) {
+      const feed = document.getElementById('chatFeed');
+      const div = document.createElement('div');
+      div.className = 'msg-wrap bot';
+      let kbHtml = '';
+      if (inlineRows.length) {
+        kbHtml = '<div class="inline-kb">' + inlineRows.map(row =>
+          '<div class="inline-row">' + row.map(btn =>
+            `<button class="inline-btn ${btn.cls || ''}" onclick="${btn.action}">${btn.label}</button>`
+          ).join('') + '</div>'
+        ).join('') + '</div>';
+      }
+      div.innerHTML = `<div class="bubble">${html}<div class="msg-time">${nowTime()}</div></div>${kbHtml}`;
+      feed.appendChild(div);
+      scrollToBottom();
+      return div;
+    }
 
     async function loadCloudDB() {
+      document.getElementById('syncStatus').innerText = 'обновление...';
       try {
         const res = await fetch(`${DB_URL}/diary.json`);
         const data = await res.json();
@@ -362,13 +222,9 @@
           db.submissions = data.submissions || [];
           db.teacherChatId = data.teacherChatId || null;
         }
-      } catch (e) {}
-      renderSchedule();
-      renderGrades();
-      if (!document.getElementById('tab-tests').classList.contains('hidden')) renderTests();
-      if (isTeacher) {
-        renderSubmissions();
-        updateTgStatus();
+        document.getElementById('syncStatus').innerText = 'бот • в сети';
+      } catch (e) {
+        document.getElementById('syncStatus').innerText = 'ошибка сети';
       }
     }
 
@@ -391,228 +247,118 @@
       } catch (e) {}
     }
 
-    function switchTab(name, btn) {
-      ['schedule', 'grades', 'tests', 'hw', 'teacher'].forEach(t => document.getElementById('tab-' + t).classList.add('hidden'));
-      document.getElementById('tab-' + name).classList.remove('hidden');
-      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      loadCloudDB();
+    // --- КОМАНДЫ БОТА ---
+    async function cmdStart() {
+      await loadCloudDB();
+      addBotMsg(
+        `Привет, <b>${userName}</b>! 👋<br>Я твой школьный дневник. Выбери нужное действие на клавиатуре ниже или нажми кнопку под сообщением:`,
+        [
+          [{ label: '📅 Расписание и ДЗ', action: 'cmdSchedule()' }, { label: '📝 Тесты с ИИ', action: 'cmdTests()' }],
+          [{ label: '📤 Сдать ДЗ', action: 'cmdSubmitHW()' }, { label: '🎓 Я учитель', action: 'cmdTeacher()' }]
+        ]
+      );
     }
 
-    function selectDay(day, el) {
-      selectedDay = day;
-      document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
-      el.classList.add('active');
-      renderSchedule();
+    async function cmdSchedule() {
+      addUserMsg('📅 Расписание и ДЗ');
+      await loadCloudDB();
+      addBotMsg(
+        `Выбери свой класс (сейчас выбран: <b>${selectedClass} класс</b>):`,
+        [
+          [
+            { label: '5 кл', action: "showClassLessons('5')" },
+            { label: '6 кл', action: "showClassLessons('6')" },
+            { label: '7 кл', action: "showClassLessons('7')" },
+            { label: '8 кл', action: "showClassLessons('8')" }
+          ],
+          [
+            { label: '9 кл', action: "showClassLessons('9')" },
+            { label: '10 кл', action: "showClassLessons('10')" },
+            { label: '11 кл', action: "showClassLessons('11')" }
+          ]
+        ]
+      );
     }
 
-    function renderSchedule() {
-      const cls = document.getElementById('classSelect').value;
-      const list = document.getElementById('scheduleList');
-      const items = db.lessons
-        .map((l, idx) => ({ ...l, idx }))
-        .filter(l => l.cls === cls && (selectedDay === 'Все' || (l.day && l.day.includes(selectedDay))));
-
-      list.innerHTML = items.length ? items.map(l => `
-        <div class="card">
-          <div class="row" style="margin-bottom:6px;">
-            <div>
-              <span class="chip">${l.day || 'Урок'}</span>
-              ${l.time ? `<span class="muted" style="margin-left:6px; font-size:12px;">${l.time}</span>` : ''}
-            </div>
-            ${isTeacher ? `<button class="btn-del" onclick="deleteLesson(${l.idx})">Удалить</button>` : ''}
-          </div>
-          <h3>${l.topic}</h3>
-          <div class="hw-box">📚 <b>ДЗ:</b> ${l.task}</div>
-        </div>
-      `).join('') : '<div class="card muted">На выбранный день уроков пока нет.</div>';
+    function showClassLessons(cls) {
+      selectedClass = cls;
+      addUserMsg(`${cls} класс`);
+      const items = db.lessons.map((l, idx) => ({ ...l, idx })).filter(l => l.cls === cls);
+      if (!items.length) {
+        addBotMsg(`Для <b>${cls} класса</b> уроков пока не добавлено.`);
+        return;
+      }
+      const text = items.map(l =>
+        `📌 <b>${l.day}</b> ${l.time ? `(${l.time})` : ''}<br>📖 <b>${l.topic}</b><br>📚 ДЗ: ${l.task}`
+      ).join('<br><br>');
+      const delBtns = isTeacher
+        ? items.map(l => [{ label: `🗑 Удалить: ${l.topic}`, action: `deleteLesson(${l.idx})` }])
+        : [];
+      addBotMsg(`<b>Расписание и ДЗ для ${cls} класса:</b><br><br>${text}`, delBtns);
     }
 
     async function deleteLesson(idx) {
       db.lessons.splice(idx, 1);
       await saveCloudDB();
-      renderSchedule();
+      addBotMsg('✅ Урок удалён из расписания.');
     }
 
-    function renderGrades() {
-      const box = document.getElementById('gradesList');
-      const avgEl = document.getElementById('avgGrade');
+    async function cmdGrades() {
+      addUserMsg('📊 Оценки');
+      await loadCloudDB();
       if (!db.grades.length) {
-        avgEl.innerText = '—';
-        box.innerHTML = '<div class="card muted">Оценок пока нет.</div>';
+        addBotMsg('В журнале пока нет выставленных оценок.');
         return;
       }
       const sum = db.grades.reduce((acc, g) => acc + Number(g.val), 0);
-      avgEl.innerText = (sum / db.grades.length).toFixed(2);
-      box.innerHTML = db.grades.map((g, idx) => `
-        <div class="card">
-          <div class="row">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <div class="mark-box m-${g.val}">${g.val}</div>
-              <div>
-                <div style="font-weight:700; font-size:15px;">${g.subject}</div>
-                <div class="muted">${g.student}${g.comment ? ' • ' + g.comment : ''}</div>
-              </div>
-            </div>
-            ${isTeacher ? `<button class="btn-del" onclick="deleteGrade(${idx})">✕</button>` : `<span class="muted" style="font-size:11px;">${g.date || ''}</span>`}
-          </div>
-        </div>
-      `).join('');
+      const avg = (sum / db.grades.length).toFixed(2);
+      const list = db.grades.slice(0, 15).map(g =>
+        `• <b>${g.student}</b> — ${g.subject}: <b>${g.val}</b> ${g.comment ? `(${g.comment})` : ''}`
+      ).join('<br>');
+      addBotMsg(`📊 <b>Журнал оценок</b> (средний балл: <b>${avg}</b>):<br><br>${list}`);
     }
 
-    async function deleteGrade(idx) {
-      db.grades.splice(idx, 1);
-      await saveCloudDB();
-      renderGrades();
-    }
-
-    function renderTests() {
-      document.getElementById('testRunner').classList.add('hidden');
-      const cat = document.getElementById('testsCatalog');
-      cat.classList.remove('hidden');
-      cat.innerHTML = db.tests.length ? db.tests.map((t, idx) => `
-        <div class="card">
-          <div class="row" style="margin-bottom:4px;">
-            <span class="chip">${t.ai ? '✨ Создано ИИ' : '📝 Тест'}</span>
-            ${isTeacher ? `<button class="btn-del" onclick="deleteTest(${idx})">Удалить</button>` : ''}
-          </div>
-          <h3 style="margin-top:6px;">${t.title}</h3>
-          <p class="muted" style="margin-bottom:10px;">Вопросов: ${t.questions.length}</p>
-          <button class="btn" onclick="startTest(${idx})">Пройти тест</button>
-        </div>
-      `).join('') : '<div class="card muted">Тестов пока нет. Учитель может создать их за секунду через ИИ-генератор.</div>';
-    }
-
-    async function deleteTest(idx) {
-      db.tests.splice(idx, 1);
-      await saveCloudDB();
-      renderTests();
-    }
-
-    let currentTest = null, qIdx = 0, score = 0;
-    function startTest(idx) {
-      currentTest = db.tests[idx];
-      qIdx = 0; score = 0;
-      document.getElementById('testsCatalog').classList.add('hidden');
-      document.getElementById('testRunner').classList.remove('hidden');
-      renderQuestion();
-    }
-
-    function renderQuestion() {
-      const box = document.getElementById('testRunner');
-      if (qIdx >= currentTest.questions.length) {
-        const total = currentTest.questions.length;
-        const pct = Math.round((score / total) * 100);
-        const mark = pct >= 85 ? '5' : pct >= 70 ? '4' : pct >= 50 ? '3' : '2';
-        const studentName = document.getElementById('hwStudentName').value.trim() || 'Ученик';
-        notifyTeacher(`✅ Тест пройден!\nУченик: ${studentName}\nТест: ${currentTest.title}\nРезультат: ${score}/${total} (Оценка: ${mark})`);
-        box.innerHTML = `
-          <div style="text-align:center; padding:10px 0;">
-            <div style="font-size:40px; margin-bottom:6px;">🎉</div>
-            <h3>Тест завершён!</h3>
-            <p class="muted">Верных ответов: <b>${score} из ${total}</b> (${pct}%)</p>
-            <div style="margin:12px auto; width:56px; height:56px; font-size:26px;" class="mark-box m-${mark}">${mark}</div>
-            <button class="btn" style="margin-top:10px;" onclick="renderTests()">Вернуться к тестам</button>
-          </div>
-        `;
+    async function cmdTests() {
+      addUserMsg('📝 Тесты (ИИ)');
+      await loadCloudDB();
+      if (!db.tests.length) {
+        addBotMsg(
+          'Готовых тестов пока нет. Хочешь, чтобы ИИ прямо сейчас составил тест по любой теме?',
+          [[{ label: '✨ Сгенерировать тест через ИИ', cls: 'ai', action: 'promptAITest()' }]]
+        );
         return;
       }
-      const q = currentTest.questions[qIdx];
-      box.innerHTML = `
-        <div class="row" style="margin-bottom:8px;">
-          <span class="chip">Вопрос ${qIdx + 1} из ${currentTest.questions.length}</span>
-          <span class="muted">${currentTest.title}</span>
-        </div>
-        <h3 style="margin-bottom:12px;">${q.q}</h3>
-        ${q.options.map((opt, i) => `<button class="option" onclick="answer(${i}, this)">${opt}</button>`).join('')}
-      `;
+      const rows = db.tests.map((t, idx) => ([
+        { label: `${t.ai ? '✨' : '📝'} ${t.title} (${t.questions.length} вопр.)`, action: `runTest(${idx})` }
+      ]));
+      rows.push([{ label: '✨ Создать новый тест с ИИ', cls: 'ai', action: 'promptAITest()' }]);
+      addBotMsg('Выбери тест для прохождения или создай новый с помощью ИИ:', rows);
     }
 
-    function answer(idx, el) {
-      const q = currentTest.questions[qIdx];
-      document.querySelectorAll('.option').forEach(b => b.disabled = true);
-      if (idx === q.ans) { el.classList.add('correct'); score++; }
-      else { el.classList.add('wrong'); document.querySelectorAll('.option')[q.ans].classList.add('correct'); }
-      setTimeout(() => { qIdx++; renderQuestion(); }, 800);
+    function promptAITest() {
+      const id = 'ai_' + Date.now();
+      addBotMsg(
+        `✨ <b>ИИ-генератор тестов</b><br>Напиши предмет и тему (например: <i>История: Петр I</i>), а ИИ сам придумает вопросы:<div class="bot-form"><input id="${id}_topic" placeholder="Предмет и тема теста..." /><select id="${id}_cnt"><option value="3">3 вопроса</option><option value="5" selected>5 вопросов</option></select></div>`,
+        [[{ label: '🚀 Сгенерировать тест', cls: 'ai', action: `executeAITest('${id}')` }]]
+      );
     }
 
-    async function submitHW() {
-      const name = document.getElementById('hwStudentName').value.trim() || 'Ученик';
-      const subj = document.getElementById('hwSubject').value.trim() || 'Общий';
-      const text = document.getElementById('hwText').value.trim();
-      if (!text) return alert('Напишите ответ!');
-      const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-      db.submissions.unshift({ type: `ДЗ • ${subj}`, name, text, time });
-      await saveCloudDB();
-      await notifyTeacher(`📥 Новое ДЗ\nУченик: ${name}\nПредмет: ${subj}\n\n${text}`);
-      document.getElementById('hwText').value = '';
-      alert('✅ Работа отправлена учителю!');
-    }
+    async function executeAITest(id) {
+      const topic = document.getElementById(`${id}_topic`).value.trim();
+      const count = parseInt(document.getElementById(`${id}_cnt`).value, 10);
+      if (!topic) return alert('Введи предмет и тему!');
+      addUserMsg(`Сделай тест: ${topic} (${count} вопр.)`);
+      const waitMsg = addBotMsg('⏳ ИИ составляет вопросы и варианты ответов...');
 
-    async function sendSkip() {
-      const name = document.getElementById('hwStudentName').value.trim() || 'Ученик';
-      const text = document.getElementById('skipReason').value.trim();
-      if (!text) return alert('Укажите причину пропуска!');
-      const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-      db.submissions.unshift({ type: 'Пропуск', name, text, time });
-      await saveCloudDB();
-      await notifyTeacher(`⚠️ Предупреждение о пропуске\nУченик: ${name}\nПричина: ${text}`);
-      document.getElementById('skipReason').value = '';
-      alert('⚠️ Предупреждение передано учителю.');
-    }
+      const prompt = `Составь школьный тест на русском языке на тему "${topic}". Количество вопросов: ${count}. Верни ТОЛЬКО валидный JSON массив без markdown в точном формате: [{"q":"вопрос","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0}] где ans всегда 0.`;
 
-    function unlockTeacher() {
-      if (document.getElementById('pinInput').value === TEACHER_PIN) {
-        isTeacher = true;
-        document.getElementById('teacherLock').classList.add('hidden');
-        document.getElementById('teacherPanel').classList.remove('hidden');
-        document.getElementById('roleBadge').innerText = 'Учитель';
-        renderSchedule();
-        renderGrades();
-        renderSubmissions();
-        updateTgStatus();
-      } else {
-        alert('❌ Неверный ПИН-код');
-      }
-    }
-
-    function updateTgStatus() {
-      const el = document.getElementById('tgStatusText');
-      el.innerText = db.teacherChatId
-        ? `✅ Telegram привязан (ID: ${db.teacherChatId}). Все ответы приходят вам в личку.`
-        : 'Нажмите кнопку ниже из Telegram, чтобы получать работы учеников в личные сообщения.';
-    }
-
-    async function bindTeacherTelegram() {
-      if (!currentTgUserId) return alert('Откройте дневник через кнопку в Telegram, чтобы определить ваш аккаунт.');
-      db.teacherChatId = currentTgUserId;
-      await saveCloudDB();
-      updateTgStatus();
-      await notifyTeacher('✅ Уведомления школьного дневника подключены!');
-      alert('✅ Telegram успешно привязан!');
-    }
-
-    // ИИ-ГЕНЕРАТОР ТЕСТОВ (через бесплатный LLM-шлюз Pollinations с резервной генерацией)
-    async function generateAITest() {
-      const subject = document.getElementById('aiSubject').value.trim();
-      const topic = document.getElementById('aiTopic').value.trim();
-      const count = parseInt(document.getElementById('aiCount').value, 10);
-      if (!subject || !topic) return alert('Укажите предмет и тему для ИИ!');
-
-      const btn = document.getElementById('aiGenBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>ИИ составляет вопросы...';
-
-      const prompt = `Составь школьный тест на русском языке по предмету "${subject}" на тему "${topic}". Количество вопросов: ${count}. Верни ТОЛЬКО валидный JSON массив без markdown-обертки в точном формате: [{"q":"текст вопроса","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0}] где ans всегда индекс правильного варианта (0).`;
-
-      let questions = null;
       try {
         const resp = await fetch('https://text.pollinations.ai/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             messages: [
-              { role: 'system', content: 'Ты школьный методист. Отвечай строго чистым JSON массивом.' },
+              { role: 'system', content: 'Ты школьный учитель. Отвечай строго чистым JSON массивом.' },
               { role: 'user', content: prompt }
             ],
             model: 'openai',
@@ -621,110 +367,290 @@
         });
         const raw = await resp.text();
         const match = raw.match(/\[[\s\S]*\]/);
-        if (match) {
-          const parsed = JSON.parse(match[0]);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            questions = parsed.map(item => {
-              const correctText = item.options[item.ans || 0];
-              const shuffled = [...item.options].sort(() => Math.random() - 0.5);
-              return { q: item.q, options: shuffled, ans: shuffled.indexOf(correctText) };
-            });
-          }
-        }
-      } catch (e) {}
+        if (!match) throw new Error();
+        const parsed = JSON.parse(match[0]);
+        const questions = parsed.map(item => {
+          const correctText = item.options[item.ans || 0];
+          const shuffled = [...item.options].sort(() => Math.random() - 0.5);
+          return { q: item.q, options: shuffled, ans: shuffled.indexOf(correctText) };
+        });
+        db.tests.unshift({ title: topic, ai: true, questions });
+        await saveCloudDB();
+        waitMsg.remove();
+        addBotMsg(
+          `✅ Тест <b>«${topic}»</b> готов (${questions.length} вопр.) и сохранён для всех учеников!`,
+          [[{ label: '▶️ Пройти этот тест сейчас', action: 'runTest(0)' }]]
+        );
+      } catch (e) {
+        waitMsg.remove();
+        addBotMsg('❌ ИИ сейчас перегружен, попробуй нажать генерацию ещё раз.');
+      }
+    }
 
-      if (!questions) {
-        alert('ИИ сейчас перегружен, попробуйте нажать кнопку ещё раз через пару секунд.');
-        btn.disabled = false;
-        btn.innerHTML = '✨ Сгенерировать тест с помощью ИИ';
+    // Прохождение теста прямо в чате
+    let activeTest = null, qIdx = 0, score = 0;
+    function runTest(idx) {
+      activeTest = db.tests[idx];
+      qIdx = 0; score = 0;
+      addUserMsg(`Пройти тест: ${activeTest.title}`);
+      sendNextQuestion();
+    }
+
+    function sendNextQuestion() {
+      if (qIdx >= activeTest.questions.length) {
+        const total = activeTest.questions.length;
+        const pct = Math.round((score / total) * 100);
+        const mark = pct >= 85 ? '5' : pct >= 70 ? '4' : pct >= 50 ? '3' : '2';
+        notifyTeacher(`✅ Тест пройден\nУченик: ${userName}\nТест: ${activeTest.title}\nРезультат: ${score}/${total} (Оценка: ${mark})`);
+        addBotMsg(
+          `🎉 <b>Тест завершён!</b><br>Правильных ответов: <b>${score} из ${total}</b> (${pct}%)<br>Твоя оценка: <b>${mark}</b>`,
+          [[{ label: '📝 К списку тестов', action: 'cmdTests()' }]]
+        );
         return;
       }
-
-      db.tests.unshift({
-        title: `${subject}: ${topic}`,
-        ai: true,
-        questions
-      });
-      await saveCloudDB();
-
-      btn.disabled = false;
-      btn.innerHTML = '✨ Сгенерировать тест с помощью ИИ';
-      document.getElementById('aiTopic').value = '';
-      alert(`✅ ИИ создал тест «${subject}: ${topic}» (${questions.length} вопросов)! Он уже доступен во вкладке «Тесты».`);
+      const q = activeTest.questions[qIdx];
+      const qId = 'q_' + Date.now();
+      const rows = q.options.map((opt, i) => ([
+        { label: opt, action: `answerQuestion('${qId}', ${i}, this)` }
+      ]));
+      addBotMsg(`<b>Вопрос ${qIdx + 1}/${activeTest.questions.length}:</b><br>${q.q}`, rows);
     }
 
-    async function addLesson() {
-      const cls = document.getElementById('newLessonClass').value;
-      const day = document.getElementById('newLessonDay').value;
-      const time = document.getElementById('newLessonTime').value.trim();
-      const topic = document.getElementById('newLessonTopic').value.trim();
-      const task = document.getElementById('newLessonTask').value.trim();
-      if (!topic) return alert('Укажите предмет и тему!');
-      db.lessons.push({ cls, day, time, topic, task: task || 'Без домашнего задания' });
-      await saveCloudDB();
-      document.getElementById('newLessonTime').value = '';
-      document.getElementById('newLessonTopic').value = '';
-      document.getElementById('newLessonTask').value = '';
-      renderSchedule();
-      alert('✅ Урок добавлен в расписание!');
+    function answerQuestion(qId, chosenIdx, btnEl) {
+      const wrap = btnEl.closest('.msg-wrap');
+      const btns = wrap.querySelectorAll('.inline-btn');
+      btns.forEach(b => b.disabled = true);
+      const q = activeTest.questions[qIdx];
+      if (chosenIdx === q.ans) {
+        btnEl.classList.add('correct');
+        score++;
+      } else {
+        btnEl.classList.add('wrong');
+        btns[q.ans].classList.add('correct');
+      }
+      setTimeout(() => { qIdx++; sendNextQuestion(); }, 750);
     }
 
-    async function addGrade() {
-      const student = document.getElementById('gradeStudent').value.trim();
-      const subject = document.getElementById('gradeSubject').value.trim();
-      const val = document.getElementById('gradeValue').value;
-      const comment = document.getElementById('gradeComment').value.trim();
-      if (!student || !subject) return alert('Укажите ученика и предмет!');
-      const date = new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
-      db.grades.unshift({ student, subject, val, comment, date });
-      await saveCloudDB();
-      document.getElementById('gradeComment').value = '';
-      renderGrades();
-      alert('✅ Оценка выставлена в журнал!');
+    // Сдача ДЗ и пропуск
+    function cmdSubmitHW() {
+      addUserMsg('📤 Сдать ДЗ');
+      const id = 'hw_' + Date.now();
+      addBotMsg(
+        `Заполни форму для отправки домашнего задания:<div class="bot-form"><input id="${id}_name" value="${userName}" placeholder="Фамилия и Имя" /><input id="${id}_subj" placeholder="Предмет (напр. Алгебра)" /><textarea id="${id}_text" rows="3" placeholder="Текст ответа или ссылка на фото..."></textarea></div>`,
+        [[{ label: '📨 Отправить учителю', action: `sendHWForm('${id}')` }]]
+      );
     }
 
-    async function addCustomTest() {
-      const title = document.getElementById('customTestTitle').value.trim();
-      const q = document.getElementById('customQ').value.trim();
-      const o1 = document.getElementById('customOpt1').value.trim();
-      const o2 = document.getElementById('customOpt2').value.trim();
-      const o3 = document.getElementById('customOpt3').value.trim();
-      if (!title || !q || !o1 || !o2) return alert('Заполните название, вопрос и минимум 2 ответа!');
-      const opts = [o1, o2];
-      if (o3) opts.push(o3);
-      const paired = opts.map((text, idx) => ({ text, isCorrect: idx === 0 })).sort(() => Math.random() - 0.5);
-      const ans = paired.findIndex(p => p.isCorrect);
-      const existing = db.tests.find(t => t.title.toLowerCase() === title.toLowerCase());
-      const newQuestion = { q, options: paired.map(p => p.text), ans };
-      if (existing) existing.questions.push(newQuestion);
-      else db.tests.unshift({ title, ai: false, questions: [newQuestion] });
+    async function sendHWForm(id) {
+      const name = document.getElementById(`${id}_name`).value.trim() || userName;
+      const subj = document.getElementById(`${id}_subj`).value.trim() || 'Общий';
+      const text = document.getElementById(`${id}_text`).value.trim();
+      if (!text) return alert('Введи текст задания!');
+      const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      db.submissions.unshift({ type: `ДЗ (${subj})`, name, text, time });
       await saveCloudDB();
-      ['customQ', 'customOpt1', 'customOpt2', 'customOpt3'].forEach(id => document.getElementById(id).value = '');
-      alert('✅ Вопрос добавлен!');
+      await notifyTeacher(`📥 Новое ДЗ\nУченик: ${name}\nПредмет: ${subj}\n\n${text}`);
+      addBotMsg(`✅ Работа по предмету <b>${subj}</b> отправлена учителю!`);
     }
 
-    function renderSubmissions() {
-      const box = document.getElementById('teacherSubmissions');
-      box.innerHTML = db.submissions.length ? db.submissions.map(s => `
-        <div style="border-bottom:1px solid var(--border); padding:10px 0;">
-          <div class="row">
-            <span class="chip">${s.type}</span>
-            <span class="muted" style="font-size:11px;">${s.time}</span>
-          </div>
-          <div style="font-weight:700; margin-top:4px;">${s.name}</div>
-          <div style="margin-top:2px; font-size:14px;">${s.text}</div>
-        </div>
-      `).join('') : 'Пока нет новых записей.';
+    function cmdSkip() {
+      addUserMsg('⚠️ Пропуск урока');
+      const id = 'sk_' + Date.now();
+      addBotMsg(
+        `Укажи причину отсутствия на уроке:<div class="bot-form"><input id="${id}_name" value="${userName}" placeholder="Фамилия и Имя" /><input id="${id}_reason" placeholder="Причина (болезнь, олимпиада...)" /></div>`,
+        [[{ label: '⚠️ Предупредить учителя', action: `sendSkipForm('${id}')` }]]
+      );
+    }
+
+    async function sendSkipForm(id) {
+      const name = document.getElementById(`${id}_name`).value.trim() || userName;
+      const text = document.getElementById(`${id}_reason`).value.trim();
+      if (!text) return alert('Укажи причину!');
+      const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      db.submissions.unshift({ type: 'Пропуск', name, text, time });
+      await saveCloudDB();
+      await notifyTeacher(`⚠️ Пропуск урока\nУченик: ${name}\nПричина: ${text}`);
+      addBotMsg('✅ Уведомление о пропуске передано учителю.');
+    }
+
+    // Режим учителя
+    function cmdTeacher() {
+      addUserMsg('🎓 Режим учителя');
+      if (isTeacher) {
+        showTeacherMenu();
+        return;
+      }
+      const id = 'pin_' + Date.now();
+      addBotMsg(
+        `Введи ПИН-код преподавателя:<div class="bot-form"><input id="${id}" type="password" placeholder="ПИН-код" /></div>`,
+        [[{ label: '🔓 Войти', action: `checkTeacherPin('${id}')` }]]
+      );
+    }
+
+    function checkTeacherPin(id) {
+      if (document.getElementById(id).value === TEACHER_PIN) {
+        isTeacher = true;
+        document.getElementById('roleBadge').innerText = 'Учитель';
+        showTeacherMenu();
+      } else {
+        addBotMsg('❌ Неверный ПИН-код.');
+      }
+    }
+
+    function showTeacherMenu() {
+      addBotMsg(
+        '🎓 <b>Панель управления учителя</b><br>Выбери действие:',
+        [
+          [{ label: '✨ Создать тест через ИИ', cls: 'ai', action: 'promptAITest()' }],
+          [{ label: '➕ Добавить урок и ДЗ', action: 'teacherAddLessonForm()' }, { label: '🏅 Поставить оценку', action: 'teacherAddGradeForm()' }],
+          [{ label: '📥 Сданные работы', action: 'teacherViewSubmissions()' }, { label: '🔔 Привязать мой TG', action: 'bindTeacherTelegram()' }]
+        ]
+      );
+    }
+
+    function teacherAddLessonForm() {
+      const id = 'ls_' + Date.now();
+      addBotMsg(
+        `<b>Новый урок в расписание:</b><div class="bot-form">
+          <select id="${id}_cls"><option value="5">5 класс</option><option value="6">6 класс</option><option value="7" selected>7 класс</option><option value="8">8 класс</option><option value="9">9 класс</option><option value="10">10 класс</option><option value="11">11 класс</option></select>
+          <select id="${id}_day"><option>Понедельник</option><option>Вторник</option><option>Среда</option><option>Четверг</option><option>Пятница</option><option>Суббота</option></select>
+          <input id="${id}_time" placeholder="Время / номер урока (напр. 1 урок, 08:30)" />
+          <input id="${id}_topic" placeholder="Предмет и тема" />
+          <input id="${id}_task" placeholder="Домашнее задание" />
+        </div>`,
+        [[{ label: '💾 Сохранить урок', action: `saveLessonForm('${id}')` }]]
+      );
+    }
+
+    async function saveLessonForm(id) {
+      const cls = document.getElementById(`${id}_cls`).value;
+      const day = document.getElementById(`${id}_day`).value;
+      const time = document.getElementById(`${id}_time`).value.trim();
+      const topic = document.getElementById(`${id}_topic`).value.trim();
+      const task = document.getElementById(`${id}_task`).value.trim() || 'Без ДЗ';
+      if (!topic) return alert('Укажи предмет и тему!');
+      db.lessons.push({ cls, day, time, topic, task });
+      await saveCloudDB();
+      addBotMsg(`✅ Урок <b>${topic}</b> добавлен в расписание ${cls} класса (${day})!`);
+    }
+
+    function teacherAddGradeForm() {
+      const id = 'gr_' + Date.now();
+      addBotMsg(
+        `<b>Выставить оценку:</b><div class="bot-form">
+          <input id="${id}_st" placeholder="Фамилия и Имя ученика" />
+          <input id="${id}_sb" placeholder="Предмет" />
+          <select id="${id}_val"><option value="5">5 (Отлично)</option><option value="4">4 (Хорошо)</option><option value="3">3 (Удовл.)</option><option value="2">2 (Неуд.)</option></select>
+          <input id="${id}_cm" placeholder="Комментарий (необязательно)" />
+        </div>`,
+        [[{ label: '🏅 Поставить оценку', action: `saveGradeForm('${id}')` }]]
+      );
+    }
+
+    async function saveGradeForm(id) {
+      const student = document.getElementById(`${id}_st`).value.trim();
+      const subject = document.getElementById(`${id}_sb`).value.trim();
+      const val = document.getElementById(`${id}_val`).value;
+      const comment = document.getElementById(`${id}_cm`).value.trim();
+      if (!student || !subject) return alert('Заполни ученика и предмет!');
+      db.grades.unshift({ student, subject, val, comment });
+      await saveCloudDB();
+      addBotMsg(`✅ Оценка <b>${val}</b> (${subject}) выставлена ученику <b>${student}</b>.`);
+    }
+
+    async function teacherViewSubmissions() {
+      await loadCloudDB();
+      if (!db.submissions.length) {
+        addBotMsg('Новых сданных работ и сообщений о пропусках пока нет.');
+        return;
+      }
+      const list = db.submissions.slice(0, 15).map(s =>
+        `• <b>[${s.type}] ${s.name}</b> (${s.time}):<br>${s.text}`
+      ).join('<br><br>');
+      addBotMsg(`📥 <b>Последние записи:</b><br><br>${list}`, [[{ label: '🗑 Очистить список', action: 'clearSubmissions()' }]]);
     }
 
     async function clearSubmissions() {
-      if (!confirm('Очистить список?')) return;
       db.submissions = [];
       await saveCloudDB();
-      renderSubmissions();
+      addBotMsg('🗑 Список сданных работ очищен.');
     }
 
-    loadCloudDB();
+    async function bindTeacherTelegram() {
+      if (!currentTgUserId) {
+        addBotMsg('⚠️ Открой приложение через кнопку в Telegram, чтобы привязать аккаунт.');
+        return;
+      }
+      db.teacherChatId = currentTgUserId;
+      await saveCloudDB();
+      await notifyTeacher('✅ Уведомления школьного дневника подключены!');
+      addBotMsg(`✅ Твой Telegram (ID: ${currentTgUserId}) привязан! Все работы учеников будут приходить в личку.`);
+    }
+
+    // Свободный ввод текста внизу чата
+    function handleFreeText() {
+      const inp = document.getElementById('chatInput');
+      const val = inp.value.trim();
+      if (!val) return;
+      inp.value = '';
+      const low = val.toLowerCase();
+      if (low.includes('расписан') || low.includes('урок')) return cmdSchedule();
+      if (low.includes('оценк')) return cmdGrades();
+      if (low.includes('тест')) return cmdTests();
+      if (low.includes('учител') || val === TEACHER_PIN) {
+        if (val === TEACHER_PIN) {
+          addUserMsg('•••••');
+          isTeacher = true;
+          document.getElementById('roleBadge').innerText = 'Учитель';
+          return showTeacherMenu();
+        }
+        return cmdTeacher();
+      }
+      addUserMsg(val);
+      addBotMsg(
+        `Я могу сразу сгенерировать тест по теме <b>«${val}»</b> или открыть нужный раздел:`,
+        [
+          [{ label: `✨ Сделать тест ИИ: ${val}`, cls: 'ai', action: `quickAITest('${val.replace(/'/g, '')}')` }],
+          [{ label: '📅 Расписание', action: 'cmdSchedule()' }, { label: '📤 Сдать ДЗ', action: 'cmdSubmitHW()' }]
+        ]
+      );
+    }
+
+    async function quickAITest(topic) {
+      const waitMsg = addBotMsg(`⏳ ИИ генерирует тест на тему «${topic}»...`);
+      const prompt = `Составь школьный тест на русском языке на тему "${topic}". Количество вопросов: 5. Верни ТОЛЬКО валидный JSON массив без markdown: [{"q":"вопрос","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0}]`;
+      try {
+        const resp = await fetch('https://text.pollinations.ai/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: 'Ты школьный учитель. Отвечай строго чистым JSON массивом.' },
+              { role: 'user', content: prompt }
+            ],
+            model: 'openai',
+            jsonMode: true
+          })
+        });
+        const raw = await resp.text();
+        const match = raw.match(/\[[\s\S]*\]/);
+        const parsed = JSON.parse(match[0]);
+        const questions = parsed.map(item => {
+          const correctText = item.options[item.ans || 0];
+          const shuffled = [...item.options].sort(() => Math.random() - 0.5);
+          return { q: item.q, options: shuffled, ans: shuffled.indexOf(correctText) };
+        });
+        db.tests.unshift({ title: topic, ai: true, questions });
+        await saveCloudDB();
+        waitMsg.remove();
+        addBotMsg(`✅ Тест <b>«${topic}»</b> готов!`, [[{ label: '▶️ Начать тест', action: 'runTest(0)' }]]);
+      } catch (e) {
+        waitMsg.remove();
+        addBotMsg('❌ Не удалось создать тест, попробуй ещё раз.');
+      }
+    }
+
+    cmdStart();
   </script>
 </body>
 </html>
