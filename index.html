@@ -106,7 +106,7 @@
       background: var(--accent-soft); color: var(--accent); cursor: pointer; border: none;
     }
 
-    /* Полоса твоих классов */
+    /* Полоса классов */
     .class-switcher { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
     .class-switcher::-webkit-scrollbar { display: none; }
     .cls-pill {
@@ -301,18 +301,14 @@
   <div id="viewRegister" class="gate-wrap">
     <div class="gate-card">
       <div class="brand-logo">
-        <!-- Логотип: книга и настольная лампа -->
         <svg width="46" height="46" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Лучи света -->
           <line x1="25" y1="22" x2="21" y2="25" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
           <line x1="29" y1="24" x2="27" y2="28" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
           <line x1="33" y1="23" x2="34" y2="27" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round"/>
-          <!-- Лампа -->
           <path d="M26 17L33 10L38 15L31 22Z" fill="#2563eb"/>
           <circle cx="36" cy="9" r="3" fill="#2563eb"/>
           <path d="M36 12L46 18L42 29" stroke="#2563eb" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="46" cy="18" r="2.6" fill="#2563eb"/>
-          <!-- Книга -->
           <path d="M12 31V49H28C30 49 32 50.5 32 52C32 50.5 34 49 36 49H52V31" stroke="#2563eb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M16 28C22 28 28 29.5 32 33C36 29.5 42 28 48 28V45C42 45 36 46.5 32 50C28 46.5 22 45 16 45V28Z" fill="#ffffff" stroke="#2563eb" stroke-width="3.2" stroke-linejoin="round"/>
           <line x1="32" y1="33" x2="32" y2="50" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
@@ -320,7 +316,7 @@
       </div>
       <h1>Мой дневник</h1>
       <p>Введите ваши <b>Имя и Фамилию</b>, чтобы отправить заявку и получить доступ к своим классам.</p>
-      <input id="inpRegName" type="text" class="field" placeholder="Например: Артём Сорокин" />
+      <input id="inpRegName" type="text" class="field" placeholder="Имя и Фамилия" />
       <button type="button" id="btnRegSubmit" class="btn-main" onclick="registerStudent()">Продолжить</button>
       <button type="button" class="btn-ghost" onclick="loginTeacherModal()">Вход для преподавателя</button>
     </div>
