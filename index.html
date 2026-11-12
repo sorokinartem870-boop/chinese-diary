@@ -12,8 +12,8 @@
       --surface-soft: #f1f5f9;
       --text: #0f172a;
       --text-sec: #64748b;
-      --accent: #3b82f6;
-      --accent-soft: rgba(59, 130, 246, 0.12);
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.12);
       --accent-grad: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
       --border: #e2e8f0;
       --shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
@@ -35,7 +35,7 @@
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 88px; overflow-x: hidden; }
 
-    /* Плавные анимации */
+    /* Анимации */
     @keyframes fadeSlideUp {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -44,8 +44,8 @@
       from { opacity: 0; transform: scale(0.96); }
       to { opacity: 1; transform: scale(1); }
     }
-    .anim-in { animation: fadeSlideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
-    .pop-in { animation: popIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .anim-in { animation: fadeSlideUp 0.26s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .pop-in { animation: popIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
     /* Экраны входа и ожидания */
     .gate-wrap {
@@ -55,7 +55,7 @@
     .gate-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
       padding: 32px 24px; width: 100%; max-width: 400px; box-shadow: var(--shadow);
-      animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: fadeSlideUp 0.32s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .brand-logo {
       width: 76px; height: 76px; border-radius: 24px;
@@ -106,7 +106,7 @@
     .user-meta { display: flex; align-items: center; gap: 11px; }
     .user-ava {
       width: 40px; height: 40px; border-radius: 13px;
-      background: var(--accent-soft); border: 1px solid rgba(59, 130, 246, 0.22);
+      background: var(--accent-soft); border: 1px solid rgba(37, 99, 235, 0.22);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .user-name { font-weight: 800; font-size: 16px; letter-spacing: -0.2px; }
@@ -128,11 +128,11 @@
     }
     .cls-pill.active {
       background: var(--accent); color: #fff; border-color: transparent;
-      box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
     }
 
-    /* Календарная полоса недели и выбор месяца */
-    .week-strip-wrap { padding-bottom: 6px; position: relative; }
+    /* Календарная полоса недели */
+    .week-strip-wrap { padding-bottom: 6px; }
     .week-grid {
       display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 4px;
       margin-bottom: 14px;
@@ -146,12 +146,12 @@
     .w-num {
       width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
       font-size: 16.5px; font-weight: 700; color: var(--text); position: relative;
-      transition: background-color 0.22s ease, color 0.22s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s;
     }
-    .week-col.sunday .w-num { color: #e05263; }
+    .week-col.sunday .w-num { color: var(--red); }
     .week-col.active .w-num {
-      background: #4f7df3; color: #ffffff !important;
-      box-shadow: 0 4px 14px rgba(79, 125, 243, 0.42);
+      background: var(--accent); color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
       transform: scale(1.06);
     }
     .w-dot {
@@ -167,19 +167,17 @@
     .cal-pill-btn {
       background: var(--surface); border: 1px solid var(--border); color: var(--text);
       padding: 9px 15px; border-radius: 13px; font-size: 14.5px; font-weight: 700; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 6px;
-      transition: transform 0.15s, background-color 0.15s;
+      display: inline-flex; align-items: center; gap: 6px; transition: transform 0.15s;
     }
-    .cal-pill-btn:active { transform: scale(0.95); background: var(--surface-soft); }
+    .cal-pill-btn:active { transform: scale(0.95); }
     .cal-icon-btn {
       background: var(--surface); border: 1px solid var(--border); color: var(--text);
       width: 40px; height: 38px; border-radius: 13px; display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 700; cursor: pointer;
-      transition: transform 0.15s, background-color 0.15s;
+      font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.15s;
     }
-    .cal-icon-btn:active { transform: scale(0.92); background: var(--surface-soft); }
+    .cal-icon-btn:active { transform: scale(0.92); }
 
-    /* Выпадающая сетка 12 месяцев */
+    /* Сетка выбора месяца */
     .month-picker-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
@@ -188,15 +186,22 @@
     .month-opt {
       padding: 10px 6px; border-radius: 11px; border: 1px solid var(--border);
       background: var(--surface-soft); color: var(--text); font-size: 13px; font-weight: 700;
-      text-align: center; cursor: pointer; transition: all 0.15s;
+      text-align: center; cursor: pointer;
     }
     .month-opt.active { background: var(--accent); color: #fff; border-color: transparent; }
+
+    /* Плашка ближайшего урока / напоминания */
+    .next-lesson-pill {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      background: var(--accent-soft); border: 1px solid rgba(37, 99, 235, 0.25);
+      border-radius: 16px; padding: 11px 14px; margin-bottom: 12px; font-size: 13px;
+    }
 
     /* Карточки уроков и перемен */
     .diary-lesson-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
       padding: 16px 18px; margin-bottom: 10px; box-shadow: var(--shadow);
-      animation: fadeSlideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: fadeSlideUp 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     .dl-meta {
       font-size: 13px; color: var(--text-sec); font-weight: 500;
@@ -207,7 +212,7 @@
     }
     .dl-hw-status {
       display: flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600;
-      color: var(--text-sec); margin-bottom: 6px; cursor: pointer; transition: color 0.2s;
+      color: var(--text-sec); margin-bottom: 6px; cursor: pointer;
     }
     .dl-hw-status.done { color: var(--green); }
     .dl-hw-text { font-size: 14.5px; color: var(--text); line-height: 1.45; }
@@ -223,7 +228,7 @@
     .card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
       padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow);
-      animation: fadeSlideUp 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: fadeSlideUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
     .card-title { font-size: 15.5px; font-weight: 700; margin: 0; }
@@ -236,6 +241,15 @@
       background: rgba(245, 158, 11, 0.14); color: #d97706;
     }
     .muted { color: var(--text-sec); font-size: 13px; line-height: 1.45; }
+
+    /* Тумблер (Switch) */
+    .switch-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 8px 0;
+    }
+    .switch-inp {
+      width: 44px; height: 24px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0;
+    }
 
     /* Управление учениками */
     .st-row {
@@ -251,15 +265,13 @@
     .mini-btn {
       padding: 6px 10px; border-radius: 9px; border: 1px solid var(--border);
       background: var(--surface); color: var(--text); font-size: 12px; font-weight: 700;
-      cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: transform 0.15s;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
     }
-    .mini-btn:active { transform: scale(0.95); }
     .bulk-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
     .btn-danger-soft {
       padding: 11px; border-radius: 12px; border: none; background: rgba(239, 68, 68, 0.12);
-      color: var(--red); font-size: 13px; font-weight: 700; cursor: pointer; transition: transform 0.15s;
+      color: var(--red); font-size: 13px; font-weight: 700; cursor: pointer;
     }
-    .btn-danger-soft:active { transform: scale(0.96); }
 
     /* Блок новостей класса */
     .news-card {
@@ -275,9 +287,7 @@
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
       padding: 12px 14px; border-radius: 16px; border: 1px solid var(--border);
       background: var(--surface); margin-bottom: 8px; cursor: pointer;
-      transition: transform 0.15s, background-color 0.15s;
     }
-    .chat-contact-card:active { transform: scale(0.98); background: var(--surface-soft); }
     .chat-ava {
       width: 42px; height: 42px; border-radius: 50%; background: var(--accent-grad);
       color: #fff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -439,6 +449,7 @@
       <!-- ВКЛАДКА 1: КАЛЕНДАРНОЕ РАСПИСАНИЕ И УРОКИ -->
       <div id="sec-lessons">
         <div id="classNewsBanner" class="news-card hidden"></div>
+        <div id="nextLessonBanner" class="next-lesson-pill hidden"></div>
 
         <!-- Недельная полоса Пн–Вс с выбором месяца -->
         <div class="week-strip-wrap">
@@ -455,13 +466,12 @@
               <button type="button" class="cal-icon-btn" onclick="shiftWeek(1)">›</button>
             </div>
           </div>
-          <!-- Сетка быстрого выбора месяца -->
           <div id="monthPickerBox" class="month-picker-grid pop-in hidden"></div>
         </div>
 
         <!-- Форма добавления урока прямо здесь (для учителя) -->
         <div id="teacherQuickAddBar" class="hidden" style="margin-bottom:12px;">
-          <button type="button" class="btn-main" style="padding:11px; font-size:13.5px;" onclick="toggleInlineLessonForm()">➕ Добавить урок в расписание</button>
+          <button type="button" class="btn-main" style="padding:11px; font-size:13.5px;" onclick="toggleInlineLessonForm()">+ Добавить урок в расписание</button>
           <div id="inlineLessonForm" class="card pop-in hidden" style="margin-top:10px;">
             <div class="card-head">
               <h3 class="card-title">Новый урок</h3>
@@ -529,19 +539,17 @@
         <div id="mySubmissionsFeed"></div>
       </div>
 
-      <!-- ВКЛАДКА 3: ЧАТ -->
+      <!-- ВКЛАДКА 3: СООБЩЕНИЯ (ЧАТ) -->
       <div id="sec-messages" class="hidden">
-        <!-- Список диалогов (для учителя) -->
         <div id="dmTeacherContactsView" class="hidden anim-in">
           <div class="card-head">
             <h2 class="section-title" style="margin:0;">Чаты с учениками</h2>
-            <button type="button" class="mini-btn" style="background:var(--accent); color:#fff; border:none;" onclick="quickAddStudentFromChat()">➕ Ученик</button>
+            <button type="button" class="mini-btn" style="background:var(--accent); color:#fff; border:none;" onclick="quickAddStudentFromChat()">+ Ученик</button>
           </div>
           <input id="dmSearchInput" class="field" placeholder="🔍 Поиск ученика..." oninput="renderChatContactsList()" />
           <div id="dmContactsList"></div>
         </div>
 
-        <!-- Окно переписки -->
         <div id="dmConversationView" class="anim-in">
           <div class="card" style="padding:14px;">
             <div class="card-head" style="margin-bottom:8px;">
@@ -560,7 +568,41 @@
         </div>
       </div>
 
-      <!-- ВКЛАДКА 4: СТРУКТУРИРОВАННОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ -->
+      <!-- ВКЛАДКА 4: НАСТРОЙКИ И УВЕДОМЛЕНИЯ (ТОЛЬКО ДЛЯ УЧЕНИКОВ) -->
+      <div id="sec-student-settings" class="hidden">
+        <h2 class="section-title">Уведомления в Telegram</h2>
+        <div class="card">
+          <div class="card-head">
+            <h3 class="card-title">Статус подключения Telegram</h3>
+            <span class="chip" id="stTgBadge">Проверка...</span>
+          </div>
+          <p class="muted" id="stTgDesc" style="margin-bottom:12px;">
+            Привяжите ваш Telegram, чтобы бот присылал вам сообщения, когда учитель задаёт новое ДЗ, публикует объявление или проверяет вашу работу.
+          </p>
+          <button type="button" class="btn-main" onclick="bindStudentTg()">Привязать мой Telegram</button>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title" style="margin-bottom:8px;">⏰ Напоминания об уроках</h3>
+          <div class="switch-row">
+            <div>
+              <div style="font-weight:700; font-size:14px;">Напоминать до начала урока</div>
+              <div class="muted" style="font-size:12px;">Отправит сообщение в Telegram и покажет таймер</div>
+            </div>
+            <input type="checkbox" id="stRemindToggle" class="switch-inp" onchange="saveStudentRemindPrefs()" />
+          </div>
+          <div style="margin-top:8px;">
+            <label class="muted" style="display:block; margin-bottom:4px;">За сколько минут предупреждать:</label>
+            <select id="stRemindMins" class="field" style="margin-bottom:0;" onchange="saveStudentRemindPrefs()">
+              <option value="15">За 15 минут</option>
+              <option value="30" selected>За 30 минут</option>
+              <option value="60">За 1 час</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВКЛАДКА 5: СТРУКТУРИРОВАННОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ -->
       <div id="sec-teacher" class="hidden">
         <div class="seg-control">
           <button type="button" class="seg-btn active" onclick="switchTeacherSub('t-classes', this)">👥 Классы и ученики</button>
@@ -586,7 +628,7 @@
 
             <div style="display:flex; gap:6px; margin-bottom:10px;">
               <input id="tManualStudentName" class="field" style="margin-bottom:0;" placeholder="Добавить ученика вручную..." />
-              <button type="button" class="btn-main" style="width:auto; padding:0 14px;" onclick="teacherAddStudentManually()">➕</button>
+              <button type="button" class="btn-main" style="width:auto; padding:0 14px;" onclick="teacherAddStudentManually()">+</button>
             </div>
 
             <div style="display:flex; gap:8px; margin-bottom:10px;">
@@ -687,6 +729,7 @@
     let completedLessons = JSON.parse(localStorage.getItem('diary_done_lessons') || '[]');
     let selectedStudentIds = new Set();
     let activeDmStudentId = null;
+    let firedReminders = JSON.parse(localStorage.getItem('diary_fired_reminds') || '[]');
 
     const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
     const DAYS_FULL_FROM_JS = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
@@ -772,15 +815,27 @@
       } catch (e) {}
     }
 
-    async function notifyTeacher(text) {
-      if (!db.teacherChatId) return;
+    // --- ОТПРАВКА TELEGRAM-СООБЩЕНИЙ ---
+    async function sendTgDirect(chatId, text) {
+      if (!chatId) return;
       try {
         await fetchWithTimeout(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: db.teacherChatId, text })
-        }, 3000);
+          body: JSON.stringify({ chat_id: chatId, text })
+        }, 3500);
       } catch (e) {}
+    }
+
+    async function notifyTeacher(text) {
+      if (db.teacherChatId) await sendTgDirect(db.teacherChatId, text);
+    }
+
+    async function notifyClassStudents(classId, text) {
+      const targets = db.students.filter(s => (s.classes || []).includes(classId) && s.tgId);
+      for (const st of targets) {
+        await sendTgDirect(st.tgId, text);
+      }
     }
 
     function handleFilePick(input, who) {
@@ -827,6 +882,11 @@
         return;
       }
       myProfile = db.students.find(s => String(s.id) === String(myStudentId));
+      // Автоматически обновляем tgId ученика, если он зашёл через Telegram
+      if (myProfile && currentTgUserId && !myProfile.tgId) {
+        myProfile.tgId = currentTgUserId;
+        saveCloudDB();
+      }
       if (!myProfile) {
         showView('viewRegister');
       } else if (!myProfile.classes || myProfile.classes.length === 0) {
@@ -859,8 +919,16 @@
         const existing = db.students.find(s => String(s.id) === String(myStudentId));
         if (existing) {
           existing.name = name;
+          if (currentTgUserId) existing.tgId = currentTgUserId;
         } else {
-          db.students.push({ id: String(myStudentId), name, classes: [], tgId: currentTgUserId });
+          db.students.push({
+            id: String(myStudentId),
+            name,
+            classes: [],
+            tgId: currentTgUserId,
+            remindEnabled: true,
+            remindMins: 30
+          });
         }
         myProfile = db.students.find(s => String(s.id) === String(myStudentId));
         await saveCloudDB();
@@ -924,8 +992,8 @@
       const nav = document.getElementById('mainNavbar');
       if (isTeacher) {
         nav.innerHTML = `
-          <button type="button" class="nav-item active" data-tab="lessons" onclick="switchTab('lessons', this)"><span class="nav-ico">📅</span>Все уроки</button>
-          <button type="button" class="nav-item" data-tab="messages" onclick="switchTab('messages', this)"><span class="nav-ico">💬</span>Чат</button>
+          <button type="button" class="nav-item active" data-tab="lessons" onclick="switchTab('lessons', this)"><span class="nav-ico">📅</span>Расписание</button>
+          <button type="button" class="nav-item" data-tab="messages" onclick="switchTab('messages', this)"><span class="nav-ico">💬</span>Сообщения</button>
           <button type="button" class="nav-item" data-tab="teacher" onclick="switchTab('teacher', this)"><span class="nav-ico">⚙️</span>Управление</button>
         `;
       } else {
@@ -933,6 +1001,7 @@
           <button type="button" class="nav-item active" data-tab="lessons" onclick="switchTab('lessons', this)"><span class="nav-ico">📅</span>Уроки</button>
           <button type="button" class="nav-item" data-tab="submit" onclick="switchTab('submit', this)"><span class="nav-ico">📤</span>Сдать ДЗ</button>
           <button type="button" class="nav-item" data-tab="messages" onclick="switchTab('messages', this)"><span class="nav-ico">💬</span>Чат</button>
+          <button type="button" class="nav-item" data-tab="student-settings" onclick="switchTab('student-settings', this)"><span class="nav-ico">🔔</span>Уведомления</button>
         `;
       }
     }
@@ -941,7 +1010,7 @@
       showView('viewService');
       const displayName = isTeacher ? 'Режим преподавателя' : (myProfile ? myProfile.name : 'Ученик');
       document.getElementById('topUserName').innerText = displayName;
-      document.getElementById('topRoleTag').innerText = isTeacher ? 'Учитель (Выйти)' : 'Ученик';
+      document.getElementById('topRoleTag').innerText = isTeacher ? 'Учитель' : 'Ученик';
       document.getElementById('teacherQuickAddBar').classList.toggle('hidden', !isTeacher);
 
       const dateInp = document.getElementById('tLesDate');
@@ -949,6 +1018,7 @@
 
       renderNavbar();
       switchTab('lessons', document.querySelector('#mainNavbar .nav-item'));
+      startLessonReminderWatcher();
     }
 
     function renderTopClasses() {
@@ -990,7 +1060,7 @@
     }
 
     function switchTab(tab, btn) {
-      ['lessons', 'submit', 'messages', 'teacher'].forEach(t => {
+      ['lessons', 'submit', 'messages', 'student-settings', 'teacher'].forEach(t => {
         const el = document.getElementById('sec-' + t);
         if (el) {
           el.classList.toggle('hidden', t !== tab);
@@ -1013,9 +1083,132 @@
     function renderAllData() {
       renderClassNews();
       renderWeekCalendarAndLessons();
-      if (!isTeacher) renderMySubmissions();
+      if (!isTeacher) {
+        renderMySubmissions();
+        renderStudentSettingsUI();
+      }
       renderChatSection();
       if (isTeacher) renderTeacherControls();
+    }
+
+    // --- НАСТРОЙКИ И НАПОМИНАНИЯ УЧЕНИКА ---
+    function renderStudentSettingsUI() {
+      if (!myProfile) return;
+      const badge = document.getElementById('stTgBadge');
+      const desc = document.getElementById('stTgDesc');
+      if (myProfile.tgId) {
+        badge.innerText = '✅ Подключено';
+        badge.style.background = 'rgba(16, 185, 129, 0.14)';
+        badge.style.color = 'var(--green)';
+        desc.innerText = `Ваш Telegram привязан (ID: ${myProfile.tgId}). Вы будете получать сообщения при новом ДЗ, проверке работ и объявлениях.`;
+      } else {
+        badge.innerText = 'Не привязан';
+        desc.innerText = 'Нажмите кнопку ниже, чтобы привязать Telegram и получать уведомления от бота.';
+      }
+
+      document.getElementById('stRemindToggle').checked = myProfile.remindEnabled !== false;
+      document.getElementById('stRemindMins').value = String(myProfile.remindMins || 30);
+    }
+
+    async function bindStudentTg() {
+      if (!currentTgUserId) return alert('Откройте «Мой дневник» внутри Telegram.');
+      await loadCloudDB();
+      const st = db.students.find(s => String(s.id) === String(myStudentId));
+      if (st) {
+        st.tgId = currentTgUserId;
+        myProfile = st;
+        await saveCloudDB();
+        await sendTgDirect(currentTgUserId, '✅ Уведомления «Мой дневник» подключены! Теперь вы будете получать сообщения о новых ДЗ, проверке работ и напоминания об уроках.');
+        renderStudentSettingsUI();
+      }
+    }
+
+    async function saveStudentRemindPrefs() {
+      if (!myProfile) return;
+      const enabled = document.getElementById('stRemindToggle').checked;
+      const mins = parseInt(document.getElementById('stRemindMins').value, 10) || 30;
+      myProfile.remindEnabled = enabled;
+      myProfile.remindMins = mins;
+      const st = db.students.find(s => String(s.id) === String(myStudentId));
+      if (st) {
+        st.remindEnabled = enabled;
+        st.remindMins = mins;
+      }
+      await saveCloudDB();
+      checkUpcomingLessonsReminder();
+    }
+
+    let reminderInterval = null;
+    function startLessonReminderWatcher() {
+      if (reminderInterval) clearInterval(reminderInterval);
+      checkUpcomingLessonsReminder();
+      reminderInterval = setInterval(checkUpcomingLessonsReminder, 30000);
+    }
+
+    function checkUpcomingLessonsReminder() {
+      const banner = document.getElementById('nextLessonBanner');
+      if (isTeacher || !myProfile || myProfile.remindEnabled === false) {
+        banner.classList.add('hidden');
+        return;
+      }
+
+      const now = new Date();
+      const todayIso = toISODate(now);
+      const nowMins = now.getHours() * 60 + now.getMinutes();
+      const remindWindow = Number(myProfile.remindMins || 30);
+
+      // Ищем ближайший урок по всем классам ученика на сегодня
+      const dObj = parseISODate(todayIso);
+      const dayName = DAYS_FULL_FROM_JS[dObj.getDay()];
+      const myClasses = myProfile.classes || [];
+
+      const todayLessons = db.lessons.filter(l =>
+        myClasses.includes(l.classId) &&
+        (l.date === todayIso || (!l.date && l.day === dayName) || l.repeatDay === dayName)
+      );
+
+      let nearest = null;
+      let minDiff = 9999;
+
+      todayLessons.forEach(l => {
+        const startM = timeToMinutes(l.startTime || l.time);
+        if (startM !== null) {
+          const diff = startM - nowMins;
+          if (diff > 0 && diff <= 180 && diff < minDiff) {
+            minDiff = diff;
+            nearest = l;
+          }
+        }
+      });
+
+      if (!nearest) {
+        banner.classList.add('hidden');
+        return;
+      }
+
+      const clsObj = db.classes.find(c => c.id === nearest.classId);
+      const roomTxt = nearest.room ? `, каб. ${nearest.room}` : '';
+      banner.classList.remove('hidden');
+      banner.innerHTML = `
+        <div>
+          <div style="font-weight:800; color:var(--accent);">⏳ Через ${minDiff} мин: ${nearest.topic}</div>
+          <div class="muted" style="font-size:12px;">Начало в ${nearest.startTime || nearest.time}${roomTxt}${clsObj ? ` • ${clsObj.name}` : ''}</div>
+        </div>
+        <span class="chip">Скоро урок</span>
+      `;
+
+      // Если до урока осталось <= выбранного времени (например, 30 минут) — шлём сообщение в Telegram
+      if (minDiff <= remindWindow && myProfile.tgId) {
+        const remKey = `${todayIso}_${nearest.classId}_${nearest.topic}_${nearest.startTime}`;
+        if (!firedReminders.includes(remKey)) {
+          firedReminders.push(remKey);
+          localStorage.setItem('diary_fired_reminds', JSON.stringify(firedReminders));
+          sendTgDirect(
+            myProfile.tgId,
+            `⏰ Напоминание об уроке!\nЧерез ${minDiff} мин начинается: ${nearest.topic}\n🕒 Время: ${nearest.startTime || nearest.time}${roomTxt}`
+          );
+        }
+      }
     }
 
     // --- НОВОСТИ КЛАССА ---
@@ -1054,11 +1247,10 @@
       renderClassNews();
     }
 
-    // --- 1. НЕДЕЛЬНЫЙ КАЛЕНДАРЬ И ВЫБОР МЕСЯЦА ---
+    // --- КАЛЕНДАРЬ И УРОКИ ---
     function toggleMonthPicker() {
       const box = document.getElementById('monthPickerBox');
-      const isHidden = box.classList.contains('hidden');
-      if (!isHidden) {
+      if (!box.classList.contains('hidden')) {
         box.classList.add('hidden');
         return;
       }
@@ -1077,8 +1269,7 @@
     }
 
     function toggleInlineLessonForm() {
-      const form = document.getElementById('inlineLessonForm');
-      form.classList.toggle('hidden');
+      document.getElementById('inlineLessonForm').classList.toggle('hidden');
     }
 
     function getLessonsForDate(dateStr) {
@@ -1221,7 +1412,7 @@
       renderWeekCalendarAndLessons();
     }
 
-    // --- 2. СДАЧА ДЗ (ДЛЯ УЧЕНИКОВ) ---
+    // --- СДАЧА ДЗ ---
     async function sendHomework() {
       const subj = document.getElementById('inpHwSubj').value.trim() || 'Общий';
       const text = document.getElementById('inpHwBody').value.trim();
@@ -1279,7 +1470,7 @@
       `).join('');
     }
 
-    // --- 3. ЧАТ ---
+    // --- ЧАТ ---
     function renderChatSection() {
       const contactsView = document.getElementById('dmTeacherContactsView');
       const convView = document.getElementById('dmConversationView');
@@ -1318,7 +1509,7 @@
       if (!filtered.length) {
         box.innerHTML = `
           <div class="card muted" style="text-align:center; padding:24px 16px;">
-            Учеников пока нет. Нажмите <b>«➕ Ученик»</b> сверху, чтобы добавить ученика и начать диалог.
+            Учеников пока нет. Нажмите <b>«+ Ученик»</b> сверху, чтобы добавить ученика и начать диалог.
           </div>
         `;
         return;
@@ -1423,10 +1614,15 @@
       if (!isTeacher) {
         const stName = myProfile ? myProfile.name : 'Ученик';
         notifyTeacher(`💬 Сообщение от ${stName}:\n${text}`);
+      } else {
+        const st = db.students.find(s => String(s.id) === String(targetId));
+        if (st && st.tgId) {
+          sendTgDirect(st.tgId, `💬 Новое сообщение от преподавателя:\n${text}`);
+        }
       }
     }
 
-    // --- 4. УПРАВЛЕНИЕ УЧИТЕЛЯ ---
+    // --- УПРАВЛЕНИЕ УЧИТЕЛЯ ---
     function switchTeacherSub(subId, btn) {
       ['t-classes', 't-inbox', 't-settings'].forEach(s => {
         const el = document.getElementById(s);
@@ -1509,7 +1705,7 @@
           <div class="st-row ${isSel ? 'selected' : ''}">
             <input type="checkbox" class="st-check" ${isSel ? 'checked' : ''} onchange="toggleStudentSelection('${sid}')" />
             <div class="st-info" onclick="toggleStudentSelection('${sid}')" style="cursor:pointer;">
-              <div class="st-name">${s.name}</div>
+              <div class="st-name">${s.name} ${s.tgId ? '🔔' : ''}</div>
               <div class="st-classes">${clsBadges || '<span class="chip-warn">⏳ Ждёт класс</span>'}</div>
             </div>
             <button type="button" class="mini-btn" onclick="openChatDirectly('${sid}')">💬 Чат</button>
@@ -1547,15 +1743,18 @@
       if (!cls) return alert('Сначала создайте класс!');
 
       let count = 0;
-      db.students.forEach(s => {
+      for (const s of db.students) {
         if (selectedStudentIds.has(String(s.id))) {
           if (!s.classes) s.classes = [];
           if (!s.classes.includes(targetClassId)) {
             s.classes.push(targetClassId);
             count++;
+            if (s.tgId) {
+              sendTgDirect(s.tgId, `🎓 Преподаватель добавил вас в класс «${cls.name}»! Откройте «Мой дневник», чтобы посмотреть расписание.`);
+            }
           }
         }
-      });
+      }
       await saveCloudDB();
       selectedStudentIds.clear();
       renderTeacherControls();
@@ -1653,20 +1852,30 @@
       sub.teacherGrade = document.getElementById(`revGr_${idx}`).value;
       sub.teacherComment = document.getElementById(`revCm_${idx}`).value.trim();
       await saveCloudDB();
+
+      const st = db.students.find(s => String(s.id) === String(sub.studentId));
+      if (st && st.tgId) {
+        const gTxt = sub.teacherGrade ? `\nОценка: ${sub.teacherGrade}` : '';
+        const cTxt = sub.teacherComment ? `\nКомментарий: ${sub.teacherComment}` : '';
+        sendTgDirect(st.tgId, `✅ Преподаватель проверил ваше ДЗ (${sub.subject || 'Работа'})!${gTxt}${cTxt}`);
+      }
+
       renderTeacherControls();
-      alert('✅ Ответ сохранён!');
+      alert('✅ Ответ сохранён и отправлен ученику!');
     }
 
     async function teacherPublishNews() {
       const classId = document.getElementById('tNewsClass').value;
       const text = document.getElementById('tNewsText').value.trim();
       if (!classId || !text) return alert('Выберите класс и введите текст новости!');
+      const cls = db.classes.find(c => c.id === classId);
       const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
       db.news.unshift({ id: 'nw_' + Date.now(), classId, text, time });
       await saveCloudDB();
+      await notifyClassStudents(classId, `📢 Новое объявление (${cls ? cls.name : 'Класс'}):\n${text}`);
       document.getElementById('tNewsText').value = '';
       renderClassNews();
-      alert('✅ Новость опубликована!');
+      alert('✅ Новость опубликована и отправлена ученикам в Telegram!');
     }
 
     async function createNewClass() {
@@ -1701,6 +1910,7 @@
       const task = document.getElementById('tLesTask').value.trim() || (teacherPickedFile ? 'Выполнить задания из прикрепленных материалов' : 'Без задания');
       if (!classId || !topic) return alert('Выберите класс и укажите предмет!');
 
+      const cls = db.classes.find(c => c.id === classId);
       db.lessons.push({
         classId,
         lessonNum,
@@ -1714,6 +1924,14 @@
         file: teacherPickedFile
       });
       await saveCloudDB();
+
+      // Рассылаем ученикам этого класса уведомление в Telegram о новом ДЗ
+      const whenTxt = repeatDay ? `по расписанию (${repeatDay})` : `на ${date}`;
+      await notifyClassStudents(
+        classId,
+        `📚 Новый урок и ДЗ (${cls ? cls.name : 'Класс'})\nПредмет: ${topic} (${whenTxt}, ${startTime})\n🏠 Задание: ${task}`
+      );
+
       ['tLesTopic', 'tLesTask'].forEach(id => document.getElementById(id).value = '');
       teacherPickedFile = null;
       document.getElementById('tFileInput').value = '';
@@ -1721,7 +1939,7 @@
       document.getElementById('inlineLessonForm').classList.add('hidden');
       if (!repeatDay) selectedDateStr = date;
       renderWeekCalendarAndLessons();
-      alert('✅ Урок добавлен!');
+      alert('✅ Урок добавлен, а ученикам класса отправлено уведомление в Telegram!');
     }
 
     async function teacherClearInbox() {
