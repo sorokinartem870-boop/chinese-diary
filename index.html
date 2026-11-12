@@ -17,7 +17,7 @@
       --accent-grad: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
       --ai-grad: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
       --border: #e2e8f0;
-      --shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
       --green: #10b981;
       --amber: #f59e0b;
       --red: #ef4444;
@@ -31,10 +31,10 @@
       --accent: #3b82f6;
       --accent-soft: rgba(59, 130, 246, 0.16);
       --border: #222d42;
-      --shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+      --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 86px; }
+    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 88px; }
 
     /* Экраны входа и ожидания */
     .gate-wrap {
@@ -44,9 +44,9 @@
     .gate-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
       padding: 32px 24px; width: 100%; max-width: 400px; box-shadow: var(--shadow);
-      animation: fadeUp 0.35s ease;
+      animation: fadeUp 0.3s ease;
     }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     .brand-logo {
       width: 68px; height: 68px; border-radius: 22px; background: var(--accent-grad);
       color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center;
@@ -55,29 +55,29 @@
     .gate-card h1 { margin: 0 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
     .gate-card p { margin: 0 0 22px; color: var(--text-sec); font-size: 14px; line-height: 1.5; }
     .field {
-      width: 100%; padding: 13px 15px; border-radius: 14px; border: 1.5px solid var(--border);
-      background: var(--surface-soft); color: var(--text); font-size: 14.5px; margin-bottom: 12px; outline: none;
-      transition: border-color 0.2s;
+      width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--border);
+      background: var(--surface-soft); color: var(--text); font-size: 14px; margin-bottom: 10px; outline: none;
     }
     .field:focus { border-color: var(--accent); }
     .btn-main {
-      width: 100%; padding: 14px; border-radius: 14px; border: none;
-      background: var(--accent-grad); color: #fff; font-size: 15px; font-weight: 700;
-      cursor: pointer; box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25); transition: transform 0.1s;
+      width: 100%; padding: 13px; border-radius: 14px; border: none;
+      background: var(--accent-grad); color: #fff; font-size: 14.5px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
     }
+    .btn-main:disabled { opacity: 0.6; cursor: wait; }
     .btn-main:active { transform: scale(0.98); }
     .btn-ai {
-      width: 100%; padding: 14px; border-radius: 14px; border: none;
-      background: var(--ai-grad); color: #fff; font-size: 15px; font-weight: 700;
+      width: 100%; padding: 13px; border-radius: 14px; border: none;
+      background: var(--ai-grad); color: #fff; font-size: 14.5px; font-weight: 700;
       cursor: pointer; box-shadow: 0 6px 18px rgba(124, 58, 237, 0.28);
     }
     .btn-sec {
-      width: 100%; padding: 12px; border-radius: 14px; border: 1.5px solid var(--border);
-      background: transparent; color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer;
+      width: 100%; padding: 11px; border-radius: 14px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--text); font-size: 13.5px; font-weight: 600; cursor: pointer;
     }
     .btn-ghost {
       background: none; border: none; color: var(--text-sec); font-size: 13px; font-weight: 600;
-      margin-top: 16px; cursor: pointer;
+      margin-top: 16px; cursor: pointer; display: inline-block;
     }
     .status-badge {
       display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 20px;
@@ -101,7 +101,7 @@
     .user-sub { font-size: 12px; color: var(--text-sec); }
     .role-tag {
       padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700;
-      background: var(--accent-soft); color: var(--accent);
+      background: var(--accent-soft); color: var(--accent); cursor: pointer;
     }
 
     /* Полоса твоих классов */
@@ -117,22 +117,67 @@
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
 
+    /* Фильтр дней недели */
+    .day-filter { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 12px; padding-bottom: 2px; }
+    .day-filter::-webkit-scrollbar { display: none; }
+    .day-chip {
+      padding: 7px 13px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-sec); font-size: 12.5px; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+    }
+    .day-chip.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+
     /* Контейнер контента */
     .main-area { max-width: 640px; margin: 0 auto; padding: 16px; }
-    .section-title { font-size: 18px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.3px; }
+    .section-title { font-size: 17.5px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.3px; }
     .card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
       padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow);
     }
-    .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
     .card-title { font-size: 15.5px; font-weight: 700; margin: 0; }
     .chip {
       display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
       background: var(--accent-soft); color: var(--accent);
     }
+    .chip-warn {
+      display: inline-block; padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 700;
+      background: rgba(245, 158, 11, 0.14); color: #d97706;
+    }
     .muted { color: var(--text-sec); font-size: 13px; line-height: 1.45; }
 
-    /* Bento-сетка статистики */
+    /* Массовое управление учениками */
+    .st-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 12px; border-radius: 14px; border: 1.5px solid var(--border);
+      background: var(--surface-soft); margin-bottom: 8px; transition: border-color 0.15s;
+    }
+    .st-row.selected { border-color: var(--accent); background: var(--accent-soft); }
+    .st-check { width: 19px; height: 19px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .st-info { flex: 1; min-width: 0; }
+    .st-name { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .st-classes { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .mini-btn {
+      padding: 6px 10px; border-radius: 9px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text); font-size: 12px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .bulk-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .btn-danger-soft {
+      padding: 11px; border-radius: 12px; border: none; background: rgba(239, 68, 68, 0.12);
+      color: var(--red); font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+
+    /* Блок новостей класса */
+    .news-card {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.06) 100%);
+      border: 1.5px solid rgba(245, 158, 11, 0.35);
+      border-radius: 18px; padding: 14px 16px; margin-bottom: 14px;
+    }
+    .news-item { padding: 8px 0; border-bottom: 1px solid rgba(245, 158, 11, 0.2); }
+    .news-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    /* Bento-сетка */
     .bento-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
     .bento-box {
       background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
@@ -141,7 +186,7 @@
     .bento-val { font-size: 24px; font-weight: 800; margin: 4px 0 2px; letter-spacing: -0.5px; }
     .bento-lbl { font-size: 12px; color: var(--text-sec); font-weight: 600; }
 
-    /* Графики (SVG и столбцы) */
+    /* Графики */
     .chart-box { width: 100%; overflow: hidden; padding-top: 6px; }
     .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .bar-lbl { width: 95px; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -149,16 +194,48 @@
     .bar-fill { height: 100%; border-radius: 99px; background: var(--accent-grad); transition: width 0.5s ease; }
     .bar-num { width: 32px; text-align: right; font-size: 13px; font-weight: 800; }
 
-    /* Карточки уроков */
+    /* Уроки и вложения */
     .lesson-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
       padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow);
       border-left: 4px solid var(--accent);
     }
+    .lesson-card.done { border-left-color: var(--green); opacity: 0.85; }
     .hw-banner {
       margin-top: 10px; padding: 10px 12px; border-radius: 12px;
-      background: var(--surface-soft); font-size: 13.5px;
+      background: var(--surface-soft); font-size: 13.5px; line-height: 1.45;
     }
+    .file-attach-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 11px; border-radius: 12px; border: 1.5px dashed var(--border);
+      background: var(--surface-soft); color: var(--text); font-size: 13px; font-weight: 600;
+      cursor: pointer; margin-bottom: 12px;
+    }
+    .file-download {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
+      padding: 7px 12px; border-radius: 10px; background: var(--accent-soft);
+      color: var(--accent); font-size: 12.5px; font-weight: 700; text-decoration: none;
+    }
+    .preview-img {
+      max-width: 100%; max-height: 220px; border-radius: 12px; margin-top: 8px; display: block;
+    }
+    .review-box {
+      margin-top: 10px; padding: 10px 12px; border-radius: 12px;
+      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);
+      font-size: 13px;
+    }
+
+    /* Личные сообщения */
+    .dm-thread {
+      max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+      padding: 10px; background: var(--surface-soft); border-radius: 14px; margin-bottom: 10px;
+    }
+    .dm-msg {
+      max-width: 84%; padding: 9px 13px; border-radius: 14px; font-size: 13.5px; line-height: 1.4;
+    }
+    .dm-mine { align-self: flex-end; background: var(--accent-grad); color: #fff; border-bottom-right-radius: 4px; }
+    .dm-other { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .dm-meta { font-size: 10px; opacity: 0.75; margin-top: 3px; }
 
     /* Оценки */
     .grade-pill {
@@ -174,7 +251,7 @@
     .opt-btn {
       width: 100%; text-align: left; padding: 13px 15px; border-radius: 14px;
       border: 1.5px solid var(--border); background: var(--surface-soft); color: var(--text);
-      font-size: 14px; font-weight: 600; margin-bottom: 9px; cursor: pointer; transition: all 0.15s;
+      font-size: 14px; font-weight: 600; margin-bottom: 9px; cursor: pointer;
     }
     .opt-btn.correct { background: rgba(16, 185, 129, 0.15); border-color: var(--green); color: var(--green); }
     .opt-btn.wrong { background: rgba(239, 68, 68, 0.15); border-color: var(--red); color: var(--red); }
@@ -185,20 +262,20 @@
     .navbar {
       position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface);
       border-top: 1px solid var(--border); display: flex; justify-content: space-around;
-      padding: 8px 4px 12px; z-index: 30;
+      padding: 8px 2px 12px; z-index: 30;
     }
     .nav-item {
-      background: none; border: none; color: var(--text-sec); font-size: 11px; font-weight: 600;
-      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1;
+      background: none; border: none; color: var(--text-sec); font-size: 10.5px; font-weight: 600;
+      display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; flex: 1;
     }
     .nav-item.active { color: var(--accent); font-weight: 800; }
-    .nav-ico { font-size: 20px; }
+    .nav-ico { font-size: 19px; }
 
     /* Подвкладки учителя */
     .sub-tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; scrollbar-width: none; }
     .sub-tabs::-webkit-scrollbar { display: none; }
     .sub-tab {
-      padding: 8px 14px; border-radius: 11px; border: 1px solid var(--border);
+      padding: 8px 13px; border-radius: 11px; border: 1px solid var(--border);
       background: var(--surface); color: var(--text-sec); font-size: 12.5px; font-weight: 700;
       cursor: pointer; white-space: nowrap;
     }
@@ -208,6 +285,11 @@
       background: rgba(239, 68, 68, 0.1); color: var(--red); border: none;
       border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
+    .done-btn {
+      background: var(--surface-soft); color: var(--text-sec); border: 1px solid var(--border);
+      border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .done-btn.checked { background: rgba(16, 185, 129, 0.15); color: var(--green); border-color: var(--green); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -219,9 +301,9 @@
       <div class="brand-logo">🎓</div>
       <h1>EduSpace Дневник</h1>
       <p>Введите ваши <b>Имя и Фамилию</b>, чтобы отправить заявку и получить доступ к своим классам.</p>
-      <input id="inpRegName" class="field" placeholder="Например: Артём Сорокин" />
-      <button class="btn-main" onclick="registerStudent()">Продолжить</button>
-      <button class="btn-ghost" onclick="loginTeacherModal()">Вход для преподавателя</button>
+      <input id="inpRegName" type="text" class="field" placeholder="Например: Артём Сорокин" />
+      <button type="button" id="btnRegSubmit" class="btn-main" onclick="registerStudent()">Продолжить</button>
+      <button type="button" class="btn-ghost" onclick="loginTeacherModal()">Вход для преподавателя</button>
     </div>
   </div>
 
@@ -232,9 +314,9 @@
       <h1>Ожидание подтверждения</h1>
       <p id="waitDesc">Ваша заявка отправлена преподавателю. Как только вас добавят в класс, откроется доступ ко всем материалам.</p>
       <div class="status-badge"><span class="dot-pulse"></span>Ожидает добавления в класс</div>
-      <button class="btn-main" onclick="refreshAccess()">Обновить статус</button>
-      <button class="btn-ghost" onclick="changeStudentName()">Изменить имя и фамилию</button><br/>
-      <button class="btn-ghost" onclick="loginTeacherModal()">Вход для преподавателя</button>
+      <button type="button" id="btnRefreshAccess" class="btn-main" onclick="refreshAccess()">Обновить статус</button>
+      <button type="button" class="btn-ghost" onclick="changeStudentName()">Изменить имя и фамилию</button><br/>
+      <button type="button" class="btn-ghost" onclick="loginTeacherModal()">Вход для преподавателя</button>
     </div>
   </div>
 
@@ -246,7 +328,7 @@
           <div class="user-ava" id="avaLetter">У</div>
           <div>
             <div class="user-name" id="topUserName">Ученик</div>
-            <div class="user-sub" id="topClassHint">Ваши активные классы</div>
+            <div class="user-sub" id="topClassHint">Ваши классы</div>
           </div>
         </div>
         <span class="role-tag" id="topRoleTag" onclick="loginTeacherModal()">Ученик</span>
@@ -256,8 +338,10 @@
     </div>
 
     <div class="main-area">
-      <!-- ВКЛАДКА 1: УРОКИ И РАСПИСАНИЕ -->
+      <!-- ВКЛАДКА 1: УРОКИ, НОВОСТИ И ФИЛЬТР ПО ДНЯМ -->
       <div id="sec-lessons">
+        <div id="classNewsBanner" class="news-card hidden"></div>
+
         <div class="bento-grid">
           <div class="bento-box">
             <div class="bento-lbl">Средний балл</div>
@@ -270,10 +354,22 @@
             <div class="muted" style="font-size:11.5px;">доступно в классе</div>
           </div>
         </div>
+
         <div class="card-head">
           <h2 class="section-title" style="margin:0;">Расписание и задания</h2>
           <span class="chip" id="activeClassBadge">Класс</span>
         </div>
+
+        <div class="day-filter" id="dayFilterBar">
+          <button type="button" class="day-chip active" onclick="setDayFilter('Все', this)">Все дни</button>
+          <button type="button" class="day-chip" onclick="setDayFilter('Понедельник', this)">Пн</button>
+          <button type="button" class="day-chip" onclick="setDayFilter('Вторник', this)">Вт</button>
+          <button type="button" class="day-chip" onclick="setDayFilter('Среда', this)">Ср</button>
+          <button type="button" class="day-chip" onclick="setDayFilter('Четверг', this)">Чт</button>
+          <button type="button" class="day-chip" onclick="setDayFilter('Пятница', this)">Пт</button>
+          <button type="button" class="day-chip" onclick="setDayFilter('Суббота', this)">Сб</button>
+        </div>
+
         <div id="lessonsFeed"></div>
       </div>
 
@@ -297,7 +393,7 @@
         <div id="gradesFeed"></div>
       </div>
 
-      <!-- ВКЛАДКА 3: ТЕСТЫ (ТОЛЬКО ПРОХОЖДЕНИЕ ДЛЯ УЧЕНИКОВ) -->
+      <!-- ВКЛАДКА 3: ТЕСТЫ -->
       <div id="sec-tests" class="hidden">
         <div id="testsListView">
           <div class="card-head">
@@ -309,46 +405,107 @@
         <div id="testPlayerView" class="hidden card"></div>
       </div>
 
-      <!-- ВКЛАДКА 4: СДАТЬ ДЗ / ПРОПУСК -->
+      <!-- ВКЛАДКА 4: СДАТЬ ДЗ И МОИ СДАННЫЕ РАБОТЫ С КОММЕНТАРИЯМИ -->
       <div id="sec-submit" class="hidden">
         <h2 class="section-title">Отправка домашней работы</h2>
         <div class="card">
-          <div class="muted" style="margin-bottom:10px;">Работа будет прикреплена к вашему профилю и активному классу.</div>
+          <div class="muted" style="margin-bottom:10px;">Вы можете написать ответ, вставить ссылку или прикрепить фото/файл (до 1.5 МБ).</div>
           <input id="inpHwSubj" class="field" placeholder="Предмет (например: Алгебра)" />
-          <textarea id="inpHwBody" class="field" rows="4" placeholder="Введите ответ, решение или ссылку на файл..."></textarea>
-          <button class="btn-main" onclick="sendHomework()">Отправить на проверку</button>
+          <textarea id="inpHwBody" class="field" rows="3" placeholder="Текст ответа или ссылка..."></textarea>
+          <label class="file-attach-btn">
+            <span>📎 <span id="stFileLabel">Прикрепить файл или фото (до 1.5 МБ)</span></span>
+            <input type="file" id="stFileInput" style="display:none;" onchange="handleFilePick(this, 'student')" />
+          </label>
+          <button type="button" class="btn-main" onclick="sendHomework()">Отправить на проверку</button>
         </div>
+
+        <h2 class="section-title" style="margin-top:18px;">Мои сданные работы и комментарии</h2>
+        <div id="mySubmissionsFeed"></div>
+
         <h2 class="section-title" style="margin-top:18px;">Уведомление об отсутствии</h2>
         <div class="card">
           <input id="inpSkipBody" class="field" placeholder="Укажите причину пропуска (болезнь, олимпиада...)" />
-          <button class="btn-sec" onclick="sendAbsence()">Сообщить преподавателю</button>
+          <button type="button" class="btn-sec" onclick="sendAbsence()">Сообщить преподавателю</button>
         </div>
       </div>
 
-      <!-- ВКЛАДКА 5: ПАНЕЛЬ УЧИТЕЛЯ (ТОЛЬКО ДЛЯ УЧИТЕЛЯ) -->
+      <!-- ВКЛАДКА 5: ЛИЧНЫЕ СООБЩЕНИЯ -->
+      <div id="sec-messages" class="hidden">
+        <h2 class="section-title">Личные сообщения</h2>
+        <div class="card">
+          <div id="dmRecipientBar" class="hidden" style="margin-bottom:10px;">
+            <label class="muted" style="display:block; margin-bottom:4px;">Диалог с учеником:</label>
+            <select id="dmStudentSelect" class="field" style="margin-bottom:0;" onchange="renderDirectMessages()"></select>
+          </div>
+          <div id="dmHeaderHint" class="muted" style="margin-bottom:8px;">Личный чат с преподавателем</div>
+          <div id="dmThreadBox" class="dm-thread"></div>
+          <div style="display:flex; gap:8px;">
+            <input id="dmInputText" class="field" style="margin-bottom:0;" placeholder="Напишите личное сообщение..." onkeydown="if(event.key==='Enter') sendDirectMessage()" />
+            <button type="button" class="btn-main" style="width:auto; padding:0 18px;" onclick="sendDirectMessage()">➤</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВКЛАДКА 6: ПАНЕЛЬ УЧИТЕЛЯ -->
       <div id="sec-teacher" class="hidden">
         <div class="sub-tabs">
-          <button class="sub-tab active" onclick="switchTeacherSub('t-classes', this)">🏫 Классы и ученики</button>
-          <button class="sub-tab" onclick="switchTeacherSub('t-ai', this)">✨ Конструктор тестов</button>
-          <button class="sub-tab" onclick="switchTeacherSub('t-lessons', this)">📅 Уроки и оценки</button>
-          <button class="sub-tab" onclick="switchTeacherSub('t-inbox', this)">📥 Входящие ДЗ</button>
+          <button type="button" class="sub-tab active" onclick="switchTeacherSub('t-classes', this)">👥 Ученики и классы</button>
+          <button type="button" class="sub-tab" onclick="switchTeacherSub('t-ai', this)">✨ Конструктор тестов</button>
+          <button type="button" class="sub-tab" onclick="switchTeacherSub('t-lessons', this)">📅 Уроки и оценки</button>
+          <button type="button" class="sub-tab" onclick="switchTeacherSub('t-inbox', this)">📥 Проверка ДЗ</button>
         </div>
 
-        <!-- Подвкладка 1: Классы и ученики -->
+        <!-- Подвкладка 1: Массовое управление учениками, классы и новости -->
         <div id="t-classes">
+          <!-- МАССОВОЕ УПРАВЛЕНИЕ УЧЕНИКАМИ -->
           <div class="card">
-            <h3 class="card-title" style="margin-bottom:10px;">Создать новый класс</h3>
-            <input id="tNewClassName" class="field" placeholder="Название класса (напр. 8А или Программирование)" />
-            <button class="btn-main" onclick="createNewClass()">Создать класс</button>
+            <div class="card-head" style="margin-bottom:8px;">
+              <h3 class="card-title">👥 Управление учениками</h3>
+              <span class="chip" id="tSelectedCountBadge">Выбрано: 0</span>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
+              <select id="tStudentFilter" class="field" style="margin-bottom:0;" onchange="renderTeacherStudentManager()">
+                <option value="all">Все ученики</option>
+                <option value="pending">⏳ Новые заявки (без класса)</option>
+              </select>
+              <button type="button" class="btn-sec" style="width:auto; white-space:nowrap; padding:0 12px;" onclick="toggleSelectAllStudents()">Выбрать всех</button>
+            </div>
+
+            <div id="tStudentsChecklist" style="max-height:290px; overflow-y:auto; margin-bottom:10px;"></div>
+
+            <div style="padding-top:10px; border-top:1px solid var(--border);">
+              <label class="muted" style="display:block; margin-bottom:5px; font-weight:600;">Действие для выбранных учеников:</label>
+              <select id="tBulkTargetClass" class="field"></select>
+              <div class="bulk-actions">
+                <button type="button" class="btn-main" style="padding:11px; font-size:13px;" onclick="bulkAddStudentsToClass()">➕ Добавить в класс</button>
+                <button type="button" class="btn-sec" style="padding:11px; font-size:13px;" onclick="bulkTransferStudentsToClass()">🔄 Перевести в класс</button>
+                <button type="button" class="btn-danger-soft" onclick="bulkRemoveFromTargetClass()">➖ Исключить из класса</button>
+                <button type="button" class="btn-danger-soft" onclick="bulkDeleteStudents()">🗑 Удалить из базы</button>
+              </div>
+            </div>
           </div>
+
+          <!-- ИНДИВИДУАЛЬНАЯ КАРТОЧКА УСПЕВАЕМОСТИ УЧЕНИКА -->
+          <div id="tStudentProfileModal" class="card hidden" style="border: 1.5px solid var(--accent);"></div>
+
           <div class="card">
-            <h3 class="card-title" style="margin-bottom:10px;">Добавить ученика в класс</h3>
-            <div id="tAssignArea" class="muted">Загрузка списка...</div>
+            <h3 class="card-title" style="margin-bottom:10px;">🏫 Создать новый класс</h3>
+            <input id="tNewClassName" class="field" placeholder="Название класса (напр. 8А или Английский)" />
+            <button type="button" class="btn-sec" onclick="createNewClass()">Создать класс</button>
           </div>
+
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">📢 Опубликовать новость класса</h3>
+            <select id="tNewsClass" class="field"></select>
+            <textarea id="tNewsText" class="field" rows="2" placeholder="Текст объявления для учеников класса..."></textarea>
+            <button type="button" class="btn-main" onclick="teacherPublishNews()">Опубликовать новость</button>
+          </div>
+
           <div class="card">
             <h3 class="card-title" style="margin-bottom:8px;">Уведомления в Telegram</h3>
             <p class="muted" id="tTgStatus" style="margin-bottom:10px;">Привяжите аккаунт, чтобы получать уведомления о новых заявках и ДЗ.</p>
-            <button class="btn-sec" onclick="bindTeacherTg()">Привязать мой Telegram</button>
+            <button type="button" class="btn-sec" onclick="bindTeacherTg()">Привязать мой Telegram</button>
           </div>
         </div>
 
@@ -359,7 +516,7 @@
               <h3 class="card-title">✨ ИИ-генератор тестов</h3>
               <span class="chip" style="background:rgba(124,58,237,0.12); color:#7c3aed;">Только учитель</span>
             </div>
-            <p class="muted" style="margin-bottom:12px;">Выберите класс, укажите тему и сложность — ИИ автоматически составит вопросы и проверит их логику.</p>
+            <p class="muted" style="margin-bottom:12px;">Выберите класс, укажите тему и сложность — ИИ автоматически составит вопросы.</p>
             <select id="tAiClass" class="field"></select>
             <input id="tAiTopic" class="field" placeholder="Предмет и тема (напр. История: Петр I)" />
             <div style="display:flex; gap:8px;">
@@ -374,7 +531,7 @@
                 <option value="7">7 вопросов</option>
               </select>
             </div>
-            <button class="btn-ai" id="tAiBtn" onclick="teacherGenerateAITest()">✨ Сгенерировать тест с ИИ</button>
+            <button type="button" class="btn-ai" id="tAiBtn" onclick="teacherGenerateAITest()">✨ Сгенерировать тест с ИИ</button>
           </div>
 
           <div class="card">
@@ -385,14 +542,14 @@
             <input id="tManO1" class="field" placeholder="Правильный ответ" />
             <input id="tManO2" class="field" placeholder="Неправильный вариант 1" />
             <input id="tManO3" class="field" placeholder="Неправильный вариант 2" />
-            <button class="btn-sec" onclick="teacherAddManualQuestion()">Добавить вопрос в тест</button>
+            <button type="button" class="btn-sec" onclick="teacherAddManualQuestion()">Добавить вопрос в тест</button>
           </div>
         </div>
 
         <!-- Подвкладка 3: Уроки и оценки -->
         <div id="t-lessons" class="hidden">
           <div class="card">
-            <h3 class="card-title" style="margin-bottom:10px;">Добавить урок и ДЗ</h3>
+            <h3 class="card-title" style="margin-bottom:10px;">Добавить урок и ДЗ (текст + файл)</h3>
             <select id="tLesClass" class="field"></select>
             <div style="display:flex; gap:8px;">
               <select id="tLesDay" class="field">
@@ -402,8 +559,12 @@
               <input id="tLesTime" class="field" placeholder="Время (08:30)" />
             </div>
             <input id="tLesTopic" class="field" placeholder="Предмет и тема урока" />
-            <input id="tLesTask" class="field" placeholder="Домашнее задание" />
-            <button class="btn-main" onclick="teacherCreateLesson()">Опубликовать урок</button>
+            <textarea id="tLesTask" class="field" rows="3" placeholder="Домашнее задание (текст или ссылка)..."></textarea>
+            <label class="file-attach-btn">
+              <span>📎 <span id="tFileLabel">Прикрепить файл или фото к ДЗ (до 1.5 МБ)</span></span>
+              <input type="file" id="tFileInput" style="display:none;" onchange="handleFilePick(this, 'teacher')" />
+            </label>
+            <button type="button" class="btn-main" onclick="teacherCreateLesson()">Опубликовать урок</button>
           </div>
 
           <div class="card">
@@ -419,15 +580,15 @@
               </select>
               <input id="tGrComment" class="field" placeholder="Комментарий" />
             </div>
-            <button class="btn-main" onclick="teacherCreateGrade()">Поставить оценку</button>
+            <button type="button" class="btn-main" onclick="teacherCreateGrade()">Поставить оценку</button>
           </div>
         </div>
 
         <!-- Подвкладка 4: Входящие ДЗ -->
         <div id="t-inbox" class="hidden">
           <div class="card-head">
-            <h3 class="section-title" style="margin:0;">Сданные работы</h3>
-            <button class="del-btn" onclick="teacherClearInbox()">Очистить</button>
+            <h3 class="section-title" style="margin:0;">Проверка работ учеников</h3>
+            <button type="button" class="del-btn" onclick="teacherClearInbox()">Очистить</button>
           </div>
           <div id="tInboxList"></div>
         </div>
@@ -436,11 +597,12 @@
 
     <!-- НИЖНЯЯ НАВИГАЦИЯ СЕРВИСА -->
     <nav class="navbar">
-      <button class="nav-item active" onclick="switchTab('lessons', this)"><span class="nav-ico">📅</span>Уроки</button>
-      <button class="nav-item" onclick="switchTab('analytics', this)"><span class="nav-ico">📈</span>Графики</button>
-      <button class="nav-item" onclick="switchTab('tests', this)"><span class="nav-ico">📝</span>Тесты</button>
-      <button class="nav-item" onclick="switchTab('submit', this)"><span class="nav-ico">📤</span>Сдать ДЗ</button>
-      <button class="nav-item hidden" id="navTeacherBtn" onclick="switchTab('teacher', this)"><span class="nav-ico">⚙️</span>Управление</button>
+      <button type="button" class="nav-item active" onclick="switchTab('lessons', this)"><span class="nav-ico">📅</span>Уроки</button>
+      <button type="button" class="nav-item" onclick="switchTab('analytics', this)"><span class="nav-ico">📈</span>Графики</button>
+      <button type="button" class="nav-item" onclick="switchTab('tests', this)"><span class="nav-ico">📝</span>Тесты</button>
+      <button type="button" class="nav-item" onclick="switchTab('submit', this)"><span class="nav-ico">📤</span>Сдать ДЗ</button>
+      <button type="button" class="nav-item" onclick="switchTab('messages', this)"><span class="nav-ico">💬</span>Чат</button>
+      <button type="button" class="nav-item hidden" id="navTeacherBtn" onclick="switchTab('teacher', this)"><span class="nav-ico">⚙️</span>Учитель</button>
     </nav>
   </div>
 
@@ -452,22 +614,15 @@
     const tg = window.Telegram && window.Telegram.WebApp;
     let currentTgUserId = null;
 
-    function haptic(type = 'light') {
+    if (tg) {
       try {
-        if (tg && tg.HapticFeedback) {
-          if (type === 'success' || type === 'error') tg.HapticFeedback.notificationOccurred(type);
-          else tg.HapticFeedback.impactOccurred(type);
+        tg.ready();
+        tg.expand();
+        if (tg.colorScheme === 'dark') document.body.classList.add('dark');
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+          currentTgUserId = tg.initDataUnsafe.user.id;
         }
       } catch (e) {}
-    }
-
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      if (tg.colorScheme === 'dark') document.body.classList.add('dark');
-      if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        currentTgUserId = tg.initDataUnsafe.user.id;
-      }
     }
 
     let myStudentId = localStorage.getItem('diary_student_id');
@@ -483,49 +638,116 @@
       grades: [],
       tests: [],
       submissions: [],
+      news: [],
+      messages: [],
       teacherChatId: null
     };
 
     let isTeacher = false;
     let activeClassId = null;
+    let selectedDayFilter = 'Все';
     let myProfile = null;
+    let teacherPickedFile = null;
+    let studentPickedFile = null;
+    let completedLessons = JSON.parse(localStorage.getItem('diary_done_lessons') || '[]');
+    let selectedStudentIds = new Set();
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 4500) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(timer);
+        return res;
+      } catch (e) {
+        clearTimeout(timer);
+        throw e;
+      }
+    }
 
     async function loadCloudDB() {
       try {
-        const res = await fetch(`${DB_URL}/diary_v2.json`);
+        const local = localStorage.getItem('diary_v2_cache');
+        if (local) Object.assign(db, JSON.parse(local));
+      } catch (e) {}
+
+      try {
+        const res = await fetchWithTimeout(`${DB_URL}/diary_v2.json`);
         const data = await res.json();
-        if (data) {
+        if (data && typeof data === 'object') {
           db.classes = data.classes || [];
           db.students = data.students || [];
           db.lessons = data.lessons || [];
           db.grades = data.grades || [];
           db.tests = data.tests || [];
           db.submissions = data.submissions || [];
+          db.news = data.news || [];
+          db.messages = data.messages || [];
           db.teacherChatId = data.teacherChatId || null;
+          localStorage.setItem('diary_v2_cache', JSON.stringify(db));
         }
       } catch (e) {}
     }
 
     async function saveCloudDB() {
-      await fetch(`${DB_URL}/diary_v2.json`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(db)
-      });
+      try { localStorage.setItem('diary_v2_cache', JSON.stringify(db)); } catch (e) {}
+      try {
+        await fetchWithTimeout(`${DB_URL}/diary_v2.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(db)
+        });
+      } catch (e) {}
     }
 
     async function notifyTeacher(text) {
       if (!db.teacherChatId) return;
       try {
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        await fetchWithTimeout(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ chat_id: db.teacherChatId, text })
-        });
+        }, 3000);
       } catch (e) {}
     }
 
-    // --- ИНИЦИАЛИЗАЦИЯ И ЭКРАНЫ ДОСТУПА ---
+    function handleFilePick(input, who) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      if (file.size > 1.5 * 1024 * 1024) {
+        alert('Файл слишком большой! Выберите файл или фото размером до 1.5 МБ.');
+        input.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const payload = { name: file.name, type: file.type, data: reader.result };
+        if (who === 'teacher') {
+          teacherPickedFile = payload;
+          document.getElementById('tFileLabel').innerText = `Прикреплено: ${file.name}`;
+        } else {
+          studentPickedFile = payload;
+          document.getElementById('stFileLabel').innerText = `Прикреплено: ${file.name}`;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function formatLinks(text) {
+      if (!text) return '';
+      return text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:var(--accent); font-weight:700;">Открыть ссылку ↗</a>');
+    }
+
+    function renderFileAttachment(fileObj) {
+      if (!fileObj || !fileObj.data) return '';
+      if (fileObj.type && fileObj.type.startsWith('image/')) {
+        return `<img src="${fileObj.data}" class="preview-img" alt="${fileObj.name}" />
+                <a href="${fileObj.data}" download="${fileObj.name}" class="file-download">📥 Скачать фото (${fileObj.name})</a>`;
+      }
+      return `<a href="${fileObj.data}" download="${fileObj.name}" class="file-download">📎 Скачать файл: ${fileObj.name}</a>`;
+    }
+
+    // --- ИНИЦИАЛИЗАЦИЯ ---
     async function boot() {
       await loadCloudDB();
       if (isTeacher) {
@@ -550,21 +772,42 @@
     }
 
     async function registerStudent() {
-      const name = document.getElementById('inpRegName').value.trim();
-      if (name.length < 3) return alert('Введите ваши Имя и Фамилию!');
-      haptic('medium');
-      await loadCloudDB();
-      const existing = db.students.find(s => s.id === myStudentId);
-      if (existing) existing.name = name;
-      else db.students.push({ id: myStudentId, name, classes: [], tgId: currentTgUserId });
-      await saveCloudDB();
-      await notifyTeacher(`🆕 Новая заявка в дневник:\n👤 ${name}\n\nОткройте «Управление» -> «Классы и ученики», чтобы добавить в класс.`);
-      boot();
+      const inp = document.getElementById('inpRegName');
+      const btn = document.getElementById('btnRegSubmit');
+      const name = inp.value.trim();
+      if (name.length < 2) {
+        alert('Введите ваши Имя и Фамилию!');
+        inp.focus();
+        return;
+      }
+      btn.disabled = true;
+      btn.innerText = 'Отправка заявки...';
+      try {
+        await loadCloudDB();
+        const existing = db.students.find(s => s.id === myStudentId);
+        if (existing) existing.name = name;
+        else db.students.push({ id: myStudentId, name, classes: [], tgId: currentTgUserId });
+        myProfile = db.students.find(s => s.id === myStudentId);
+        await saveCloudDB();
+        notifyTeacher(`🆕 Новая заявка в дневник:\n👤 ${name}\n\nОткройте «Учитель» -> «Ученики и классы», чтобы добавить в класс.`);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Продолжить';
+      }
+      if (myProfile && myProfile.classes && myProfile.classes.length > 0) enterService();
+      else {
+        document.getElementById('waitDesc').innerHTML = `<b>${name}</b>, ваша заявка отправлена преподавателю. Как только вас добавят в класс, откроется доступ ко всем материалам.`;
+        showView('viewWaiting');
+      }
     }
 
     async function refreshAccess() {
-      haptic('light');
+      const btn = document.getElementById('btnRefreshAccess');
+      btn.disabled = true;
+      btn.innerText = 'Проверка...';
       await boot();
+      btn.disabled = false;
+      btn.innerText = 'Обновить статус';
       if (myProfile && (!myProfile.classes || myProfile.classes.length === 0)) {
         alert('Преподаватель пока ещё не добавил вас в класс.');
       }
@@ -573,6 +816,7 @@
     async function changeStudentName() {
       await loadCloudDB();
       db.students = db.students.filter(s => s.id !== myStudentId);
+      myProfile = null;
       await saveCloudDB();
       showView('viewRegister');
     }
@@ -581,16 +825,13 @@
       if (isTeacher) return;
       const pin = prompt('Введите ПИН-код преподавателя:');
       if (pin === TEACHER_PIN) {
-        haptic('success');
         isTeacher = true;
         enterService();
       } else if (pin !== null) {
-        haptic('error');
         alert('Неверный ПИН-код');
       }
     }
 
-    // --- ВХОД В ОСНОВНОЙ СЕРВИС ---
     function enterService() {
       showView('viewService');
       const displayName = isTeacher ? 'Преподаватель' : (myProfile ? myProfile.name : 'Ученик');
@@ -605,46 +846,30 @@
 
     function renderTopClasses() {
       const box = document.getElementById('topClassesList');
-      let list = [];
-      if (isTeacher) {
-        list = db.classes;
-      } else if (myProfile && myProfile.classes) {
-        list = db.classes.filter(c => myProfile.classes.includes(c.id));
-      }
-
+      let list = isTeacher ? db.classes : (myProfile && myProfile.classes ? db.classes.filter(c => myProfile.classes.includes(c.id)) : []);
       if (!list.length) {
         activeClassId = null;
-        box.innerHTML = isTeacher
-          ? '<span class="muted" style="font-size:12.5px;">Нет классов — создайте первый во вкладке «Управление»</span>'
-          : '';
+        box.innerHTML = isTeacher ? '<span class="muted" style="font-size:12.5px;">Нет классов — создайте первый во вкладке «Учитель»</span>' : '';
         return;
       }
-
-      if (!activeClassId || !list.some(c => c.id === activeClassId)) {
-        activeClassId = list[0].id;
-      }
-
+      if (!activeClassId || !list.some(c => c.id === activeClassId)) activeClassId = list[0].id;
       box.innerHTML = list.map(c => `
-        <button class="cls-pill ${c.id === activeClassId ? 'active' : ''}" onclick="selectClass('${c.id}')">
-          ${c.name}
-        </button>
+        <button type="button" class="cls-pill ${c.id === activeClassId ? 'active' : ''}" onclick="selectClass('${c.id}')">${c.name}</button>
       `).join('');
     }
 
     function selectClass(id) {
-      haptic('light');
       activeClassId = id;
       renderTopClasses();
       renderAllData();
     }
 
     function switchTab(tab, btn) {
-      haptic('light');
-      ['lessons', 'analytics', 'tests', 'submit', 'teacher'].forEach(t => {
+      ['lessons', 'analytics', 'tests', 'submit', 'messages', 'teacher'].forEach(t => {
         document.getElementById('sec-' + t).classList.toggle('hidden', t !== tab);
       });
       document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
       loadCloudDB().then(() => {
         renderTopClasses();
         renderAllData();
@@ -657,33 +882,94 @@
       document.getElementById('activeClassBadge').innerText = clsName;
       document.getElementById('testsClassBadge').innerText = clsName;
 
+      renderClassNews();
       renderLessons();
       renderAnalyticsAndGrades();
       renderTestsCatalog();
+      renderMySubmissions();
+      renderDirectMessages();
       if (isTeacher) renderTeacherControls();
     }
 
-    // --- 1. УРОКИ И РАСПИСАНИЕ ---
-    function renderLessons() {
-      const feed = document.getElementById('lessonsFeed');
-      const items = db.lessons.map((l, idx) => ({ ...l, idx })).filter(l => l.classId === activeClassId);
+    // --- НОВОСТИ КЛАССА ---
+    function renderClassNews() {
+      const banner = document.getElementById('classNewsBanner');
+      const items = db.news.map((n, idx) => ({ ...n, idx })).filter(n => n.classId === activeClassId);
       if (!items.length) {
-        feed.innerHTML = '<div class="card muted">Для этого класса расписание пока не заполнено.</div>';
+        banner.classList.add('hidden');
         return;
       }
-      feed.innerHTML = items.map(l => `
-        <div class="lesson-card">
-          <div class="card-head" style="margin-bottom:6px;">
-            <div>
-              <span class="chip">${l.day}</span>
-              ${l.time ? `<span class="muted" style="margin-left:6px; font-size:12px;">${l.time}</span>` : ''}
+      banner.classList.remove('hidden');
+      banner.innerHTML = `
+        <div style="font-weight:800; font-size:13.5px; color:#d97706; margin-bottom:4px;">📢 Объявления класса</div>
+        ${items.map(n => `
+          <div class="news-item">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+              <div style="font-size:13.5px; line-height:1.4;">${formatLinks(n.text)} <span class="muted" style="font-size:11px;">(${n.time})</span></div>
+              ${isTeacher ? `<button type="button" class="del-btn" onclick="deleteNews(${n.idx})">✕</button>` : ''}
             </div>
-            ${isTeacher ? `<button class="del-btn" onclick="deleteLesson(${l.idx})">Удалить</button>` : ''}
           </div>
-          <div style="font-weight:800; font-size:15.5px;">${l.topic}</div>
-          <div class="hw-banner">📚 <b>Задание:</b> ${l.task}</div>
-        </div>
-      `).join('');
+        `).join('')}
+      `;
+    }
+
+    async function deleteNews(idx) {
+      db.news.splice(idx, 1);
+      await saveCloudDB();
+      renderClassNews();
+    }
+
+    // --- 1. УРОКИ И ФИЛЬТР ПО ДНЯМ НЕДЕЛИ ---
+    function setDayFilter(day, btn) {
+      selectedDayFilter = day;
+      document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderLessons();
+    }
+
+    function toggleLessonDone(key) {
+      if (completedLessons.includes(key)) {
+        completedLessons = completedLessons.filter(k => k !== key);
+      } else {
+        completedLessons.push(key);
+      }
+      localStorage.setItem('diary_done_lessons', JSON.stringify(completedLessons));
+      renderLessons();
+    }
+
+    function renderLessons() {
+      const feed = document.getElementById('lessonsFeed');
+      const items = db.lessons
+        .map((l, idx) => ({ ...l, idx }))
+        .filter(l => l.classId === activeClassId && (selectedDayFilter === 'Все' || l.day === selectedDayFilter));
+
+      if (!items.length) {
+        feed.innerHTML = `<div class="card muted">На ${selectedDayFilter === 'Все' ? 'выбранный класс' : selectedDayFilter.toLowerCase()} уроков пока нет.</div>`;
+        return;
+      }
+      feed.innerHTML = items.map(l => {
+        const key = `${l.classId}_${l.day}_${l.topic}`;
+        const isDone = completedLessons.includes(key);
+        return `
+          <div class="lesson-card ${isDone ? 'done' : ''}">
+            <div class="card-head" style="margin-bottom:6px;">
+              <div>
+                <span class="chip">${l.day}</span>
+                ${l.time ? `<span class="muted" style="margin-left:6px; font-size:12px;">${l.time}</span>` : ''}
+              </div>
+              <div style="display:flex; gap:6px;">
+                ${!isTeacher ? `<button type="button" class="done-btn ${isDone ? 'checked' : ''}" onclick="toggleLessonDone('${key.replace(/'/g, '')}')">${isDone ? '✓ Сделано' : 'Отметить'}</button>` : ''}
+                ${isTeacher ? `<button type="button" class="del-btn" onclick="deleteLesson(${l.idx})">Удалить</button>` : ''}
+              </div>
+            </div>
+            <div style="font-weight:800; font-size:15.5px;">${l.topic}</div>
+            <div class="hw-banner">
+              📚 <b>Задание:</b> ${formatLinks(l.task)}
+              ${renderFileAttachment(l.file)}
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     async function deleteLesson(idx) {
@@ -717,7 +1003,6 @@
       avgEl.innerText = avg;
       trendBadge.innerText = `Ср. балл: ${avg}`;
 
-      // Линейный SVG-график последних оценок (до 10 штук в хронологическом порядке)
       const recent = [...myGrades].slice(0, 10).reverse();
       const w = 320, h = 110, padX = 20, padY = 18;
       const stepX = recent.length > 1 ? (w - padX * 2) / (recent.length - 1) : 0;
@@ -750,7 +1035,6 @@
         </svg>
       `;
 
-      // Столбчатая диаграмма по предметам
       const bySubj = {};
       myGrades.forEach(g => {
         if (!bySubj[g.subject]) bySubj[g.subject] = [];
@@ -768,7 +1052,6 @@
         `;
       }).join('');
 
-      // Список оценок
       feed.innerHTML = myGrades.map((g, idx) => `
         <div class="card" style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; margin-bottom:10px;">
           <div style="display:flex; align-items:center; gap:12px;">
@@ -778,7 +1061,7 @@
               <div class="muted" style="font-size:12px;">${isTeacher ? g.studentName + ' • ' : ''}${g.comment || 'Оценка за урок'}</div>
             </div>
           </div>
-          ${isTeacher ? `<button class="del-btn" onclick="deleteGrade(${idx})">✕</button>` : ''}
+          ${isTeacher ? `<button type="button" class="del-btn" onclick="deleteGrade(${idx})">✕</button>` : ''}
         </div>
       `).join('');
     }
@@ -789,7 +1072,7 @@
       renderAnalyticsAndGrades();
     }
 
-    // --- 3. ТЕСТЫ (ТОЛЬКО ПРОХОЖДЕНИЕ) ---
+    // --- 3. ТЕСТЫ ---
     function renderTestsCatalog() {
       document.getElementById('testPlayerView').classList.add('hidden');
       document.getElementById('testsListView').classList.remove('hidden');
@@ -810,11 +1093,11 @@
         <div class="card">
           <div class="card-head">
             <span class="chip">${t.ai ? '✨ Тест (AI)' : '📝 Тест'}</span>
-            ${isTeacher ? `<button class="del-btn" onclick="deleteTest(${t.idx})">Удалить</button>` : `<span class="muted" style="font-size:12px;">${t.questions.length} вопр.</span>`}
+            ${isTeacher ? `<button type="button" class="del-btn" onclick="deleteTest(${t.idx})">Удалить</button>` : `<span class="muted" style="font-size:12px;">${t.questions.length} вопр.</span>`}
           </div>
           <h3 class="card-title" style="margin-bottom:6px;">${t.title}</h3>
           <div class="muted" style="margin-bottom:12px;">Вопросов: ${t.questions.length} • Автоматическая оценка</div>
-          <button class="btn-main" onclick="launchTest(${t.idx})">Начать тестирование</button>
+          <button type="button" class="btn-main" onclick="launchTest(${t.idx})">Начать тестирование</button>
         </div>
       `).join('');
     }
@@ -827,7 +1110,6 @@
 
     let curTest = null, curQ = 0, curScore = 0;
     function launchTest(idx) {
-      haptic('medium');
       curTest = db.tests[idx];
       curQ = 0; curScore = 0;
       document.getElementById('testsListView').classList.add('hidden');
@@ -842,7 +1124,6 @@
         const pct = Math.round((curScore / total) * 100);
         const mark = pct >= 85 ? '5' : pct >= 70 ? '4' : pct >= 50 ? '3' : '2';
         const stName = myProfile ? myProfile.name : 'Преподаватель';
-        haptic('success');
         notifyTeacher(`✅ Тест завершён\nУченик: ${stName}\nТест: ${curTest.title}\nРезультат: ${curScore}/${total} (Оценка: ${mark})`);
         box.innerHTML = `
           <div style="text-align:center; padding:12px 0;">
@@ -850,7 +1131,7 @@
             <h2 style="margin:0 0 6px;">Результат теста</h2>
             <p class="muted">Верных ответов: <b>${curScore} из ${total}</b> (${pct}%)</p>
             <div class="grade-pill g-${mark}" style="width:54px; height:54px; font-size:24px; margin:14px auto;">${mark}</div>
-            <button class="btn-main" style="margin-top:12px;" onclick="renderTestsCatalog()">К списку тестов</button>
+            <button type="button" class="btn-main" style="margin-top:12px;" onclick="renderTestsCatalog()">К списку тестов</button>
           </div>
         `;
         return;
@@ -865,7 +1146,7 @@
           <span class="muted" style="font-size:12px;">${curTest.title}</span>
         </div>
         <h3 style="margin:6px 0 14px; font-size:16.5px;">${q.q}</h3>
-        ${q.options.map((opt, i) => `<button class="opt-btn" onclick="pickOption(${i}, this)">${opt}</button>`).join('')}
+        ${q.options.map((opt, i) => `<button type="button" class="opt-btn" onclick="pickOption(${i}, this)">${opt}</button>`).join('')}
         <div id="stepExplain"></div>
       `;
     }
@@ -875,11 +1156,9 @@
       const all = document.querySelectorAll('.opt-btn');
       all.forEach(b => b.disabled = true);
       if (idx === q.ans) {
-        haptic('success');
         el.classList.add('correct');
         curScore++;
       } else {
-        haptic('error');
         el.classList.add('wrong');
         all[q.ans].classList.add('correct');
       }
@@ -889,41 +1168,152 @@
       setTimeout(() => { curQ++; renderTestStep(); }, q.exp ? 1600 : 850);
     }
 
-    // --- 4. СДАЧА ДЗ И ПРОПУСК ---
+    // --- 4. СДАЧА ДЗ, МОИ РАБОТЫ И КОММЕНТАРИИ УЧИТЕЛЯ ---
     async function sendHomework() {
       const subj = document.getElementById('inpHwSubj').value.trim() || 'Общий';
       const text = document.getElementById('inpHwBody').value.trim();
-      if (!text) return alert('Введите ответ или ссылку!');
-      haptic('success');
+      if (!text && !studentPickedFile) return alert('Напишите ответ или прикрепите файл!');
       const name = myProfile ? myProfile.name : 'Преподаватель';
       const cls = db.classes.find(c => c.id === activeClassId);
       const className = cls ? cls.name : 'Без класса';
       const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-      db.submissions.unshift({ type: `ДЗ • ${subj}`, name, className, text, time });
+
+      db.submissions.unshift({
+        id: 'sub_' + Date.now(),
+        studentId: myStudentId,
+        subject: subj,
+        type: `ДЗ • ${subj}`,
+        name,
+        className,
+        text,
+        file: studentPickedFile,
+        time,
+        teacherComment: '',
+        teacherGrade: ''
+      });
       await saveCloudDB();
-      await notifyTeacher(`📥 Сдано ДЗ (${className})\nУченик: ${name}\nПредмет: ${subj}\n\n${text}`);
+      await notifyTeacher(`📥 Сдано ДЗ (${className})\nУченик: ${name}\nПредмет: ${subj}\n\n${text || '[Прикреплён файл]'}`);
       document.getElementById('inpHwBody').value = '';
-      alert('✅ Работа успешно отправлена!');
+      studentPickedFile = null;
+      document.getElementById('stFileInput').value = '';
+      document.getElementById('stFileLabel').innerText = 'Прикрепить файл или фото (до 1.5 МБ)';
+      renderMySubmissions();
+      alert('✅ Работа отправлена на проверку!');
+    }
+
+    function renderMySubmissions() {
+      const box = document.getElementById('mySubmissionsFeed');
+      const mine = db.submissions.filter(s => s.studentId === myStudentId || (myProfile && s.name === myProfile.name));
+      if (!mine.length) {
+        box.innerHTML = '<div class="card muted">Вы ещё не отправляли домашние задания.</div>';
+        return;
+      }
+      box.innerHTML = mine.map(s => `
+        <div class="card" style="padding:14px;">
+          <div class="card-head" style="margin-bottom:6px;">
+            <span class="chip">${s.type}</span>
+            <span class="muted" style="font-size:11.5px;">${s.time}</span>
+          </div>
+          <div style="font-size:13.5px;">${formatLinks(s.text)}</div>
+          ${renderFileAttachment(s.file)}
+          ${(s.teacherComment || s.teacherGrade) ? `
+            <div class="review-box">
+              <b>✅ Проверено учителем${s.teacherGrade ? ` • Оценка: ${s.teacherGrade}` : ''}</b>
+              ${s.teacherComment ? `<div style="margin-top:4px;">💬 ${s.teacherComment}</div>` : ''}
+            </div>
+          ` : `<div class="muted" style="font-size:12px; margin-top:8px;">⏳ Ожидает проверки преподавателя</div>`}
+        </div>
+      `).join('');
     }
 
     async function sendAbsence() {
       const text = document.getElementById('inpSkipBody').value.trim();
       if (!text) return alert('Укажите причину!');
-      haptic('success');
       const name = myProfile ? myProfile.name : 'Преподаватель';
       const cls = db.classes.find(c => c.id === activeClassId);
       const className = cls ? cls.name : 'Без класса';
       const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-      db.submissions.unshift({ type: 'Пропуск', name, className, text, time });
+      db.submissions.unshift({ id: 'sub_' + Date.now(), studentId: myStudentId, type: 'Пропуск', name, className, text, time });
       await saveCloudDB();
       await notifyTeacher(`⚠️ Пропуск урока (${className})\nУченик: ${name}\nПричина: ${text}`);
       document.getElementById('inpSkipBody').value = '';
       alert('Уведомление отправлено преподавателю.');
     }
 
-    // --- 5. ПАНЕЛЬ УЧИТЕЛЯ (ТОЛЬКО ДЛЯ УЧИТЕЛЯ) ---
+    // --- 5. ЛИЧНЫЕ СООБЩЕНИЯ ---
+    function renderDirectMessages() {
+      const recBar = document.getElementById('dmRecipientBar');
+      const hint = document.getElementById('dmHeaderHint');
+      const thread = document.getElementById('dmThreadBox');
+
+      let targetStudentId = myStudentId;
+
+      if (isTeacher) {
+        recBar.classList.remove('hidden');
+        hint.classList.add('hidden');
+        const sel = document.getElementById('dmStudentSelect');
+        if (!db.students.length) {
+          thread.innerHTML = '<div class="muted" style="text-align:center;">Нет зарегистрированных учеников.</div>';
+          return;
+        }
+        const prevVal = sel.value;
+        sel.innerHTML = db.students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+        if (prevVal && db.students.some(s => s.id === prevVal)) sel.value = prevVal;
+        targetStudentId = sel.value;
+      } else {
+        recBar.classList.add('hidden');
+        hint.classList.remove('hidden');
+      }
+
+      const msgs = db.messages.filter(m => m.studentId === targetStudentId);
+      if (!msgs.length) {
+        thread.innerHTML = '<div class="muted" style="text-align:center; padding:24px 0;">Сообщений пока нет. Напишите первым!</div>';
+        return;
+      }
+
+      thread.innerHTML = msgs.map(m => {
+        const isMine = (isTeacher && m.sender === 'teacher') || (!isTeacher && m.sender === 'student');
+        return `
+          <div class="dm-msg ${isMine ? 'dm-mine' : 'dm-other'}">
+            <div>${formatLinks(m.text)}</div>
+            <div class="dm-meta">${m.sender === 'teacher' ? 'Преподаватель' : 'Ученик'} • ${m.time}</div>
+          </div>
+        `;
+      }).join('');
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    async function sendDirectMessage() {
+      const inp = document.getElementById('dmInputText');
+      const text = inp.value.trim();
+      if (!text) return;
+
+      let targetStudentId = myStudentId;
+      if (isTeacher) {
+        const sel = document.getElementById('dmStudentSelect');
+        if (!sel || !sel.value) return alert('Выберите ученика!');
+        targetStudentId = sel.value;
+      }
+
+      const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      db.messages.push({
+        studentId: targetStudentId,
+        sender: isTeacher ? 'teacher' : 'student',
+        text,
+        time
+      });
+      inp.value = '';
+      await saveCloudDB();
+      renderDirectMessages();
+
+      if (!isTeacher) {
+        const stName = myProfile ? myProfile.name : 'Ученик';
+        notifyTeacher(`💬 Новое личное сообщение от ${stName}:\n${text}`);
+      }
+    }
+
+    // --- 6. ПАНЕЛЬ УЧИТЕЛЯ И МАССОВОЕ УПРАВЛЕНИЕ УЧЕНИКАМИ ---
     function switchTeacherSub(subId, btn) {
-      haptic('light');
       ['t-classes', 't-ai', 't-lessons', 't-inbox'].forEach(s => {
         document.getElementById(s).classList.toggle('hidden', s !== subId);
       });
@@ -931,37 +1321,211 @@
       btn.classList.add('active');
     }
 
-    function renderTeacherControls() {
-      // Назначение учеников в классы
-      const assignArea = document.getElementById('tAssignArea');
-      if (!db.students.length) {
-        assignArea.innerHTML = 'Пока ни один ученик не отправил заявку.';
-      } else if (!db.classes.length) {
-        assignArea.innerHTML = 'Сначала создайте класс выше, чтобы добавлять в него учеников.';
-      } else {
-        const stOpts = db.students.map(s => {
-          const cNames = (s.classes || []).map(cid => (db.classes.find(c => c.id === cid) || {}).name).filter(Boolean).join(', ');
-          return `<option value="${s.id}">${s.name} ${cNames ? `[${cNames}]` : '[⏳ ждёт класс]'}</option>`;
-        }).join('');
-        const clOpts = db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-        assignArea.innerHTML = `
-          <select id="tSelStudent" class="field">${stOpts}</select>
-          <select id="tSelClass" class="field">${clOpts}</select>
-          <button class="btn-main" onclick="assignStudent()">Добавить в класс</button>
+    function getFilteredStudentsForTeacher() {
+      const filterEl = document.getElementById('tStudentFilter');
+      const filterVal = filterEl ? filterEl.value : 'all';
+      if (filterVal === 'all') return db.students;
+      if (filterVal === 'pending') return db.students.filter(s => !s.classes || s.classes.length === 0);
+      return db.students.filter(s => (s.classes || []).includes(filterVal));
+    }
+
+    function renderTeacherStudentManager() {
+      const filterEl = document.getElementById('tStudentFilter');
+      const prevFilter = filterEl ? filterEl.value : 'all';
+      if (filterEl) {
+        const pendingCnt = db.students.filter(s => !s.classes || s.classes.length === 0).length;
+        filterEl.innerHTML = `
+          <option value="all">Все ученики (${db.students.length})</option>
+          <option value="pending">⏳ Заявки без класса (${pendingCnt})</option>
+          ${db.classes.map(c => `<option value="${c.id}">Класс: ${c.name}</option>`).join('')}
         `;
+        if ([...filterEl.options].some(o => o.value === prevFilter)) filterEl.value = prevFilter;
       }
 
-      // Статус TG
+      const listEl = document.getElementById('tStudentsChecklist');
+      const filtered = getFilteredStudentsForTeacher();
+
+      // Очищаем несуществующие ID из выделения
+      const validIds = new Set(db.students.map(s => s.id));
+      selectedStudentIds.forEach(id => { if (!validIds.has(id)) selectedStudentIds.delete(id); });
+      document.getElementById('tSelectedCountBadge').innerText = `Выбрано: ${selectedStudentIds.size}`;
+
+      if (!filtered.length) {
+        listEl.innerHTML = '<div class="muted" style="padding:10px 0; text-align:center;">По выбранному фильтру учеников нет.</div>';
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(s => {
+        const isSel = selectedStudentIds.has(s.id);
+        const clsBadges = (s.classes || [])
+          .map(cid => (db.classes.find(c => c.id === cid) || {}).name)
+          .filter(Boolean)
+          .map(name => `<span class="chip" style="font-size:10.5px; padding:2px 7px;">${name}</span>`)
+          .join('');
+        return `
+          <div class="st-row ${isSel ? 'selected' : ''}">
+            <input type="checkbox" class="st-check" ${isSel ? 'checked' : ''} onchange="toggleStudentSelection('${s.id}')" />
+            <div class="st-info" onclick="toggleStudentSelection('${s.id}')" style="cursor:pointer;">
+              <div class="st-name">${s.name}</div>
+              <div class="st-classes">${clsBadges || '<span class="chip-warn">⏳ Ждёт класс</span>'}</div>
+            </div>
+            <button type="button" class="mini-btn" onclick="openStudentProfileCard('${s.id}')">📊 Карточка</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleStudentSelection(stId) {
+      if (selectedStudentIds.has(stId)) selectedStudentIds.delete(stId);
+      else selectedStudentIds.add(stId);
+      renderTeacherStudentManager();
+    }
+
+    function toggleSelectAllStudents() {
+      const filtered = getFilteredStudentsForTeacher();
+      if (!filtered.length) return;
+      const allSelected = filtered.every(s => selectedStudentIds.has(s.id));
+      if (allSelected) {
+        filtered.forEach(s => selectedStudentIds.delete(s.id));
+      } else {
+        filtered.forEach(s => selectedStudentIds.add(s.id));
+      }
+      renderTeacherStudentManager();
+    }
+
+    async function bulkAddStudentsToClass() {
+      if (!selectedStudentIds.size) return alert('Отметьте галочками хотя бы одного ученика!');
+      const targetClassId = document.getElementById('tBulkTargetClass').value;
+      const cls = db.classes.find(c => c.id === targetClassId);
+      if (!cls) return alert('Сначала создайте класс!');
+
+      let count = 0;
+      db.students.forEach(s => {
+        if (selectedStudentIds.has(s.id)) {
+          if (!s.classes) s.classes = [];
+          if (!s.classes.includes(targetClassId)) {
+            s.classes.push(targetClassId);
+            count++;
+          }
+        }
+      });
+      await saveCloudDB();
+      selectedStudentIds.clear();
+      renderTeacherControls();
+      alert(`✅ В класс «${cls.name}» добавлено учеников: ${count}`);
+    }
+
+    async function bulkTransferStudentsToClass() {
+      if (!selectedStudentIds.size) return alert('Отметьте галочками учеников для перевода!');
+      const targetClassId = document.getElementById('tBulkTargetClass').value;
+      const cls = db.classes.find(c => c.id === targetClassId);
+      if (!cls) return alert('Выберите целевой класс!');
+
+      const count = selectedStudentIds.size;
+      db.students.forEach(s => {
+        if (selectedStudentIds.has(s.id)) {
+          s.classes = [targetClassId];
+        }
+      });
+      await saveCloudDB();
+      selectedStudentIds.clear();
+      renderTeacherControls();
+      alert(`🔄 Переведено в класс «${cls.name}»: ${count} уч.`);
+    }
+
+    async function bulkRemoveFromTargetClass() {
+      if (!selectedStudentIds.size) return alert('Отметьте галочками учеников!');
+      const targetClassId = document.getElementById('tBulkTargetClass').value;
+      const cls = db.classes.find(c => c.id === targetClassId);
+      if (!cls) return alert('Выберите класс!');
+
+      db.students.forEach(s => {
+        if (selectedStudentIds.has(s.id) && s.classes) {
+          s.classes = s.classes.filter(cid => cid !== targetClassId);
+        }
+      });
+      await saveCloudDB();
+      selectedStudentIds.clear();
+      renderTeacherControls();
+      alert(`➖ Выбранные ученики исключены из класса «${cls.name}».`);
+    }
+
+    async function bulkDeleteStudents() {
+      if (!selectedStudentIds.size) return alert('Отметьте галочками учеников!');
+      if (!confirm(`Удалить выбранных учеников (${selectedStudentIds.size}) из базы?`)) return;
+      db.students = db.students.filter(s => !selectedStudentIds.has(s.id));
+      selectedStudentIds.clear();
+      await saveCloudDB();
+      renderTeacherControls();
+    }
+
+    function openStudentProfileCard(stId) {
+      const st = db.students.find(s => s.id === stId);
+      const modal = document.getElementById('tStudentProfileModal');
+      if (!st) return;
+
+      const stGrades = db.grades
+        .map((g, idx) => ({ ...g, idx }))
+        .filter(g => g.studentId === st.id || g.studentName.toLowerCase() === st.name.toLowerCase());
+      const avg = stGrades.length
+        ? (stGrades.reduce((sum, g) => sum + Number(g.val), 0) / stGrades.length).toFixed(2)
+        : '—';
+      const stSubs = db.submissions.filter(sub => sub.studentId === st.id || sub.name === st.name);
+
+      modal.classList.remove('hidden');
+      modal.innerHTML = `
+        <div class="card-head">
+          <h3 class="card-title">📊 Карточка: ${st.name}</h3>
+          <button type="button" class="del-btn" onclick="document.getElementById('tStudentProfileModal').classList.add('hidden')">Закрыть</button>
+        </div>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+          <div class="chip">Средний балл: ${avg}</div>
+          <div class="chip">Оценок: ${stGrades.length}</div>
+          <div class="chip">Сдано ДЗ: ${stSubs.length}</div>
+        </div>
+        <div style="font-weight:700; font-size:13px; margin-bottom:6px;">Оценки ученика:</div>
+        ${stGrades.length ? stGrades.map(g => `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border);">
+            <div style="font-size:13px;"><b>${g.subject}</b>: <span style="color:var(--accent); font-weight:800;">${g.val}</span> <span class="muted">${g.comment ? '(' + g.comment + ')' : ''}</span></div>
+            <button type="button" class="del-btn" onclick="deleteGradeFromCard(${g.idx}, '${st.id}')">✕</button>
+          </div>
+        `).join('') : '<div class="muted" style="margin-bottom:8px;">Оценок пока нет.</div>'}
+        <button type="button" class="btn-sec" style="margin-top:10px;" onclick="jumpToStudentDM('${st.id}')">💬 Открыть личный чат с учеником</button>
+      `;
+      modal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    async function deleteGradeFromCard(gradeIdx, stId) {
+      db.grades.splice(gradeIdx, 1);
+      await saveCloudDB();
+      openStudentProfileCard(stId);
+      renderAnalyticsAndGrades();
+    }
+
+    function jumpToStudentDM(stId) {
+      const chatNavBtn = document.querySelectorAll('.nav-item')[4];
+      switchTab('messages', chatNavBtn);
+      setTimeout(() => {
+        const sel = document.getElementById('dmStudentSelect');
+        if (sel) {
+          sel.value = stId;
+          renderDirectMessages();
+        }
+      }, 100);
+    }
+
+    function renderTeacherControls() {
+      renderTeacherStudentManager();
+
       document.getElementById('tTgStatus').innerText = db.teacherChatId
         ? `✅ Привязано (ID: ${db.teacherChatId}). Уведомления приходят в Telegram.`
         : 'Привяжите аккаунт, чтобы получать уведомления о новых заявках и ДЗ.';
 
-      // Списки классов в селектах
       const clsOptions = db.classes.length
         ? db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('')
         : '<option value="">Сначала создайте класс</option>';
 
-      ['tAiClass', 'tManClass', 'tLesClass'].forEach(id => {
+      ['tBulkTargetClass', 'tNewsClass', 'tAiClass', 'tManClass', 'tLesClass'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = clsOptions;
       });
@@ -973,24 +1537,75 @@
           : '<option value="">Нет учеников</option>';
       }
 
-      // Входящие ДЗ
       const inbox = document.getElementById('tInboxList');
-      inbox.innerHTML = db.submissions.length ? db.submissions.map(s => `
-        <div class="card" style="padding:13px;">
+      inbox.innerHTML = db.submissions.length ? db.submissions.map((s, idx) => `
+        <div class="card" style="padding:14px;">
           <div class="card-head" style="margin-bottom:4px;">
             <span class="chip">${s.type}</span>
             <span class="muted" style="font-size:11.5px;">${s.time}</span>
           </div>
           <div style="font-weight:700; font-size:14.5px;">${s.name} <span class="muted">(${s.className})</span></div>
-          <div style="margin-top:4px; font-size:13.5px;">${s.text}</div>
+          <div style="margin-top:4px; font-size:13.5px;">${formatLinks(s.text)}</div>
+          ${renderFileAttachment(s.file)}
+          ${s.type !== 'Пропуск' ? `
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
+              <div style="display:flex; gap:6px;">
+                <select id="revGr_${idx}" class="field" style="width:110px; margin-bottom:6px;">
+                  <option value="">Без оценки</option>
+                  <option value="5" ${s.teacherGrade === '5' ? 'selected' : ''}>Оценка: 5</option>
+                  <option value="4" ${s.teacherGrade === '4' ? 'selected' : ''}>Оценка: 4</option>
+                  <option value="3" ${s.teacherGrade === '3' ? 'selected' : ''}>Оценка: 3</option>
+                  <option value="2" ${s.teacherGrade === '2' ? 'selected' : ''}>Оценка: 2</option>
+                </select>
+                <input id="revCm_${idx}" class="field" style="margin-bottom:6px;" value="${s.teacherComment || ''}" placeholder="Комментарий ученику к ДЗ..." />
+              </div>
+              <button type="button" class="btn-sec" onclick="teacherReviewSubmission(${idx})">💾 Сохранить комментарий и оценку</button>
+            </div>
+          ` : ''}
         </div>
       `).join('') : '<div class="card muted">Новых работ и сообщений пока нет.</div>';
+    }
+
+    async function teacherReviewSubmission(idx) {
+      const sub = db.submissions[idx];
+      if (!sub) return;
+      const gradeVal = document.getElementById(`revGr_${idx}`).value;
+      const commentVal = document.getElementById(`revCm_${idx}`).value.trim();
+
+      sub.teacherGrade = gradeVal;
+      sub.teacherComment = commentVal;
+
+      if (gradeVal && sub.studentId) {
+        db.grades.unshift({
+          studentId: sub.studentId,
+          studentName: sub.name,
+          subject: sub.subject || 'Домашнее задание',
+          val: gradeVal,
+          comment: commentVal || 'За домашнюю работу'
+        });
+      }
+
+      await saveCloudDB();
+      renderTeacherControls();
+      renderAnalyticsAndGrades();
+      alert('✅ Комментарий и оценка сохранены для ученика!');
+    }
+
+    async function teacherPublishNews() {
+      const classId = document.getElementById('tNewsClass').value;
+      const text = document.getElementById('tNewsText').value.trim();
+      if (!classId || !text) return alert('Выберите класс и введите текст новости!');
+      const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      db.news.unshift({ id: 'nw_' + Date.now(), classId, text, time });
+      await saveCloudDB();
+      document.getElementById('tNewsText').value = '';
+      renderClassNews();
+      alert('✅ Новость опубликована для класса!');
     }
 
     async function createNewClass() {
       const name = document.getElementById('tNewClassName').value.trim();
       if (!name) return alert('Введите название класса!');
-      haptic('success');
       const newCls = { id: 'c_' + Date.now(), name };
       db.classes.push(newCls);
       activeClassId = newCls.id;
@@ -1001,32 +1616,14 @@
       alert(`✅ Класс «${name}» создан!`);
     }
 
-    async function assignStudent() {
-      const stId = document.getElementById('tSelStudent').value;
-      const clId = document.getElementById('tSelClass').value;
-      const st = db.students.find(s => s.id === stId);
-      const cl = db.classes.find(c => c.id === clId);
-      if (!st || !cl) return;
-      if (!st.classes) st.classes = [];
-      if (!st.classes.includes(clId)) {
-        st.classes.push(clId);
-        await saveCloudDB();
-      }
-      haptic('success');
-      renderTeacherControls();
-      alert(`✅ Ученик ${st.name} добавлен в класс «${cl.name}»!`);
-    }
-
     async function bindTeacherTg() {
       if (!currentTgUserId) return alert('Откройте приложение через Telegram.');
       db.teacherChatId = currentTgUserId;
       await saveCloudDB();
       await notifyTeacher('✅ Уведомления EduSpace успешно подключены!');
-      haptic('success');
       renderTeacherControls();
     }
 
-    // ИИ-генератор тестов (ТОЛЬКО В ПАНЕЛИ УЧИТЕЛЯ)
     async function teacherGenerateAITest() {
       if (!isTeacher) return;
       const classId = document.getElementById('tAiClass').value;
@@ -1044,7 +1641,7 @@
       const prompt = `Составь тест на русском языке на тему "${topic}". Уровень сложности: ${level}. Количество вопросов: ${count}. Формат: [{"q":"вопрос","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0,"exp":"краткое пояснение в 1 предложение"}] где ans всегда 0.`;
 
       try {
-        const resp = await fetch('https://text.pollinations.ai/', {
+        const resp = await fetchWithTimeout('https://text.pollinations.ai/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1055,7 +1652,7 @@
             model: 'openai',
             jsonMode: true
           })
-        });
+        }, 15000);
         const raw = await resp.text();
         const match = raw.match(/\[[\s\S]*\]/);
         if (!match) throw new Error();
@@ -1068,12 +1665,10 @@
 
         db.tests.unshift({ classId, title: topic, ai: true, questions });
         await saveCloudDB();
-        haptic('success');
         document.getElementById('tAiTopic').value = '';
         renderTestsCatalog();
-        alert(`✅ Тест «${topic}» (${questions.length} вопр.) создан и опубликован для класса!`);
+        alert(`✅ Тест «${topic}» (${questions.length} вопр.) создан и опубликован!`);
       } catch (e) {
-        haptic('error');
         alert('ИИ сейчас перегружен, нажмите кнопку ещё раз.');
       } finally {
         btn.disabled = false;
@@ -1099,7 +1694,6 @@
       else db.tests.unshift({ classId, title, ai: false, questions: [newQ] });
       await saveCloudDB();
       ['tManQ', 'tManO1', 'tManO2', 'tManO3'].forEach(id => document.getElementById(id).value = '');
-      haptic('success');
       alert('✅ Вопрос добавлен в тест!');
     }
 
@@ -1108,14 +1702,16 @@
       const day = document.getElementById('tLesDay').value;
       const time = document.getElementById('tLesTime').value.trim();
       const topic = document.getElementById('tLesTopic').value.trim();
-      const task = document.getElementById('tLesTask').value.trim() || 'Без задания';
+      const task = document.getElementById('tLesTask').value.trim() || (teacherPickedFile ? 'Смотрите прикреплённый файл' : 'Без задания');
       if (!classId || !topic) return alert('Выберите класс и укажите тему урока!');
-      db.lessons.push({ classId, day, time, topic, task });
+      db.lessons.push({ classId, day, time, topic, task, file: teacherPickedFile });
       await saveCloudDB();
       ['tLesTime', 'tLesTopic', 'tLesTask'].forEach(id => document.getElementById(id).value = '');
-      haptic('success');
+      teacherPickedFile = null;
+      document.getElementById('tFileInput').value = '';
+      document.getElementById('tFileLabel').innerText = 'Прикрепить файл или фото к ДЗ (до 1.5 МБ)';
       renderLessons();
-      alert('✅ Урок опубликован!');
+      alert('✅ Урок и ДЗ опубликованы!');
     }
 
     async function teacherCreateGrade() {
@@ -1128,7 +1724,6 @@
       db.grades.unshift({ studentId, studentName: st.name, subject, val, comment });
       await saveCloudDB();
       document.getElementById('tGrComment').value = '';
-      haptic('success');
       renderAnalyticsAndGrades();
       alert(`✅ Оценка ${val} выставлена!`);
     }
