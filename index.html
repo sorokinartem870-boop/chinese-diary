@@ -100,8 +100,8 @@
     .user-name { font-weight: 800; font-size: 16px; letter-spacing: -0.2px; }
     .user-sub { font-size: 12px; color: var(--text-sec); }
     .role-tag {
-      padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700;
-      background: var(--accent-soft); color: var(--accent); cursor: pointer;
+      padding: 6px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700;
+      background: var(--accent-soft); color: var(--accent); cursor: pointer; border: none;
     }
 
     /* Полоса твоих классов */
@@ -331,7 +331,7 @@
             <div class="user-sub" id="topClassHint">Ваши классы</div>
           </div>
         </div>
-        <span class="role-tag" id="topRoleTag" onclick="loginTeacherModal()">Ученик</span>
+        <button type="button" class="role-tag" id="topRoleTag" onclick="toggleTeacherRole()">Ученик</button>
       </div>
       <!-- ТОЛЬКО ТВОИ КЛАССЫ НАВЕРХУ -->
       <div class="class-switcher" id="topClassesList"></div>
@@ -409,7 +409,7 @@
       <div id="sec-submit" class="hidden">
         <h2 class="section-title">Отправка домашней работы</h2>
         <div class="card">
-          <div class="muted" style="margin-bottom:10px;">Вы можете написать ответ, вставить ссылку или прикрепить фото/файл (до 1.5 МБ).</div>
+          <div class="muted" style="margin-bottom:10px;">Напишите ответ, вставьте ссылку или прикрепите фото/файл (до 1.5 МБ).</div>
           <input id="inpHwSubj" class="field" placeholder="Предмет (например: Алгебра)" />
           <textarea id="inpHwBody" class="field" rows="3" placeholder="Текст ответа или ссылка..."></textarea>
           <label class="file-attach-btn">
@@ -457,10 +457,15 @@
 
         <!-- Подвкладка 1: Массовое управление учениками, классы и новости -->
         <div id="t-classes">
-          <!-- МАССОВОЕ УПРАВЛЕНИЕ УЧЕНИКАМИ -->
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">🏫 1. Создать новый класс</h3>
+            <input id="tNewClassName" class="field" placeholder="Название класса (напр. 8А или Английский)" />
+            <button type="button" class="btn-main" onclick="createNewClass()">Создать класс</button>
+          </div>
+
           <div class="card">
             <div class="card-head" style="margin-bottom:8px;">
-              <h3 class="card-title">👥 Управление учениками</h3>
+              <h3 class="card-title">👥 2. Управление учениками</h3>
               <span class="chip" id="tSelectedCountBadge">Выбрано: 0</span>
             </div>
 
@@ -486,20 +491,13 @@
             </div>
           </div>
 
-          <!-- ИНДИВИДУАЛЬНАЯ КАРТОЧКА УСПЕВАЕМОСТИ УЧЕНИКА -->
           <div id="tStudentProfileModal" class="card hidden" style="border: 1.5px solid var(--accent);"></div>
-
-          <div class="card">
-            <h3 class="card-title" style="margin-bottom:10px;">🏫 Создать новый класс</h3>
-            <input id="tNewClassName" class="field" placeholder="Название класса (напр. 8А или Английский)" />
-            <button type="button" class="btn-sec" onclick="createNewClass()">Создать класс</button>
-          </div>
 
           <div class="card">
             <h3 class="card-title" style="margin-bottom:10px;">📢 Опубликовать новость класса</h3>
             <select id="tNewsClass" class="field"></select>
             <textarea id="tNewsText" class="field" rows="2" placeholder="Текст объявления для учеников класса..."></textarea>
-            <button type="button" class="btn-main" onclick="teacherPublishNews()">Опубликовать новость</button>
+            <button type="button" class="btn-sec" onclick="teacherPublishNews()">Опубликовать новость</button>
           </div>
 
           <div class="card">
@@ -652,7 +650,7 @@
     let completedLessons = JSON.parse(localStorage.getItem('diary_done_lessons') || '[]');
     let selectedStudentIds = new Set();
 
-    async function fetchWithTimeout(url, options = {}, timeoutMs = 4500) {
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeoutMs);
       try {
@@ -827,8 +825,21 @@
       if (pin === TEACHER_PIN) {
         isTeacher = true;
         enterService();
+        const tNavBtn = document.getElementById('navTeacherBtn');
+        switchTab('teacher', tNavBtn);
       } else if (pin !== null) {
         alert('Неверный ПИН-код');
+      }
+    }
+
+    function toggleTeacherRole() {
+      if (!isTeacher) {
+        loginTeacherModal();
+        return;
+      }
+      if (confirm('Выйти из режима преподавателя?')) {
+        isTeacher = false;
+        boot();
       }
     }
 
@@ -837,7 +848,7 @@
       const displayName = isTeacher ? 'Преподаватель' : (myProfile ? myProfile.name : 'Ученик');
       document.getElementById('topUserName').innerText = displayName;
       document.getElementById('avaLetter').innerText = displayName.charAt(0).toUpperCase();
-      document.getElementById('topRoleTag').innerText = isTeacher ? 'Учитель' : 'Ученик';
+      document.getElementById('topRoleTag').innerText = isTeacher ? 'Учитель (Выйти)' : 'Ученик';
       document.getElementById('navTeacherBtn').classList.toggle('hidden', !isTeacher);
 
       renderTopClasses();
@@ -1345,7 +1356,6 @@
       const listEl = document.getElementById('tStudentsChecklist');
       const filtered = getFilteredStudentsForTeacher();
 
-      // Очищаем несуществующие ID из выделения
       const validIds = new Set(db.students.map(s => s.id));
       selectedStudentIds.forEach(id => { if (!validIds.has(id)) selectedStudentIds.delete(id); });
       document.getElementById('tSelectedCountBadge').innerText = `Выбрано: ${selectedStudentIds.size}`;
@@ -1385,11 +1395,8 @@
       const filtered = getFilteredStudentsForTeacher();
       if (!filtered.length) return;
       const allSelected = filtered.every(s => selectedStudentIds.has(s.id));
-      if (allSelected) {
-        filtered.forEach(s => selectedStudentIds.delete(s.id));
-      } else {
-        filtered.forEach(s => selectedStudentIds.add(s.id));
-      }
+      if (allSelected) filtered.forEach(s => selectedStudentIds.delete(s.id));
+      else filtered.forEach(s => selectedStudentIds.add(s.id));
       renderTeacherStudentManager();
     }
 
@@ -1423,9 +1430,7 @@
 
       const count = selectedStudentIds.size;
       db.students.forEach(s => {
-        if (selectedStudentIds.has(s.id)) {
-          s.classes = [targetClassId];
-        }
+        if (selectedStudentIds.has(s.id)) s.classes = [targetClassId];
       });
       await saveCloudDB();
       selectedStudentIds.clear();
@@ -1478,7 +1483,7 @@
           <h3 class="card-title">📊 Карточка: ${st.name}</h3>
           <button type="button" class="del-btn" onclick="document.getElementById('tStudentProfileModal').classList.add('hidden')">Закрыть</button>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
           <div class="chip">Средний балл: ${avg}</div>
           <div class="chip">Оценок: ${stGrades.length}</div>
           <div class="chip">Сдано ДЗ: ${stSubs.length}</div>
@@ -1523,7 +1528,7 @@
 
       const clsOptions = db.classes.length
         ? db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('')
-        : '<option value="">Сначала создайте класс</option>';
+        : '<option value="">Сначала создайте класс выше</option>';
 
       ['tBulkTargetClass', 'tNewsClass', 'tAiClass', 'tManClass', 'tLesClass'].forEach(id => {
         const el = document.getElementById(id);
@@ -1630,14 +1635,14 @@
       const topic = document.getElementById('tAiTopic').value.trim();
       const level = document.getElementById('tAiLevel').value;
       const count = parseInt(document.getElementById('tAiCount').value, 10);
-      if (!classId) return alert('Сначала создайте класс!');
+      if (!classId) return alert('Сначала создайте класс во вкладке «Ученики и классы»!');
       if (!topic) return alert('Введите предмет и тему теста!');
 
       const btn = document.getElementById('tAiBtn');
       btn.disabled = true;
       btn.innerText = '⏳ ИИ составляет вопросы...';
 
-      const sys = 'Ты опытный школьный методист. Возвращай ТОЛЬКО валидный JSON-массив без markdown.';
+      const sys = 'Ты опытный школьный методист. Возвращай ТОЛЬКО валидный JSON-массив без markdown и пояснений.';
       const prompt = `Составь тест на русском языке на тему "${topic}". Уровень сложности: ${level}. Количество вопросов: ${count}. Формат: [{"q":"вопрос","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0,"exp":"краткое пояснение в 1 предложение"}] где ans всегда 0.`;
 
       try {
@@ -1652,7 +1657,7 @@
             model: 'openai',
             jsonMode: true
           })
-        }, 15000);
+        }, 20000);
         const raw = await resp.text();
         const match = raw.match(/\[[\s\S]*\]/);
         if (!match) throw new Error();
