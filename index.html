@@ -3,320 +3,445 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Школьный Дневник AI</title>
+  <title>EduSpace — Электронный дневник</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #f1f5f9;
-      --chat-bg: #e8eef5;
-      --bot-msg: rgba(255, 255, 255, 0.92);
-      --user-msg: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-      --user-text: #ffffff;
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
       --text: #0f172a;
-      --muted: #64748b;
+      --text-sec: #64748b;
       --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.1);
       --accent-grad: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-      --ai-grad: linear-gradient(135deg, #7c3aed 0%, #db2777 50%, #f59e0b 100%);
-      --inline-bg: rgba(37, 99, 235, 0.08);
-      --inline-text: #1d4ed8;
-      --panel: rgba(255, 255, 255, 0.86);
-      --border: rgba(148, 163, 184, 0.28);
-      --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+      --ai-grad: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+      --border: #e2e8f0;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
     }
     body.dark {
-      --bg: #090d16;
-      --chat-bg: #0b1120;
-      --bot-msg: rgba(30, 41, 59, 0.88);
-      --user-msg: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-      --user-text: #ffffff;
+      --bg: #0b0f19;
+      --surface: #131a2a;
+      --surface-soft: #1a2336;
       --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #60a5fa;
-      --inline-bg: rgba(96, 165, 250, 0.14);
-      --inline-text: #93c5fd;
-      --panel: rgba(15, 23, 42, 0.85);
-      --border: rgba(148, 163, 184, 0.16);
-      --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+      --text-sec: #94a3b8;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.16);
+      --border: #222d42;
+      --shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body {
-      margin: 0; background: var(--chat-bg); color: var(--text);
-      height: 100vh; display: flex; flex-direction: column; overflow: hidden;
-      position: relative;
-    }
-
-    /* Живой фоновый градиент (Ambient Orbs) */
-    .bg-orb {
-      position: fixed; border-radius: 50%; filter: blur(65px); z-index: 0; pointer-events: none; opacity: 0.45;
-      animation: floatOrb 14s ease-in-out infinite alternate;
-    }
-    .orb-1 { width: 240px; height: 240px; background: #3b82f6; top: -40px; left: -60px; }
-    .orb-2 { width: 220px; height: 220px; background: #a855f7; bottom: 80px; right: -50px; animation-delay: -5s; }
-    @keyframes floatOrb {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(25px, 35px) scale(1.12); }
-    }
+    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 86px; }
 
     /* Экраны входа и ожидания */
-    .gate-screen {
-      flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-      padding: 24px; text-align: center; z-index: 2; overflow-y: auto;
+    .gate-wrap {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 24px; text-align: center;
     }
     .gate-card {
-      background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--border); border-radius: 28px;
-      padding: 32px 24px; width: 100%; max-width: 400px;
-      box-shadow: var(--shadow);
-      animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
+      padding: 32px 24px; width: 100%; max-width: 400px; box-shadow: var(--shadow);
+      animation: fadeUp 0.35s ease;
     }
-    @keyframes popIn { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-    .gate-icon {
-      width: 74px; height: 74px; border-radius: 24px; background: var(--accent-grad);
-      color: #fff; font-size: 34px; display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px; box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .brand-logo {
+      width: 68px; height: 68px; border-radius: 22px; background: var(--accent-grad);
+      color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px; box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
     }
-    .gate-card h2 { margin: 0 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
-    .gate-card p { margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.5; }
-    .gate-input {
-      width: 100%; padding: 14px 16px; border-radius: 16px; border: 1.5px solid var(--border);
-      background: var(--bg); color: var(--text); font-size: 15px; margin-bottom: 14px; outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+    .gate-card h1 { margin: 0 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+    .gate-card p { margin: 0 0 22px; color: var(--text-sec); font-size: 14px; line-height: 1.5; }
+    .field {
+      width: 100%; padding: 13px 15px; border-radius: 14px; border: 1.5px solid var(--border);
+      background: var(--surface-soft); color: var(--text); font-size: 14.5px; margin-bottom: 12px; outline: none;
+      transition: border-color 0.2s;
     }
-    .gate-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
-    .primary-btn {
-      width: 100%; padding: 14px; border-radius: 16px; border: none;
+    .field:focus { border-color: var(--accent); }
+    .btn-main {
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
       background: var(--accent-grad); color: #fff; font-size: 15px; font-weight: 700;
-      cursor: pointer; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-      transition: transform 0.12s;
+      cursor: pointer; box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25); transition: transform 0.1s;
     }
-    .primary-btn:active { transform: scale(0.97); }
-    .link-btn {
-      background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600;
+    .btn-main:active { transform: scale(0.98); }
+    .btn-ai {
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
+      background: var(--ai-grad); color: #fff; font-size: 15px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 6px 18px rgba(124, 58, 237, 0.28);
+    }
+    .btn-sec {
+      width: 100%; padding: 12px; border-radius: 14px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .btn-ghost {
+      background: none; border: none; color: var(--text-sec); font-size: 13px; font-weight: 600;
       margin-top: 16px; cursor: pointer;
     }
-    .status-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(245, 158, 11, 0.12); color: #d97706;
-      padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-bottom: 18px;
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 20px;
+      background: rgba(245, 158, 11, 0.12); color: #d97706; font-size: 13px; font-weight: 700; margin-bottom: 20px;
     }
-    .pulse-dot {
-      width: 9px; height: 9px; border-radius: 50%; background: #f59e0b;
-      animation: pulse 1.4s infinite;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.75); } }
+    .dot-pulse { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; animation: pulse 1.4s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    /* Шапка основного приложения */
-    header {
-      background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border); padding: 10px 14px 10px; z-index: 10; flex-shrink: 0;
+    /* Верхняя шапка сервиса */
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 14px 16px 12px; position: sticky; top: 0; z-index: 20;
     }
-    .top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .bot-info { display: flex; align-items: center; gap: 11px; }
-    .avatar {
+    .topbar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .user-meta { display: flex; align-items: center; gap: 11px; }
+    .user-ava {
       width: 40px; height: 40px; border-radius: 14px; background: var(--accent-grad);
-      color: #fff; display: flex; align-items: center; justify-content: center; font-size: 19px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+      color: #fff; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center;
     }
-    .bot-title { font-weight: 800; font-size: 15px; letter-spacing: -0.2px; }
-    .bot-status { font-size: 12px; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-    .online-dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; }
-    .role-pill {
-      font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px;
-      background: var(--inline-bg); color: var(--inline-text); letter-spacing: 0.2px;
+    .user-name { font-weight: 800; font-size: 16px; letter-spacing: -0.2px; }
+    .user-sub { font-size: 12px; color: var(--text-sec); }
+    .role-tag {
+      padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700;
+      background: var(--accent-soft); color: var(--accent);
     }
 
-    /* Твои классы наверху */
-    .classes-bar {
-      display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 2px; scrollbar-width: none;
+    /* Полоса твоих классов */
+    .class-switcher { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .class-switcher::-webkit-scrollbar { display: none; }
+    .cls-pill {
+      padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface-soft); color: var(--text-sec); font-size: 13.5px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: all 0.18s;
     }
-    .classes-bar::-webkit-scrollbar { display: none; }
-    .class-tab {
-      padding: 7px 15px; border-radius: 20px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--muted); font-size: 13px; font-weight: 700;
-      cursor: pointer; white-space: nowrap; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .class-tab.active {
+    .cls-pill.active {
       background: var(--accent-grad); color: #fff; border-color: transparent;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.32); transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
 
-    /* Лента чата */
-    #chatFeed {
-      flex: 1; overflow-y: auto; padding: 14px 12px 18px; z-index: 2;
-      display: flex; flex-direction: column; gap: 12px;
+    /* Контейнер контента */
+    .main-area { max-width: 640px; margin: 0 auto; padding: 16px; }
+    .section-title { font-size: 18px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.3px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow);
     }
-    .msg-wrap {
-      display: flex; flex-direction: column; max-width: 90%;
-      animation: msgSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .card-title { font-size: 15.5px; font-weight: 700; margin: 0; }
+    .chip {
+      display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
+      background: var(--accent-soft); color: var(--accent);
     }
-    .msg-wrap.bot { align-self: flex-start; }
-    .msg-wrap.user { align-self: flex-end; }
-    @keyframes msgSlide { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .muted { color: var(--text-sec); font-size: 13px; line-height: 1.45; }
 
-    .bubble {
-      padding: 12px 15px; border-radius: 20px; font-size: 14px; line-height: 1.48;
-      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06); word-wrap: break-word;
+    /* Bento-сетка статистики */
+    .bento-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+    .bento-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 14px; box-shadow: var(--shadow);
     }
-    .bot .bubble {
-      background: var(--bot-msg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border); border-bottom-left-radius: 5px;
-    }
-    .user .bubble {
-      background: var(--user-msg); color: var(--user-text);
-      border-bottom-right-radius: 5px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
-    }
-    .msg-time { font-size: 10px; opacity: 0.65; text-align: right; margin-top: 5px; }
+    .bento-val { font-size: 24px; font-weight: 800; margin: 4px 0 2px; letter-spacing: -0.5px; }
+    .bento-lbl { font-size: 12px; color: var(--text-sec); font-weight: 600; }
 
-    /* Красивые мини-карточки внутри сообщений бота */
-    .widget-item {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
-      padding: 10px 12px; margin-top: 8px;
-    }
-    .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .badge-tag {
-      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 8px;
-      background: var(--inline-bg); color: var(--inline-text);
-    }
-    .grade-circle {
-      width: 30px; height: 30px; border-radius: 10px; font-weight: 800; font-size: 15px;
-      display: flex; align-items: center; justify-content: center; color: #fff;
-    }
-    .g-5 { background: linear-gradient(135deg, #10b981, #059669); }
-    .g-4 { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-    .g-3 { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .g-2 { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    /* Графики (SVG и столбцы) */
+    .chart-box { width: 100%; overflow: hidden; padding-top: 6px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .bar-lbl { width: 95px; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track { flex: 1; height: 10px; background: var(--surface-soft); border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; background: var(--accent-grad); transition: width 0.5s ease; }
+    .bar-num { width: 32px; text-align: right; font-size: 13px; font-weight: 800; }
 
-    /* Прогресс-бар в тестах */
-    .progress-track {
-      width: 100%; height: 6px; background: var(--bg); border-radius: 99px;
-      overflow: hidden; margin-bottom: 10px;
+    /* Карточки уроков */
+    .lesson-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow);
+      border-left: 4px solid var(--accent);
     }
-    .progress-fill {
-      height: 100%; background: var(--ai-grad); border-radius: 99px; transition: width 0.35s ease;
-    }
-    .explain-box {
-      margin-top: 8px; padding: 8px 10px; border-radius: 10px; font-size: 12.5px;
-      background: rgba(124, 58, 237, 0.08); border-left: 3px solid #8b5cf6;
+    .hw-banner {
+      margin-top: 10px; padding: 10px 12px; border-radius: 12px;
+      background: var(--surface-soft); font-size: 13.5px;
     }
 
-    /* Inline-кнопки */
-    .inline-kb { display: flex; flex-direction: column; gap: 6px; margin-top: 7px; }
-    .inline-row { display: flex; gap: 6px; }
-    .inline-btn {
-      flex: 1; background: var(--bot-msg); backdrop-filter: blur(10px);
-      color: var(--inline-text); border: 1px solid var(--border);
-      border-radius: 13px; padding: 10px 11px; font-size: 13px; font-weight: 700;
-      cursor: pointer; text-align: center; transition: transform 0.1s, background 0.15s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-    }
-    .inline-btn:active { transform: scale(0.97); }
-    .inline-btn.ai {
-      background: var(--ai-grad); color: #fff; border: none;
-      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
-    }
-    .inline-btn.correct { background: #10b981 !important; color: #fff !important; border-color: #10b981 !important; }
-    .inline-btn.wrong { background: #ef4444 !important; color: #fff !important; border-color: #ef4444 !important; }
-
-    .bot-form input, .bot-form select, .bot-form textarea {
-      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); margin-top: 8px; font-size: 13.5px; outline: none;
-    }
-
-    /* Нижняя панель команд */
-    .bottom-dock {
-      background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-      border-top: 1px solid var(--border); padding: 8px 10px 12px; z-index: 10; flex-shrink: 0;
-    }
-    .input-bar { display: flex; gap: 8px; margin-bottom: 8px; }
-    .input-bar input {
-      flex: 1; padding: 10px 15px; border-radius: 22px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); font-size: 14px; outline: none;
-    }
-    .send-btn {
-      width: 40px; height: 40px; border-radius: 50%; border: none;
-      background: var(--accent-grad); color: #fff; font-size: 16px; cursor: pointer;
+    /* Оценки */
+    .grade-pill {
+      width: 34px; height: 34px; border-radius: 11px; color: #fff; font-weight: 800; font-size: 15px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
-    .reply-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .reply-btn {
-      background: var(--bg); color: var(--text); border: 1px solid var(--border);
-      border-radius: 12px; padding: 9px 8px; font-size: 13px; font-weight: 700;
-      cursor: pointer; text-align: center; transition: transform 0.1s;
+    .g-5 { background: var(--green); }
+    .g-4 { background: var(--accent); }
+    .g-3 { background: var(--amber); }
+    .g-2 { background: var(--red); }
+
+    /* Тесты */
+    .opt-btn {
+      width: 100%; text-align: left; padding: 13px 15px; border-radius: 14px;
+      border: 1.5px solid var(--border); background: var(--surface-soft); color: var(--text);
+      font-size: 14px; font-weight: 600; margin-bottom: 9px; cursor: pointer; transition: all 0.15s;
     }
-    .reply-btn:active { transform: scale(0.97); background: var(--inline-bg); }
-    .reply-btn.ai-pill {
-      background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(236,72,153,0.12));
-      border-color: rgba(124,58,237,0.3); color: #7c3aed;
+    .opt-btn.correct { background: rgba(16, 185, 129, 0.15); border-color: var(--green); color: var(--green); }
+    .opt-btn.wrong { background: rgba(239, 68, 68, 0.15); border-color: var(--red); color: var(--red); }
+    .prog-bar { height: 7px; background: var(--surface-soft); border-radius: 99px; overflow: hidden; margin-bottom: 14px; }
+    .prog-in { height: 100%; background: var(--accent-grad); transition: width 0.3s ease; }
+
+    /* Нижняя навигация */
+    .navbar {
+      position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface);
+      border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+      padding: 8px 4px 12px; z-index: 30;
     }
-    body.dark .reply-btn.ai-pill { color: #c084fc; }
+    .nav-item {
+      background: none; border: none; color: var(--text-sec); font-size: 11px; font-weight: 600;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1;
+    }
+    .nav-item.active { color: var(--accent); font-weight: 800; }
+    .nav-ico { font-size: 20px; }
+
+    /* Подвкладки учителя */
+    .sub-tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; scrollbar-width: none; }
+    .sub-tabs::-webkit-scrollbar { display: none; }
+    .sub-tab {
+      padding: 8px 14px; border-radius: 11px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-sec); font-size: 12.5px; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+    }
+    .sub-tab.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+
+    .del-btn {
+      background: rgba(239, 68, 68, 0.1); color: var(--red); border: none;
+      border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
 
-  <!-- ЭКРАН 1: ВВОД ИМЕНИ И ФАМИЛИИ -->
-  <div id="screenRegister" class="gate-screen">
+  <!-- 1. ЭКРАН ВВОДА ИМЕНИ И ФАМИЛИИ -->
+  <div id="viewRegister" class="gate-wrap">
     <div class="gate-card">
-      <div class="gate-icon">📘</div>
-      <h2>Школьный Дневник</h2>
+      <div class="brand-logo">🎓</div>
+      <h1>EduSpace Дневник</h1>
       <p>Введите ваши <b>Имя и Фамилию</b>, чтобы отправить заявку и получить доступ к своим классам.</p>
-      <input id="regFullName" class="gate-input" placeholder="Например: Артём Сорокин" />
-      <button class="primary-btn" onclick="submitRegistration()">Отправить заявку</button>
-      <button class="link-btn" onclick="openTeacherLoginFromGate()">🎓 Войти как учитель</button>
+      <input id="inpRegName" class="field" placeholder="Например: Артём Сорокин" />
+      <button class="btn-main" onclick="registerStudent()">Продолжить</button>
+      <button class="btn-ghost" onclick="loginTeacherModal()">Вход для преподавателя</button>
     </div>
   </div>
 
-  <!-- ЭКРАН 2: ОЖИДАНИЕ ДОБАВЛЕНИЯ В КЛАСС -->
-  <div id="screenWaiting" class="gate-screen hidden">
+  <!-- 2. ЭКРАН ОЖИДАНИЯ -->
+  <div id="viewWaiting" class="gate-wrap hidden">
     <div class="gate-card">
-      <div class="gate-icon">⏳</div>
-      <h2>Заявка на проверке</h2>
-      <p id="waitingUserText">Подождите, пока учитель добавит вас в класс.</p>
-      <div class="status-pill">
-        <span class="pulse-dot"></span>Ожидает добавления в класс
-      </div>
-      <button class="primary-btn" onclick="checkApprovalStatus()">🔄 Проверить статус</button>
-      <button class="link-btn" onclick="resetMyProfile()">Изменить имя и фамилию</button><br/>
-      <button class="link-btn" onclick="openTeacherLoginFromGate()">🎓 Войти как учитель</button>
+      <div class="brand-logo">⏳</div>
+      <h1>Ожидание подтверждения</h1>
+      <p id="waitDesc">Ваша заявка отправлена преподавателю. Как только вас добавят в класс, откроется доступ ко всем материалам.</p>
+      <div class="status-badge"><span class="dot-pulse"></span>Ожидает добавления в класс</div>
+      <button class="btn-main" onclick="refreshAccess()">Обновить статус</button>
+      <button class="btn-ghost" onclick="changeStudentName()">Изменить имя и фамилию</button><br/>
+      <button class="btn-ghost" onclick="loginTeacherModal()">Вход для преподавателя</button>
     </div>
   </div>
 
-  <!-- ЭКРАН 3: ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
-  <div id="screenApp" class="hidden" style="display:flex; flex-direction:column; height:100vh;">
-    <header>
-      <div class="top-row">
-        <div class="bot-info">
-          <div class="avatar">📘</div>
+  <!-- 3. ОСНОВНОЙ СЕРВИС -->
+  <div id="viewService" class="hidden">
+    <div class="topbar">
+      <div class="topbar-head">
+        <div class="user-meta">
+          <div class="user-ava" id="avaLetter">У</div>
           <div>
-            <div class="bot-title" id="headerUserName">Дневник</div>
-            <div class="bot-status"><span class="online-dot"></span><span id="syncStatus">в сети • AI подключён</span></div>
+            <div class="user-name" id="topUserName">Ученик</div>
+            <div class="user-sub" id="topClassHint">Ваши активные классы</div>
           </div>
         </div>
-        <span class="role-pill" id="roleBadge">Ученик</span>
+        <span class="role-tag" id="topRoleTag" onclick="loginTeacherModal()">Ученик</span>
       </div>
-      <!-- ТВОИ КЛАССЫ НАВЕРХУ -->
-      <div class="classes-bar" id="myClassesBar"></div>
-    </header>
+      <!-- ТОЛЬКО ТВОИ КЛАССЫ НАВЕРХУ -->
+      <div class="class-switcher" id="topClassesList"></div>
+    </div>
 
-    <div id="chatFeed"></div>
-
-    <div class="bottom-dock">
-      <div class="input-bar">
-        <input id="chatInput" placeholder="Спроси ИИ-репетитора или введи команду..." onkeydown="if(event.key==='Enter') handleFreeText()" />
-        <button class="send-btn" onclick="handleFreeText()">➤</button>
+    <div class="main-area">
+      <!-- ВКЛАДКА 1: УРОКИ И РАСПИСАНИЕ -->
+      <div id="sec-lessons">
+        <div class="bento-grid">
+          <div class="bento-box">
+            <div class="bento-lbl">Средний балл</div>
+            <div class="bento-val" id="kpiAvg" style="color:var(--accent);">—</div>
+            <div class="muted" style="font-size:11.5px;">по всем предметам</div>
+          </div>
+          <div class="bento-box">
+            <div class="bento-lbl">Активных тестов</div>
+            <div class="bento-val" id="kpiTests">0</div>
+            <div class="muted" style="font-size:11.5px;">доступно в классе</div>
+          </div>
+        </div>
+        <div class="card-head">
+          <h2 class="section-title" style="margin:0;">Расписание и задания</h2>
+          <span class="chip" id="activeClassBadge">Класс</span>
+        </div>
+        <div id="lessonsFeed"></div>
       </div>
-      <div class="reply-grid">
-        <button class="reply-btn" onclick="cmdSchedule()">📅 Расписание и ДЗ</button>
-        <button class="reply-btn" onclick="cmdGrades()">📊 Мои оценки</button>
-        <button class="reply-btn ai-pill" onclick="cmdTests()">✨ Тесты и ИИ</button>
-        <button class="reply-btn" onclick="cmdSubmitHW()">📤 Сдать ДЗ</button>
-        <button class="reply-btn" onclick="cmdSkip()">⚠️ Пропуск урока</button>
-        <button class="reply-btn" onclick="cmdTeacher()">🎓 Учитель</button>
+
+      <!-- ВКЛАДКА 2: УСПЕВАЕМОСТЬ И ГРАФИКИ -->
+      <div id="sec-analytics" class="hidden">
+        <h2 class="section-title">Аналитика и графики</h2>
+        <div class="card">
+          <div class="card-head">
+            <h3 class="card-title">Динамика оценок</h3>
+            <span class="chip" id="chartTrendBadge">Тренд</span>
+          </div>
+          <div class="chart-box" id="lineChartBox"></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h3 class="card-title">Средний балл по предметам</h3>
+          </div>
+          <div id="subjectBarsBox"></div>
+        </div>
+        <h3 class="section-title" style="font-size:16px; margin-top:16px;">История оценок</h3>
+        <div id="gradesFeed"></div>
+      </div>
+
+      <!-- ВКЛАДКА 3: ТЕСТЫ (ТОЛЬКО ПРОХОЖДЕНИЕ ДЛЯ УЧЕНИКОВ) -->
+      <div id="sec-tests" class="hidden">
+        <div id="testsListView">
+          <div class="card-head">
+            <h2 class="section-title" style="margin:0;">Контрольные тесты</h2>
+            <span class="chip" id="testsClassBadge">Класс</span>
+          </div>
+          <div id="testsCatalogFeed"></div>
+        </div>
+        <div id="testPlayerView" class="hidden card"></div>
+      </div>
+
+      <!-- ВКЛАДКА 4: СДАТЬ ДЗ / ПРОПУСК -->
+      <div id="sec-submit" class="hidden">
+        <h2 class="section-title">Отправка домашней работы</h2>
+        <div class="card">
+          <div class="muted" style="margin-bottom:10px;">Работа будет прикреплена к вашему профилю и активному классу.</div>
+          <input id="inpHwSubj" class="field" placeholder="Предмет (например: Алгебра)" />
+          <textarea id="inpHwBody" class="field" rows="4" placeholder="Введите ответ, решение или ссылку на файл..."></textarea>
+          <button class="btn-main" onclick="sendHomework()">Отправить на проверку</button>
+        </div>
+        <h2 class="section-title" style="margin-top:18px;">Уведомление об отсутствии</h2>
+        <div class="card">
+          <input id="inpSkipBody" class="field" placeholder="Укажите причину пропуска (болезнь, олимпиада...)" />
+          <button class="btn-sec" onclick="sendAbsence()">Сообщить преподавателю</button>
+        </div>
+      </div>
+
+      <!-- ВКЛАДКА 5: ПАНЕЛЬ УЧИТЕЛЯ (ТОЛЬКО ДЛЯ УЧИТЕЛЯ) -->
+      <div id="sec-teacher" class="hidden">
+        <div class="sub-tabs">
+          <button class="sub-tab active" onclick="switchTeacherSub('t-classes', this)">🏫 Классы и ученики</button>
+          <button class="sub-tab" onclick="switchTeacherSub('t-ai', this)">✨ Конструктор тестов</button>
+          <button class="sub-tab" onclick="switchTeacherSub('t-lessons', this)">📅 Уроки и оценки</button>
+          <button class="sub-tab" onclick="switchTeacherSub('t-inbox', this)">📥 Входящие ДЗ</button>
+        </div>
+
+        <!-- Подвкладка 1: Классы и ученики -->
+        <div id="t-classes">
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">Создать новый класс</h3>
+            <input id="tNewClassName" class="field" placeholder="Название класса (напр. 8А или Программирование)" />
+            <button class="btn-main" onclick="createNewClass()">Создать класс</button>
+          </div>
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">Добавить ученика в класс</h3>
+            <div id="tAssignArea" class="muted">Загрузка списка...</div>
+          </div>
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:8px;">Уведомления в Telegram</h3>
+            <p class="muted" id="tTgStatus" style="margin-bottom:10px;">Привяжите аккаунт, чтобы получать уведомления о новых заявках и ДЗ.</p>
+            <button class="btn-sec" onclick="bindTeacherTg()">Привязать мой Telegram</button>
+          </div>
+        </div>
+
+        <!-- Подвкладка 2: Создание тестов (ТОЛЬКО УЧИТЕЛЬ) -->
+        <div id="t-ai" class="hidden">
+          <div class="card" style="border: 1.5px solid rgba(124, 58, 237, 0.35);">
+            <div class="card-head">
+              <h3 class="card-title">✨ ИИ-генератор тестов</h3>
+              <span class="chip" style="background:rgba(124,58,237,0.12); color:#7c3aed;">Только учитель</span>
+            </div>
+            <p class="muted" style="margin-bottom:12px;">Выберите класс, укажите тему и сложность — ИИ автоматически составит вопросы и проверит их логику.</p>
+            <select id="tAiClass" class="field"></select>
+            <input id="tAiTopic" class="field" placeholder="Предмет и тема (напр. История: Петр I)" />
+            <div style="display:flex; gap:8px;">
+              <select id="tAiLevel" class="field">
+                <option value="базовый">Базовый уровень</option>
+                <option value="средний" selected>Средний уровень</option>
+                <option value="углублённый">Углублённый</option>
+              </select>
+              <select id="tAiCount" class="field">
+                <option value="3">3 вопроса</option>
+                <option value="5" selected>5 вопросов</option>
+                <option value="7">7 вопросов</option>
+              </select>
+            </div>
+            <button class="btn-ai" id="tAiBtn" onclick="teacherGenerateAITest()">✨ Сгенерировать тест с ИИ</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">Ручное добавление вопроса</h3>
+            <select id="tManClass" class="field"></select>
+            <input id="tManTitle" class="field" placeholder="Название теста" />
+            <input id="tManQ" class="field" placeholder="Текст вопроса" />
+            <input id="tManO1" class="field" placeholder="Правильный ответ" />
+            <input id="tManO2" class="field" placeholder="Неправильный вариант 1" />
+            <input id="tManO3" class="field" placeholder="Неправильный вариант 2" />
+            <button class="btn-sec" onclick="teacherAddManualQuestion()">Добавить вопрос в тест</button>
+          </div>
+        </div>
+
+        <!-- Подвкладка 3: Уроки и оценки -->
+        <div id="t-lessons" class="hidden">
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">Добавить урок и ДЗ</h3>
+            <select id="tLesClass" class="field"></select>
+            <div style="display:flex; gap:8px;">
+              <select id="tLesDay" class="field">
+                <option>Понедельник</option><option>Вторник</option><option>Среда</option>
+                <option>Четверг</option><option>Пятница</option><option>Суббота</option>
+              </select>
+              <input id="tLesTime" class="field" placeholder="Время (08:30)" />
+            </div>
+            <input id="tLesTopic" class="field" placeholder="Предмет и тема урока" />
+            <input id="tLesTask" class="field" placeholder="Домашнее задание" />
+            <button class="btn-main" onclick="teacherCreateLesson()">Опубликовать урок</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">Выставить оценку</h3>
+            <select id="tGrStudent" class="field"></select>
+            <input id="tGrSubject" class="field" placeholder="Предмет" />
+            <div style="display:flex; gap:8px;">
+              <select id="tGrVal" class="field">
+                <option value="5">5 (Отлично)</option>
+                <option value="4">4 (Хорошо)</option>
+                <option value="3">3 (Удовл.)</option>
+                <option value="2">2 (Неуд.)</option>
+              </select>
+              <input id="tGrComment" class="field" placeholder="Комментарий" />
+            </div>
+            <button class="btn-main" onclick="teacherCreateGrade()">Поставить оценку</button>
+          </div>
+        </div>
+
+        <!-- Подвкладка 4: Входящие ДЗ -->
+        <div id="t-inbox" class="hidden">
+          <div class="card-head">
+            <h3 class="section-title" style="margin:0;">Сданные работы</h3>
+            <button class="del-btn" onclick="teacherClearInbox()">Очистить</button>
+          </div>
+          <div id="tInboxList"></div>
+        </div>
       </div>
     </div>
+
+    <!-- НИЖНЯЯ НАВИГАЦИЯ СЕРВИСА -->
+    <nav class="navbar">
+      <button class="nav-item active" onclick="switchTab('lessons', this)"><span class="nav-ico">📅</span>Уроки</button>
+      <button class="nav-item" onclick="switchTab('analytics', this)"><span class="nav-ico">📈</span>Графики</button>
+      <button class="nav-item" onclick="switchTab('tests', this)"><span class="nav-ico">📝</span>Тесты</button>
+      <button class="nav-item" onclick="switchTab('submit', this)"><span class="nav-ico">📤</span>Сдать ДЗ</button>
+      <button class="nav-item hidden" id="navTeacherBtn" onclick="switchTab('teacher', this)"><span class="nav-ico">⚙️</span>Управление</button>
+    </nav>
   </div>
 
   <script>
@@ -366,8 +491,6 @@
     let myProfile = null;
 
     async function loadCloudDB() {
-      const stEl = document.getElementById('syncStatus');
-      if (stEl) stEl.innerText = 'синхронизация...';
       try {
         const res = await fetch(`${DB_URL}/diary_v2.json`);
         const data = await res.json();
@@ -380,10 +503,7 @@
           db.submissions = data.submissions || [];
           db.teacherChatId = data.teacherChatId || null;
         }
-        if (stEl) stEl.innerText = 'в сети • AI подключён';
-      } catch (e) {
-        if (stEl) stEl.innerText = 'ошибка сети';
-      }
+      } catch (e) {}
     }
 
     async function saveCloudDB() {
@@ -405,444 +525,485 @@
       } catch (e) {}
     }
 
-    async function initApp() {
+    // --- ИНИЦИАЛИЗАЦИЯ И ЭКРАНЫ ДОСТУПА ---
+    async function boot() {
       await loadCloudDB();
       if (isTeacher) {
-        openMainApp();
+        enterService();
         return;
       }
       myProfile = db.students.find(s => s.id === myStudentId);
       if (!myProfile) {
-        showScreen('screenRegister');
+        showView('viewRegister');
       } else if (!myProfile.classes || myProfile.classes.length === 0) {
-        document.getElementById('waitingUserText').innerHTML = `<b>${myProfile.name}</b>, ваша заявка отправлена учителю. Ожидайте добавления в класс.`;
-        showScreen('screenWaiting');
+        document.getElementById('waitDesc').innerHTML = `<b>${myProfile.name}</b>, ваша заявка отправлена преподавателю. Как только вас добавят в класс, откроется доступ ко всем материалам.`;
+        showView('viewWaiting');
       } else {
-        openMainApp();
+        enterService();
       }
     }
 
-    function showScreen(id) {
-      ['screenRegister', 'screenWaiting', 'screenApp'].forEach(s => {
-        const el = document.getElementById(s);
-        if (s === id) el.classList.remove('hidden');
-        else el.classList.add('hidden');
+    function showView(id) {
+      ['viewRegister', 'viewWaiting', 'viewService'].forEach(v => {
+        document.getElementById(v).classList.toggle('hidden', v !== id);
       });
     }
 
-    async function submitRegistration() {
-      haptic('medium');
-      const name = document.getElementById('regFullName').value.trim();
+    async function registerStudent() {
+      const name = document.getElementById('inpRegName').value.trim();
       if (name.length < 3) return alert('Введите ваши Имя и Фамилию!');
+      haptic('medium');
       await loadCloudDB();
       const existing = db.students.find(s => s.id === myStudentId);
       if (existing) existing.name = name;
       else db.students.push({ id: myStudentId, name, classes: [], tgId: currentTgUserId });
       await saveCloudDB();
-      await notifyTeacher(`🆕 Новая заявка в дневник:\n👤 ${name}\n\nОткройте «Учитель» -> «Ученики», чтобы добавить в класс.`);
-      initApp();
+      await notifyTeacher(`🆕 Новая заявка в дневник:\n👤 ${name}\n\nОткройте «Управление» -> «Классы и ученики», чтобы добавить в класс.`);
+      boot();
     }
 
-    async function checkApprovalStatus() {
+    async function refreshAccess() {
       haptic('light');
-      await initApp();
+      await boot();
       if (myProfile && (!myProfile.classes || myProfile.classes.length === 0)) {
-        alert('Учитель пока ещё не добавил вас в класс. Попробуйте проверить через минуту!');
+        alert('Преподаватель пока ещё не добавил вас в класс.');
       }
     }
 
-    async function resetMyProfile() {
+    async function changeStudentName() {
       await loadCloudDB();
       db.students = db.students.filter(s => s.id !== myStudentId);
       await saveCloudDB();
-      showScreen('screenRegister');
+      showView('viewRegister');
     }
 
-    function openTeacherLoginFromGate() {
-      const pin = prompt('Введите ПИН-код учителя:');
+    function loginTeacherModal() {
+      if (isTeacher) return;
+      const pin = prompt('Введите ПИН-код преподавателя:');
       if (pin === TEACHER_PIN) {
         haptic('success');
         isTeacher = true;
-        openMainApp();
+        enterService();
       } else if (pin !== null) {
         haptic('error');
-        alert('❌ Неверный ПИН-код');
+        alert('Неверный ПИН-код');
       }
     }
 
-    function openMainApp() {
-      showScreen('screenApp');
-      document.getElementById('roleBadge').innerText = isTeacher ? '🎓 Учитель' : '🎒 Ученик';
-      document.getElementById('headerUserName').innerText = isTeacher ? 'Панель учителя' : (myProfile ? myProfile.name : 'Ученик');
-      renderTopClasses();
+    // --- ВХОД В ОСНОВНОЙ СЕРВИС ---
+    function enterService() {
+      showView('viewService');
+      const displayName = isTeacher ? 'Преподаватель' : (myProfile ? myProfile.name : 'Ученик');
+      document.getElementById('topUserName').innerText = displayName;
+      document.getElementById('avaLetter').innerText = displayName.charAt(0).toUpperCase();
+      document.getElementById('topRoleTag').innerText = isTeacher ? 'Учитель' : 'Ученик';
+      document.getElementById('navTeacherBtn').classList.toggle('hidden', !isTeacher);
 
-      if (document.getElementById('chatFeed').children.length === 0) {
-        const activeCls = db.classes.find(c => c.id === activeClassId);
-        const clsGreeting = activeCls ? `Активный класс: <b>${activeCls.name}</b>.` : 'Классы пока не созданы.';
-        addBotMsg(
-          `Привет${myProfile ? ', <b>' + myProfile.name + '</b>' : ''}! 👋<br>${clsGreeting}<br>Выбирай свои классы наверху, задавай любые вопросы ИИ-репетитору в поле снизу или жми на кнопки:`,
-          isTeacher
-            ? [
-                [{ label: '🎓 Меню управления учителя', action: 'showTeacherMenu()' }],
-                [{ label: '✨ Сделать тест через ИИ', cls: 'ai', action: 'promptAITest()' }]
-              ]
-            : [
-                [{ label: '📅 Расписание и ДЗ', action: 'cmdSchedule()' }, { label: '✨ Тесты с ИИ', cls: 'ai', action: 'cmdTests()' }],
-                [{ label: '📊 Мои оценки', action: 'cmdGrades()' }, { label: '📤 Сдать ДЗ', action: 'cmdSubmitHW()' }]
-              ]
-        );
-      }
+      renderTopClasses();
+      renderAllData();
     }
 
     function renderTopClasses() {
-      const bar = document.getElementById('myClassesBar');
-      let allowedClasses = [];
+      const box = document.getElementById('topClassesList');
+      let list = [];
       if (isTeacher) {
-        allowedClasses = db.classes;
+        list = db.classes;
       } else if (myProfile && myProfile.classes) {
-        allowedClasses = db.classes.filter(c => myProfile.classes.includes(c.id));
+        list = db.classes.filter(c => myProfile.classes.includes(c.id));
       }
 
-      if (!allowedClasses.length) {
+      if (!list.length) {
         activeClassId = null;
-        bar.innerHTML = isTeacher
-          ? '<span style="font-size:12px; color:var(--muted); padding:4px 0;">Создайте первый класс в меню учителя</span>'
+        box.innerHTML = isTeacher
+          ? '<span class="muted" style="font-size:12.5px;">Нет классов — создайте первый во вкладке «Управление»</span>'
           : '';
         return;
       }
 
-      if (!activeClassId || !allowedClasses.some(c => c.id === activeClassId)) {
-        activeClassId = allowedClasses[0].id;
+      if (!activeClassId || !list.some(c => c.id === activeClassId)) {
+        activeClassId = list[0].id;
       }
 
-      bar.innerHTML = allowedClasses.map(c => `
-        <button class="class-tab ${c.id === activeClassId ? 'active' : ''}" onclick="switchActiveClass('${c.id}')">
+      box.innerHTML = list.map(c => `
+        <button class="cls-pill ${c.id === activeClassId ? 'active' : ''}" onclick="selectClass('${c.id}')">
           ${c.name}
         </button>
       `).join('');
     }
 
-    function switchActiveClass(classId) {
+    function selectClass(id) {
       haptic('light');
-      activeClassId = classId;
+      activeClassId = id;
       renderTopClasses();
-      const cls = db.classes.find(c => c.id === classId);
-      addBotMsg(`Выбран класс: <b>${cls ? cls.name : ''}</b>`, [
-        [{ label: '📅 Уроки и ДЗ', action: 'cmdSchedule()' }, { label: '✨ Тесты класса', cls: 'ai', action: 'cmdTests()' }]
-      ]);
+      renderAllData();
     }
 
-    function nowTime() {
-      return new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function scrollToBottom() {
-      const feed = document.getElementById('chatFeed');
-      setTimeout(() => { feed.scrollTop = feed.scrollHeight; }, 45);
-    }
-
-    function addUserMsg(text) {
-      const feed = document.getElementById('chatFeed');
-      const div = document.createElement('div');
-      div.className = 'msg-wrap user';
-      div.innerHTML = `<div class="bubble">${text}<div class="msg-time">${nowTime()}</div></div>`;
-      feed.appendChild(div);
-      scrollToBottom();
-    }
-
-    function addBotMsg(html, inlineRows = []) {
-      const feed = document.getElementById('chatFeed');
-      const div = document.createElement('div');
-      div.className = 'msg-wrap bot';
-      let kbHtml = '';
-      if (inlineRows.length) {
-        kbHtml = '<div class="inline-kb">' + inlineRows.map(row =>
-          '<div class="inline-row">' + row.map(btn =>
-            `<button class="inline-btn ${btn.cls || ''}" onclick="${btn.action}">${btn.label}</button>`
-          ).join('') + '</div>'
-        ).join('') + '</div>';
-      }
-      div.innerHTML = `<div class="bubble">${html}<div class="msg-time">${nowTime()}</div></div>${kbHtml}`;
-      feed.appendChild(div);
-      scrollToBottom();
-      return div;
-    }
-
-    // --- РАСПИСАНИЕ И ДЗ ---
-    async function cmdSchedule() {
+    function switchTab(tab, btn) {
       haptic('light');
-      addUserMsg('📅 Расписание и ДЗ');
-      await loadCloudDB();
-      renderTopClasses();
-      if (!activeClassId) return addBotMsg('Сначала создайте класс в панели учителя.');
+      ['lessons', 'analytics', 'tests', 'submit', 'teacher'].forEach(t => {
+        document.getElementById('sec-' + t).classList.toggle('hidden', t !== tab);
+      });
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadCloudDB().then(() => {
+        renderTopClasses();
+        renderAllData();
+      });
+    }
+
+    function renderAllData() {
       const cls = db.classes.find(c => c.id === activeClassId);
-      const items = db.lessons.map((l, idx) => ({ ...l, idx })).filter(l => l.classId === activeClassId);
-      if (!items.length) return addBotMsg(`Для класса <b>${cls.name}</b> уроков пока нет.`);
+      const clsName = cls ? cls.name : 'Не выбран';
+      document.getElementById('activeClassBadge').innerText = clsName;
+      document.getElementById('testsClassBadge').innerText = clsName;
 
-      const cardsHtml = items.map(l => `
-        <div class="widget-item">
-          <div class="widget-header">
-            <span class="badge-tag">${l.day}</span>
-            <span style="font-size:11.5px; color:var(--muted);">${l.time || ''}</span>
+      renderLessons();
+      renderAnalyticsAndGrades();
+      renderTestsCatalog();
+      if (isTeacher) renderTeacherControls();
+    }
+
+    // --- 1. УРОКИ И РАСПИСАНИЕ ---
+    function renderLessons() {
+      const feed = document.getElementById('lessonsFeed');
+      const items = db.lessons.map((l, idx) => ({ ...l, idx })).filter(l => l.classId === activeClassId);
+      if (!items.length) {
+        feed.innerHTML = '<div class="card muted">Для этого класса расписание пока не заполнено.</div>';
+        return;
+      }
+      feed.innerHTML = items.map(l => `
+        <div class="lesson-card">
+          <div class="card-head" style="margin-bottom:6px;">
+            <div>
+              <span class="chip">${l.day}</span>
+              ${l.time ? `<span class="muted" style="margin-left:6px; font-size:12px;">${l.time}</span>` : ''}
+            </div>
+            ${isTeacher ? `<button class="del-btn" onclick="deleteLesson(${l.idx})">Удалить</button>` : ''}
           </div>
-          <div style="font-weight:700; font-size:14.5px; margin-bottom:4px;">${l.topic}</div>
-          <div style="font-size:13px;">📚 <b>ДЗ:</b> ${l.task}</div>
+          <div style="font-weight:800; font-size:15.5px;">${l.topic}</div>
+          <div class="hw-banner">📚 <b>Задание:</b> ${l.task}</div>
         </div>
       `).join('');
-
-      const delBtns = isTeacher
-        ? items.map(l => [{ label: `🗑 Удалить: ${l.topic}`, action: `deleteLesson(${l.idx})` }])
-        : [];
-      addBotMsg(`📅 <b>Расписание и ДЗ (${cls.name}):</b>${cardsHtml}`, delBtns);
     }
 
     async function deleteLesson(idx) {
       db.lessons.splice(idx, 1);
       await saveCloudDB();
-      addBotMsg('✅ Урок удалён.');
+      renderLessons();
     }
 
-    // --- ОЦЕНКИ ---
-    async function cmdGrades() {
-      haptic('light');
-      addUserMsg('📊 Мои оценки');
-      await loadCloudDB();
+    // --- 2. ГРАФИКИ И ОЦЕНКИ ---
+    function renderAnalyticsAndGrades() {
       const myGrades = isTeacher
         ? db.grades
         : db.grades.filter(g => g.studentId === myStudentId || (myProfile && g.studentName.toLowerCase() === myProfile.name.toLowerCase()));
 
-      if (!myGrades.length) return addBotMsg('Оценок пока нет.');
-      const sum = myGrades.reduce((acc, g) => acc + Number(g.val), 0);
-      const avg = (sum / myGrades.length).toFixed(2);
+      const avgEl = document.getElementById('kpiAvg');
+      const trendBadge = document.getElementById('chartTrendBadge');
+      const lineBox = document.getElementById('lineChartBox');
+      const barsBox = document.getElementById('subjectBarsBox');
+      const feed = document.getElementById('gradesFeed');
 
-      const cardsHtml = myGrades.slice(0, 15).map(g => `
-        <div class="widget-item" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-          <div>
-            <div style="font-weight:700; font-size:14px;">${g.subject}</div>
-            <div style="font-size:12px; color:var(--muted);">${isTeacher ? g.studentName + ' • ' : ''}${g.comment || 'За работу на уроке'}</div>
+      if (!myGrades.length) {
+        avgEl.innerText = '—';
+        trendBadge.innerText = 'Нет данных';
+        lineBox.innerHTML = '<div class="muted">График появится после выставления первых оценок.</div>';
+        barsBox.innerHTML = '<div class="muted">Нет оценок по предметам.</div>';
+        feed.innerHTML = '<div class="card muted">Оценок пока нет.</div>';
+        return;
+      }
+
+      const avg = (myGrades.reduce((s, g) => s + Number(g.val), 0) / myGrades.length).toFixed(2);
+      avgEl.innerText = avg;
+      trendBadge.innerText = `Ср. балл: ${avg}`;
+
+      // Линейный SVG-график последних оценок (до 10 штук в хронологическом порядке)
+      const recent = [...myGrades].slice(0, 10).reverse();
+      const w = 320, h = 110, padX = 20, padY = 18;
+      const stepX = recent.length > 1 ? (w - padX * 2) / (recent.length - 1) : 0;
+      const pts = recent.map((g, i) => {
+        const x = recent.length > 1 ? padX + i * stepX : w / 2;
+        const val = Number(g.val);
+        const y = h - padY - ((val - 2) / 3) * (h - padY * 2);
+        return { x, y, val };
+      });
+      const polyPoints = pts.map(p => `${p.x},${p.y}`).join(' ');
+      const areaPoints = `${pts[0].x},${h - 10} ${polyPoints} ${pts[pts.length - 1].x},${h - 10}`;
+
+      lineBox.innerHTML = `
+        <svg viewBox="0 0 ${w} ${h}" style="width:100%; height:120px; display:block;">
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2563eb" stop-opacity="0.28" />
+              <stop offset="100%" stop-color="#2563eb" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
+          <line x1="${padX}" y1="${padY}" x2="${w - padX}" y2="${padY}" stroke="var(--border)" stroke-dasharray="3 3" />
+          <line x1="${padX}" y1="${h / 2}" x2="${w - padX}" y2="${h / 2}" stroke="var(--border)" stroke-dasharray="3 3" />
+          <line x1="${padX}" y1="${h - padY}" x2="${w - padX}" y2="${h - padY}" stroke="var(--border)" stroke-dasharray="3 3" />
+          ${pts.length > 1 ? `<polygon points="${areaPoints}" fill="url(#areaGrad)" />` : ''}
+          ${pts.length > 1 ? `<polyline fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />` : ''}
+          ${pts.map(p => `
+            <circle cx="${p.x}" cy="${p.y}" r="5" fill="#ffffff" stroke="#2563eb" stroke-width="2.5" />
+            <text x="${p.x}" y="${p.y - 9}" text-anchor="middle" font-size="11" font-weight="800" fill="var(--text)">${p.val}</text>
+          `).join('')}
+        </svg>
+      `;
+
+      // Столбчатая диаграмма по предметам
+      const bySubj = {};
+      myGrades.forEach(g => {
+        if (!bySubj[g.subject]) bySubj[g.subject] = [];
+        bySubj[g.subject].push(Number(g.val));
+      });
+      barsBox.innerHTML = Object.entries(bySubj).map(([subj, arr]) => {
+        const sAvg = (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1);
+        const pct = Math.min(100, Math.round((sAvg / 5) * 100));
+        return `
+          <div class="bar-row">
+            <div class="bar-lbl">${subj}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+            <div class="bar-num">${sAvg}</div>
           </div>
-          <div class="grade-circle g-${g.val}">${g.val}</div>
+        `;
+      }).join('');
+
+      // Список оценок
+      feed.innerHTML = myGrades.map((g, idx) => `
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="grade-pill g-${g.val}">${g.val}</div>
+            <div>
+              <div style="font-weight:700; font-size:14.5px;">${g.subject}</div>
+              <div class="muted" style="font-size:12px;">${isTeacher ? g.studentName + ' • ' : ''}${g.comment || 'Оценка за урок'}</div>
+            </div>
+          </div>
+          ${isTeacher ? `<button class="del-btn" onclick="deleteGrade(${idx})">✕</button>` : ''}
         </div>
       `).join('');
-
-      addBotMsg(`📊 <b>Журнал оценок</b> (Средний балл: <b>${avg}</b>):${cardsHtml}`);
     }
 
-    // --- ТЕСТЫ И ИИ ---
-    async function cmdTests() {
-      haptic('light');
-      addUserMsg('✨ Тесты и ИИ');
-      await loadCloudDB();
+    async function deleteGrade(idx) {
+      db.grades.splice(idx, 1);
+      await saveCloudDB();
+      renderAnalyticsAndGrades();
+    }
+
+    // --- 3. ТЕСТЫ (ТОЛЬКО ПРОХОЖДЕНИЕ) ---
+    function renderTestsCatalog() {
+      document.getElementById('testPlayerView').classList.add('hidden');
+      document.getElementById('testsListView').classList.remove('hidden');
+
       const clsTests = db.tests
         .map((t, idx) => ({ ...t, idx }))
         .filter(t => !t.classId || t.classId === activeClassId || isTeacher);
 
-      const rows = clsTests.map(t => ([
-        { label: `${t.ai ? '✨' : '📝'} ${t.title} (${t.questions.length} вопр.)`, action: `runTest(${t.idx})` }
-      ]));
-      rows.push([{ label: '✨ Сгенерировать новый тест ИИ', cls: 'ai', action: 'promptAITest()' }]);
+      document.getElementById('kpiTests').innerText = clsTests.length;
+      const feed = document.getElementById('testsCatalogFeed');
 
-      addBotMsg(
-        clsTests.length ? 'Выберите готовый тест или создайте новый с помощью ИИ:' : 'Готовых тестов пока нет — создайте свой первый тест за 5 секунд с помощью ИИ:',
-        rows
-      );
-    }
-
-    let activeTest = null, qIdx = 0, score = 0;
-    function runTest(idx) {
-      haptic('medium');
-      activeTest = db.tests[idx];
-      qIdx = 0; score = 0;
-      addUserMsg(`Пройти тест: ${activeTest.title}`);
-      sendNextQuestion();
-    }
-
-    function sendNextQuestion() {
-      if (qIdx >= activeTest.questions.length) {
-        const total = activeTest.questions.length;
-        const pct = Math.round((score / total) * 100);
-        const mark = pct >= 85 ? '5' : pct >= 70 ? '4' : pct >= 50 ? '3' : '2';
-        const stName = myProfile ? myProfile.name : 'Учитель';
-        haptic('success');
-        notifyTeacher(`✅ Тест пройден\nУченик: ${stName}\nТест: ${activeTest.title}\nРезультат: ${score}/${total} (Оценка: ${mark})`);
-        addBotMsg(
-          `<div style="text-align:center; padding:6px 0;">
-            <div style="font-size:36px;">🏆</div>
-            <div style="font-size:17px; font-weight:800; margin:4px 0;">Тест завершён!</div>
-            <div style="color:var(--muted); font-size:13px;">Правильных ответов: <b>${score} из ${total}</b> (${pct}%)</div>
-            <div class="grade-circle g-${mark}" style="width:46px; height:46px; font-size:22px; margin:10px auto 0;">${mark}</div>
-          </div>`,
-          [[{ label: '✨ К списку тестов', action: 'cmdTests()' }]]
-        );
+      if (!clsTests.length) {
+        feed.innerHTML = '<div class="card muted">Для этого класса тестов пока нет.</div>';
         return;
       }
-      const q = activeTest.questions[qIdx];
-      const progressPct = Math.round((qIdx / activeTest.questions.length) * 100);
-      const rows = q.options.map((opt, i) => ([
-        { label: opt, action: `answerQuestion(${i}, this)` }
-      ]));
-      addBotMsg(
-        `<div class="progress-track"><div class="progress-fill" style="width:${progressPct}%"></div></div>
-         <div style="font-size:11.5px; color:var(--muted); margin-bottom:4px;">Вопрос ${qIdx + 1} из ${activeTest.questions.length}</div>
-         <div style="font-weight:700; font-size:15px;">${q.q}</div>`,
-        rows
-      );
+
+      feed.innerHTML = clsTests.map(t => `
+        <div class="card">
+          <div class="card-head">
+            <span class="chip">${t.ai ? '✨ Тест (AI)' : '📝 Тест'}</span>
+            ${isTeacher ? `<button class="del-btn" onclick="deleteTest(${t.idx})">Удалить</button>` : `<span class="muted" style="font-size:12px;">${t.questions.length} вопр.</span>`}
+          </div>
+          <h3 class="card-title" style="margin-bottom:6px;">${t.title}</h3>
+          <div class="muted" style="margin-bottom:12px;">Вопросов: ${t.questions.length} • Автоматическая оценка</div>
+          <button class="btn-main" onclick="launchTest(${t.idx})">Начать тестирование</button>
+        </div>
+      `).join('');
     }
 
-    function answerQuestion(chosenIdx, btnEl) {
-      const wrap = btnEl.closest('.msg-wrap');
-      const btns = wrap.querySelectorAll('.inline-btn');
-      btns.forEach(b => b.disabled = true);
-      const q = activeTest.questions[qIdx];
-      if (chosenIdx === q.ans) {
+    async function deleteTest(idx) {
+      db.tests.splice(idx, 1);
+      await saveCloudDB();
+      renderTestsCatalog();
+    }
+
+    let curTest = null, curQ = 0, curScore = 0;
+    function launchTest(idx) {
+      haptic('medium');
+      curTest = db.tests[idx];
+      curQ = 0; curScore = 0;
+      document.getElementById('testsListView').classList.add('hidden');
+      document.getElementById('testPlayerView').classList.remove('hidden');
+      renderTestStep();
+    }
+
+    function renderTestStep() {
+      const box = document.getElementById('testPlayerView');
+      if (curQ >= curTest.questions.length) {
+        const total = curTest.questions.length;
+        const pct = Math.round((curScore / total) * 100);
+        const mark = pct >= 85 ? '5' : pct >= 70 ? '4' : pct >= 50 ? '3' : '2';
+        const stName = myProfile ? myProfile.name : 'Преподаватель';
         haptic('success');
-        btnEl.classList.add('correct');
-        score++;
+        notifyTeacher(`✅ Тест завершён\nУченик: ${stName}\nТест: ${curTest.title}\nРезультат: ${curScore}/${total} (Оценка: ${mark})`);
+        box.innerHTML = `
+          <div style="text-align:center; padding:12px 0;">
+            <div style="font-size:44px; margin-bottom:8px;">🏆</div>
+            <h2 style="margin:0 0 6px;">Результат теста</h2>
+            <p class="muted">Верных ответов: <b>${curScore} из ${total}</b> (${pct}%)</p>
+            <div class="grade-pill g-${mark}" style="width:54px; height:54px; font-size:24px; margin:14px auto;">${mark}</div>
+            <button class="btn-main" style="margin-top:12px;" onclick="renderTestsCatalog()">К списку тестов</button>
+          </div>
+        `;
+        return;
+      }
+
+      const q = curTest.questions[curQ];
+      const pct = Math.round((curQ / curTest.questions.length) * 100);
+      box.innerHTML = `
+        <div class="prog-bar"><div class="prog-in" style="width:${pct}%"></div></div>
+        <div class="card-head">
+          <span class="chip">Вопрос ${curQ + 1} из ${curTest.questions.length}</span>
+          <span class="muted" style="font-size:12px;">${curTest.title}</span>
+        </div>
+        <h3 style="margin:6px 0 14px; font-size:16.5px;">${q.q}</h3>
+        ${q.options.map((opt, i) => `<button class="opt-btn" onclick="pickOption(${i}, this)">${opt}</button>`).join('')}
+        <div id="stepExplain"></div>
+      `;
+    }
+
+    function pickOption(idx, el) {
+      const q = curTest.questions[curQ];
+      const all = document.querySelectorAll('.opt-btn');
+      all.forEach(b => b.disabled = true);
+      if (idx === q.ans) {
+        haptic('success');
+        el.classList.add('correct');
+        curScore++;
       } else {
         haptic('error');
-        btnEl.classList.add('wrong');
-        btns[q.ans].classList.add('correct');
+        el.classList.add('wrong');
+        all[q.ans].classList.add('correct');
       }
       if (q.exp) {
-        const bubble = wrap.querySelector('.bubble');
-        bubble.insertAdjacentHTML('beforeend', `<div class="explain-box">💡 ${q.exp}</div>`);
-        scrollToBottom();
+        document.getElementById('stepExplain').innerHTML = `<div class="hw-banner" style="margin-top:8px;">💡 ${q.exp}</div>`;
       }
-      setTimeout(() => { qIdx++; sendNextQuestion(); }, q.exp ? 1600 : 800);
+      setTimeout(() => { curQ++; renderTestStep(); }, q.exp ? 1600 : 850);
     }
 
-    // --- СДАЧА ДЗ И ПРОПУСК ---
-    function cmdSubmitHW() {
-      haptic('light');
-      addUserMsg('📤 Сдать ДЗ');
-      const id = 'hw_' + Date.now();
-      const cls = db.classes.find(c => c.id === activeClassId);
-      addBotMsg(
-        `📤 <b>Отправка домашнего задания</b>${cls ? ` (${cls.name})` : ''}:<div class="bot-form"><input id="${id}_subj" placeholder="Предмет (напр. Алгебра)" /><textarea id="${id}_text" rows="3" placeholder="Напишите ответ или вставьте ссылку на работу..."></textarea></div>`,
-        [[{ label: '📨 Отправить учителю', action: `sendHWForm('${id}')` }]]
-      );
-    }
-
-    async function sendHWForm(id) {
-      const name = myProfile ? myProfile.name : 'Ученик';
+    // --- 4. СДАЧА ДЗ И ПРОПУСК ---
+    async function sendHomework() {
+      const subj = document.getElementById('inpHwSubj').value.trim() || 'Общий';
+      const text = document.getElementById('inpHwBody').value.trim();
+      if (!text) return alert('Введите ответ или ссылку!');
+      haptic('success');
+      const name = myProfile ? myProfile.name : 'Преподаватель';
       const cls = db.classes.find(c => c.id === activeClassId);
       const className = cls ? cls.name : 'Без класса';
-      const subj = document.getElementById(`${id}_subj`).value.trim() || 'Общий';
-      const text = document.getElementById(`${id}_text`).value.trim();
-      if (!text) return alert('Введите ответ!');
-      haptic('success');
       const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
       db.submissions.unshift({ type: `ДЗ • ${subj}`, name, className, text, time });
       await saveCloudDB();
-      await notifyTeacher(`📥 Новое ДЗ (${className})\nУченик: ${name}\nПредмет: ${subj}\n\n${text}`);
-      addBotMsg(`✅ Работа по предмету <b>${subj}</b> отправлена учителю!`);
+      await notifyTeacher(`📥 Сдано ДЗ (${className})\nУченик: ${name}\nПредмет: ${subj}\n\n${text}`);
+      document.getElementById('inpHwBody').value = '';
+      alert('✅ Работа успешно отправлена!');
     }
 
-    function cmdSkip() {
-      haptic('light');
-      addUserMsg('⚠️ Пропуск урока');
-      const id = 'sk_' + Date.now();
-      addBotMsg(
-        `⚠️ <b>Предупреждение об отсутствии</b>:<div class="bot-form"><input id="${id}_reason" placeholder="Причина (болезнь, олимпиада...)" /></div>`,
-        [[{ label: '⚠️ Отправить учителю', action: `sendSkipForm('${id}')` }]]
-      );
-    }
-
-    async function sendSkipForm(id) {
-      const name = myProfile ? myProfile.name : 'Ученик';
+    async function sendAbsence() {
+      const text = document.getElementById('inpSkipBody').value.trim();
+      if (!text) return alert('Укажите причину!');
+      haptic('success');
+      const name = myProfile ? myProfile.name : 'Преподаватель';
       const cls = db.classes.find(c => c.id === activeClassId);
       const className = cls ? cls.name : 'Без класса';
-      const text = document.getElementById(`${id}_reason`).value.trim();
-      if (!text) return alert('Укажи причину!');
-      haptic('success');
       const time = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
       db.submissions.unshift({ type: 'Пропуск', name, className, text, time });
       await saveCloudDB();
-      await notifyTeacher(`⚠️ Пропуск (${className})\nУченик: ${name}\nПричина: ${text}`);
-      addBotMsg('✅ Уведомление передано учителю.');
+      await notifyTeacher(`⚠️ Пропуск урока (${className})\nУченик: ${name}\nПричина: ${text}`);
+      document.getElementById('inpSkipBody').value = '';
+      alert('Уведомление отправлено преподавателю.');
     }
 
-    // --- ПАНЕЛЬ УЧИТЕЛЯ ---
-    function cmdTeacher() {
+    // --- 5. ПАНЕЛЬ УЧИТЕЛЯ (ТОЛЬКО ДЛЯ УЧИТЕЛЯ) ---
+    function switchTeacherSub(subId, btn) {
       haptic('light');
-      addUserMsg('🎓 Учитель');
-      if (isTeacher) return showTeacherMenu();
-      const id = 'pin_' + Date.now();
-      addBotMsg(
-        `🔐 Введите ПИН-код учителя:<div class="bot-form"><input id="${id}" type="password" placeholder="ПИН-код" /></div>`,
-        [[{ label: '🔓 Войти', action: `checkTeacherPin('${id}')` }]]
-      );
+      ['t-classes', 't-ai', 't-lessons', 't-inbox'].forEach(s => {
+        document.getElementById(s).classList.toggle('hidden', s !== subId);
+      });
+      document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
     }
 
-    function checkTeacherPin(id) {
-      if (document.getElementById(id).value === TEACHER_PIN) {
-        haptic('success');
-        isTeacher = true;
-        document.getElementById('roleBadge').innerText = '🎓 Учитель';
-        document.getElementById('headerUserName').innerText = 'Панель учителя';
-        renderTopClasses();
-        showTeacherMenu();
+    function renderTeacherControls() {
+      // Назначение учеников в классы
+      const assignArea = document.getElementById('tAssignArea');
+      if (!db.students.length) {
+        assignArea.innerHTML = 'Пока ни один ученик не отправил заявку.';
+      } else if (!db.classes.length) {
+        assignArea.innerHTML = 'Сначала создайте класс выше, чтобы добавлять в него учеников.';
       } else {
-        haptic('error');
-        addBotMsg('❌ Неверный ПИН-код.');
+        const stOpts = db.students.map(s => {
+          const cNames = (s.classes || []).map(cid => (db.classes.find(c => c.id === cid) || {}).name).filter(Boolean).join(', ');
+          return `<option value="${s.id}">${s.name} ${cNames ? `[${cNames}]` : '[⏳ ждёт класс]'}</option>`;
+        }).join('');
+        const clOpts = db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        assignArea.innerHTML = `
+          <select id="tSelStudent" class="field">${stOpts}</select>
+          <select id="tSelClass" class="field">${clOpts}</select>
+          <button class="btn-main" onclick="assignStudent()">Добавить в класс</button>
+        `;
       }
+
+      // Статус TG
+      document.getElementById('tTgStatus').innerText = db.teacherChatId
+        ? `✅ Привязано (ID: ${db.teacherChatId}). Уведомления приходят в Telegram.`
+        : 'Привяжите аккаунт, чтобы получать уведомления о новых заявках и ДЗ.';
+
+      // Списки классов в селектах
+      const clsOptions = db.classes.length
+        ? db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('')
+        : '<option value="">Сначала создайте класс</option>';
+
+      ['tAiClass', 'tManClass', 'tLesClass'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = clsOptions;
+      });
+
+      const grSt = document.getElementById('tGrStudent');
+      if (grSt) {
+        grSt.innerHTML = db.students.length
+          ? db.students.map(s => `<option value="${s.id}">${s.name}</option>`).join('')
+          : '<option value="">Нет учеников</option>';
+      }
+
+      // Входящие ДЗ
+      const inbox = document.getElementById('tInboxList');
+      inbox.innerHTML = db.submissions.length ? db.submissions.map(s => `
+        <div class="card" style="padding:13px;">
+          <div class="card-head" style="margin-bottom:4px;">
+            <span class="chip">${s.type}</span>
+            <span class="muted" style="font-size:11.5px;">${s.time}</span>
+          </div>
+          <div style="font-weight:700; font-size:14.5px;">${s.name} <span class="muted">(${s.className})</span></div>
+          <div style="margin-top:4px; font-size:13.5px;">${s.text}</div>
+        </div>
+      `).join('') : '<div class="card muted">Новых работ и сообщений пока нет.</div>';
     }
 
-    async function showTeacherMenu() {
-      await loadCloudDB();
-      const pendingCount = db.students.filter(s => !s.classes || s.classes.length === 0).length;
-      addBotMsg(
-        `🎓 <b>Панель управления учителя</b>${pendingCount ? `<br>🔔 Новых заявок в класс: <b>${pendingCount}</b>` : ''}`,
-        [
-          [{ label: '🏫 Создать класс', action: 'teacherCreateClassForm()' }, { label: `👥 Ученики (${db.students.length})`, action: 'teacherManageStudents()' }],
-          [{ label: '✨ Сгенерировать тест ИИ', cls: 'ai', action: 'promptAITest()' }],
-          [{ label: '➕ Урок и ДЗ', action: 'teacherAddLessonForm()' }, { label: '🏅 Оценка', action: 'teacherAddGradeForm()' }],
-          [{ label: '📥 Сданные ДЗ', action: 'teacherViewSubmissions()' }, { label: '🔔 Привязать TG', action: 'bindTeacherTelegram()' }]
-        ]
-      );
-    }
-
-    function teacherCreateClassForm() {
-      const id = 'cl_' + Date.now();
-      addBotMsg(
-        `🏫 <b>Новый класс / группа:</b><div class="bot-form"><input id="${id}_name" placeholder="Название (напр. 8Б или Информатика)" /></div>`,
-        [[{ label: '✅ Создать класс', action: `saveNewClass('${id}')` }]]
-      );
-    }
-
-    async function saveNewClass(id) {
-      const name = document.getElementById(`${id}_name`).value.trim();
+    async function createNewClass() {
+      const name = document.getElementById('tNewClassName').value.trim();
       if (!name) return alert('Введите название класса!');
       haptic('success');
       const newCls = { id: 'c_' + Date.now(), name };
       db.classes.push(newCls);
       activeClassId = newCls.id;
       await saveCloudDB();
+      document.getElementById('tNewClassName').value = '';
       renderTopClasses();
-      addBotMsg(`✅ Класс <b>«${name}»</b> создан!`);
+      renderAllData();
+      alert(`✅ Класс «${name}» создан!`);
     }
 
-    async function teacherManageStudents() {
-      await loadCloudDB();
-      if (!db.students.length) return addBotMsg('Пока ни один ученик не подал заявку.');
-      if (!db.classes.length) return addBotMsg('Сначала создайте класс.', [[{ label: '🏫 Создать класс', action: 'teacherCreateClassForm()' }]]);
-
-      const id = 'st_assign_' + Date.now();
-      const stOpts = db.students.map(s => {
-        const clsNames = (s.classes || []).map(cid => (db.classes.find(c => c.id === cid) || {}).name).filter(Boolean).join(', ');
-        return `<option value="${s.id}">${s.name} ${clsNames ? `[${clsNames}]` : '[⏳ ждёт класс]'}</option>`;
-      }).join('');
-      const clsOpts = db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-
-      addBotMsg(
-        `👥 <b>Добавить ученика в класс:</b><div class="bot-form"><select id="${id}_st">${stOpts}</select><select id="${id}_cl">${clsOpts}</select></div>`,
-        [[{ label: '➕ Добавить в класс', action: `assignStudentToClass('${id}')` }]]
-      );
-    }
-
-    async function assignStudentToClass(id) {
-      const stId = document.getElementById(`${id}_st`).value;
-      const clId = document.getElementById(`${id}_cl`).value;
+    async function assignStudent() {
+      const stId = document.getElementById('tSelStudent').value;
+      const clId = document.getElementById('tSelClass').value;
       const st = db.students.find(s => s.id === stId);
       const cl = db.classes.find(c => c.id === clId);
       if (!st || !cl) return;
@@ -852,240 +1013,134 @@
         await saveCloudDB();
       }
       haptic('success');
-      addBotMsg(`✅ Ученик <b>${st.name}</b> добавлен в класс <b>«${cl.name}»</b>!`);
+      renderTeacherControls();
+      alert(`✅ Ученик ${st.name} добавлен в класс «${cl.name}»!`);
     }
 
-    // --- ПРОКАЧАННЫЙ ИИ-ГЕНЕРАТОР ТЕСТОВ ---
-    function promptAITest() {
-      const id = 'ai_' + Date.now();
-      const clsOpts = db.classes.length
-        ? db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>Класс: ${c.name}</option>`).join('')
-        : '<option value="">Для всех классов</option>';
-      addBotMsg(
-        `✨ <b>Умный ИИ-генератор тестов</b><div class="bot-form">
-          <select id="${id}_cls">${clsOpts}</select>
-          <input id="${id}_topic" placeholder="Предмет и тема (напр. Биология: Фотосинтез)" />
-          <select id="${id}_lvl">
-            <option value="базовый школьный">Сложность: Базовая</option>
-            <option value="средний школьный" selected>Сложность: Средняя</option>
-            <option value="олимпиадный углублённый">Сложность: Олимпиадная</option>
-          </select>
-          <select id="${id}_cnt">
-            <option value="3">3 вопроса</option>
-            <option value="5" selected>5 вопросов</option>
-            <option value="7">7 вопросов</option>
-          </select>
-        </div>`,
-        [[{ label: '🚀 Сгенерировать тест', cls: 'ai', action: `executeAITest('${id}')` }]]
-      );
-    }
-
-    async function callPollinationsAI(systemPrompt, userPrompt, jsonMode = false) {
-      const resp = await fetch('https://text.pollinations.ai/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-          ],
-          model: 'openai',
-          jsonMode
-        })
-      });
-      if (!resp.ok) throw new Error('AI HTTP ' + resp.status);
-      return await resp.text();
-    }
-
-    async function executeAITest(id) {
-      const classId = document.getElementById(`${id}_cls`).value;
-      const topic = document.getElementById(`${id}_topic`).value.trim();
-      const level = document.getElementById(`${id}_lvl`).value;
-      const count = parseInt(document.getElementById(`${id}_cnt`).value, 10);
-      if (!topic) return alert('Введите предмет и тему!');
-      haptic('medium');
-      const waitMsg = addBotMsg(`✨ ИИ составляет тест (${count} вопр., уровень: ${level})...`);
-
-      const sys = 'Ты опытный школьный методист. Возвращай ТОЛЬКО валидный JSON-массив объектов без markdown и лишнего текста.';
-      const prompt = `Составь тест на русском языке на тему "${topic}". Уровень сложности: ${level}. Количество вопросов: ${count}. Формат каждого объекта: {"q":"текст вопроса","options":["правильный ответ","неправильный вариант 1","неправильный вариант 2","неправильный вариант 3"],"ans":0,"exp":"краткое пояснение в 1 предложение, почему этот ответ верный"}. Поле ans всегда равно 0.`;
-
-      try {
-        const raw = await callPollinationsAI(sys, prompt, true);
-        const match = raw.match(/\[[\s\S]*\]/);
-        if (!match) throw new Error('No JSON array');
-        const parsed = JSON.parse(match[0]);
-        const questions = parsed.map(item => {
-          const correctText = item.options[item.ans || 0];
-          const shuffled = [...item.options].sort(() => Math.random() - 0.5);
-          return {
-            q: item.q,
-            options: shuffled,
-            ans: shuffled.indexOf(correctText),
-            exp: item.exp || ''
-          };
-        });
-        db.tests.unshift({ classId, title: topic, ai: true, questions });
-        await saveCloudDB();
-        waitMsg.remove();
-        haptic('success');
-        addBotMsg(
-          `✅ Тест <b>«${topic}»</b> готов (${questions.length} вопросов с пояснениями ИИ)!`,
-          [[{ label: '▶️ Пройти тест сейчас', cls: 'ai', action: 'runTest(0)' }]]
-        );
-      } catch (e) {
-        waitMsg.remove();
-        haptic('error');
-        addBotMsg('❌ ИИ сейчас занят, нажмите кнопку генерации ещё раз.');
-      }
-    }
-
-    function teacherAddLessonForm() {
-      if (!db.classes.length) return addBotMsg('Сначала создайте класс.');
-      const id = 'ls_' + Date.now();
-      const clsOpts = db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('');
-      addBotMsg(
-        `📅 <b>Новый урок и ДЗ:</b><div class="bot-form">
-          <select id="${id}_cls">${clsOpts}</select>
-          <select id="${id}_day"><option>Понедельник</option><option>Вторник</option><option>Среда</option><option>Четверг</option><option>Пятница</option><option>Суббота</option></select>
-          <input id="${id}_time" placeholder="Время / урок (напр. 1 урок • 08:30)" />
-          <input id="${id}_topic" placeholder="Предмет и тема" />
-          <input id="${id}_task" placeholder="Домашнее задание" />
-        </div>`,
-        [[{ label: '💾 Сохранить урок', action: `saveLessonForm('${id}')` }]]
-      );
-    }
-
-    async function saveLessonForm(id) {
-      const classId = document.getElementById(`${id}_cls`).value;
-      const day = document.getElementById(`${id}_day`).value;
-      const time = document.getElementById(`${id}_time`).value.trim();
-      const topic = document.getElementById(`${id}_topic`).value.trim();
-      const task = document.getElementById(`${id}_task`).value.trim() || 'Без ДЗ';
-      if (!topic) return alert('Укажите предмет и тему!');
-      haptic('success');
-      db.lessons.push({ classId, day, time, topic, task });
-      await saveCloudDB();
-      addBotMsg(`✅ Урок <b>${topic}</b> (${day}) добавлен!`);
-    }
-
-    function teacherAddGradeForm() {
-      if (!db.students.length) return addBotMsg('Нет зарегистрированных учеников.');
-      const id = 'gr_' + Date.now();
-      const stOpts = db.students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-      addBotMsg(
-        `🏅 <b>Выставить оценку:</b><div class="bot-form">
-          <select id="${id}_st">${stOpts}</select>
-          <input id="${id}_sb" placeholder="Предмет" />
-          <select id="${id}_val"><option value="5">5 (Отлично)</option><option value="4">4 (Хорошо)</option><option value="3">3 (Удовл.)</option><option value="2">2 (Неуд.)</option></select>
-          <input id="${id}_cm" placeholder="Комментарий (напр. Контрольная)" />
-        </div>`,
-        [[{ label: '🏅 Поставить', action: `saveGradeForm('${id}')` }]]
-      );
-    }
-
-    async function saveGradeForm(id) {
-      const studentId = document.getElementById(`${id}_st`).value;
-      const st = db.students.find(s => s.id === studentId);
-      const subject = document.getElementById(`${id}_sb`).value.trim();
-      const val = document.getElementById(`${id}_val`).value;
-      const comment = document.getElementById(`${id}_cm`).value.trim();
-      if (!st || !subject) return alert('Укажите предмет!');
-      haptic('success');
-      db.grades.unshift({ studentId, studentName: st.name, subject, val, comment });
-      await saveCloudDB();
-      addBotMsg(`✅ Оценка <b>${val}</b> (${subject}) поставлена ученику <b>${st.name}</b>.`);
-    }
-
-    async function teacherViewSubmissions() {
-      await loadCloudDB();
-      if (!db.submissions.length) return addBotMsg('Сданных работ пока нет.');
-      const list = db.submissions.slice(0, 15).map(s =>
-        `<div class="widget-item"><div class="widget-header"><span class="badge-tag">${s.type}</span><span style="font-size:11px; color:var(--muted);">${s.time}</span></div><div style="font-weight:700;">${s.name} (${s.className})</div><div style="font-size:13px; margin-top:3px;">${s.text}</div></div>`
-      ).join('');
-      addBotMsg(`📥 <b>Последние записи:</b>${list}`, [[{ label: '🗑 Очистить', action: 'clearSubmissions()' }]]);
-    }
-
-    async function clearSubmissions() {
-      db.submissions = [];
-      await saveCloudDB();
-      addBotMsg('🗑 Список очищен.');
-    }
-
-    async function bindTeacherTelegram() {
-      if (!currentTgUserId) return addBotMsg('⚠️ Откройте приложение из Telegram.');
+    async function bindTeacherTg() {
+      if (!currentTgUserId) return alert('Откройте приложение через Telegram.');
       db.teacherChatId = currentTgUserId;
       await saveCloudDB();
-      await notifyTeacher('✅ Уведомления дневника подключены!');
+      await notifyTeacher('✅ Уведомления EduSpace успешно подключены!');
       haptic('success');
-      addBotMsg('✅ Ваш Telegram привязан!');
+      renderTeacherControls();
     }
 
-    // --- УМНЫЙ ИИ-РЕПЕТИТОР В СВОБОДНОМ ВВОДЕ ---
-    async function handleFreeText() {
-      const inp = document.getElementById('chatInput');
-      const val = inp.value.trim();
-      if (!val) return;
-      inp.value = '';
-      haptic('light');
+    // ИИ-генератор тестов (ТОЛЬКО В ПАНЕЛИ УЧИТЕЛЯ)
+    async function teacherGenerateAITest() {
+      if (!isTeacher) return;
+      const classId = document.getElementById('tAiClass').value;
+      const topic = document.getElementById('tAiTopic').value.trim();
+      const level = document.getElementById('tAiLevel').value;
+      const count = parseInt(document.getElementById('tAiCount').value, 10);
+      if (!classId) return alert('Сначала создайте класс!');
+      if (!topic) return alert('Введите предмет и тему теста!');
 
-      if (val === TEACHER_PIN) {
-        addUserMsg('•••••');
-        isTeacher = true;
-        document.getElementById('roleBadge').innerText = '🎓 Учитель';
-        document.getElementById('headerUserName').innerText = 'Панель учителя';
-        renderTopClasses();
-        return showTeacherMenu();
-      }
+      const btn = document.getElementById('tAiBtn');
+      btn.disabled = true;
+      btn.innerText = '⏳ ИИ составляет вопросы...';
 
-      addUserMsg(val);
-      const low = val.toLowerCase();
-      if (low === 'расписание' || low === 'уроки') return cmdSchedule();
-      if (low === 'оценки') return cmdGrades();
-      if (low === 'тесты') return cmdTests();
+      const sys = 'Ты опытный школьный методист. Возвращай ТОЛЬКО валидный JSON-массив без markdown.';
+      const prompt = `Составь тест на русском языке на тему "${topic}". Уровень сложности: ${level}. Количество вопросов: ${count}. Формат: [{"q":"вопрос","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0,"exp":"краткое пояснение в 1 предложение"}] где ans всегда 0.`;
 
-      const waitMsg = addBotMsg('✨ ИИ-репетитор думает...');
       try {
-        const reply = await callPollinationsAI(
-          'Ты дружелюбный и умный школьный ИИ-помощник в электронном дневнике. Отвечай кратко, понятно и по делу на русском языке (используй HTML-теги <b> и <br> для красивого оформления).',
-          val,
-          false
-        );
-        waitMsg.remove();
-        const safeTopic = val.replace(/'/g, '').slice(0, 45);
-        addBotMsg(reply, [
-          [{ label: `✨ Создать тест по теме «${safeTopic}»`, cls: 'ai', action: `quickAITest('${safeTopic}')` }]
-        ]);
-      } catch (e) {
-        waitMsg.remove();
-        addBotMsg('Используйте кнопки меню ниже или попробуйте задать вопрос ещё раз.');
-      }
-    }
-
-    async function quickAITest(topic) {
-      const waitMsg = addBotMsg(`✨ ИИ генерирует тест на тему «${topic}»...`);
-      const sys = 'Ты школьный методист. Возвращай ТОЛЬКО валидный JSON-массив без markdown.';
-      const prompt = `Составь школьный тест на русском языке на тему "${topic}". Количество вопросов: 5. Формат: [{"q":"вопрос","options":["правильный ответ","неправильный 1","неправильный 2","неправильный 3"],"ans":0,"exp":"краткое пояснение"}]`;
-      try {
-        const raw = await callPollinationsAI(sys, prompt, true);
+        const resp = await fetch('https://text.pollinations.ai/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              { role: 'system', content: sys },
+              { role: 'user', content: prompt }
+            ],
+            model: 'openai',
+            jsonMode: true
+          })
+        });
+        const raw = await resp.text();
         const match = raw.match(/\[[\s\S]*\]/);
+        if (!match) throw new Error();
         const parsed = JSON.parse(match[0]);
         const questions = parsed.map(item => {
           const correctText = item.options[item.ans || 0];
           const shuffled = [...item.options].sort(() => Math.random() - 0.5);
           return { q: item.q, options: shuffled, ans: shuffled.indexOf(correctText), exp: item.exp || '' };
         });
-        db.tests.unshift({ classId: activeClassId || '', title: topic, ai: true, questions });
+
+        db.tests.unshift({ classId, title: topic, ai: true, questions });
         await saveCloudDB();
-        waitMsg.remove();
         haptic('success');
-        addBotMsg(`✅ Тест <b>«${topic}»</b> готов!`, [[{ label: '▶️ Пройти тест', cls: 'ai', action: 'runTest(0)' }]]);
+        document.getElementById('tAiTopic').value = '';
+        renderTestsCatalog();
+        alert(`✅ Тест «${topic}» (${questions.length} вопр.) создан и опубликован для класса!`);
       } catch (e) {
-        waitMsg.remove();
-        addBotMsg('❌ Не удалось создать тест, попробуйте ещё раз.');
+        haptic('error');
+        alert('ИИ сейчас перегружен, нажмите кнопку ещё раз.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '✨ Сгенерировать тест с ИИ';
       }
     }
 
-    initApp();
+    async function teacherAddManualQuestion() {
+      if (!isTeacher) return;
+      const classId = document.getElementById('tManClass').value;
+      const title = document.getElementById('tManTitle').value.trim();
+      const q = document.getElementById('tManQ').value.trim();
+      const o1 = document.getElementById('tManO1').value.trim();
+      const o2 = document.getElementById('tManO2').value.trim();
+      const o3 = document.getElementById('tManO3').value.trim();
+      if (!classId || !title || !q || !o1 || !o2) return alert('Заполните класс, название, вопрос и минимум 2 ответа!');
+      const opts = [o1, o2];
+      if (o3) opts.push(o3);
+      const paired = opts.map((text, i) => ({ text, ok: i === 0 })).sort(() => Math.random() - 0.5);
+      const newQ = { q, options: paired.map(p => p.text), ans: paired.findIndex(p => p.ok), exp: '' };
+      const existing = db.tests.find(t => t.classId === classId && t.title.toLowerCase() === title.toLowerCase());
+      if (existing) existing.questions.push(newQ);
+      else db.tests.unshift({ classId, title, ai: false, questions: [newQ] });
+      await saveCloudDB();
+      ['tManQ', 'tManO1', 'tManO2', 'tManO3'].forEach(id => document.getElementById(id).value = '');
+      haptic('success');
+      alert('✅ Вопрос добавлен в тест!');
+    }
+
+    async function teacherCreateLesson() {
+      const classId = document.getElementById('tLesClass').value;
+      const day = document.getElementById('tLesDay').value;
+      const time = document.getElementById('tLesTime').value.trim();
+      const topic = document.getElementById('tLesTopic').value.trim();
+      const task = document.getElementById('tLesTask').value.trim() || 'Без задания';
+      if (!classId || !topic) return alert('Выберите класс и укажите тему урока!');
+      db.lessons.push({ classId, day, time, topic, task });
+      await saveCloudDB();
+      ['tLesTime', 'tLesTopic', 'tLesTask'].forEach(id => document.getElementById(id).value = '');
+      haptic('success');
+      renderLessons();
+      alert('✅ Урок опубликован!');
+    }
+
+    async function teacherCreateGrade() {
+      const studentId = document.getElementById('tGrStudent').value;
+      const st = db.students.find(s => s.id === studentId);
+      const subject = document.getElementById('tGrSubject').value.trim();
+      const val = document.getElementById('tGrVal').value;
+      const comment = document.getElementById('tGrComment').value.trim();
+      if (!st || !subject) return alert('Выберите ученика и укажите предмет!');
+      db.grades.unshift({ studentId, studentName: st.name, subject, val, comment });
+      await saveCloudDB();
+      document.getElementById('tGrComment').value = '';
+      haptic('success');
+      renderAnalyticsAndGrades();
+      alert(`✅ Оценка ${val} выставлена!`);
+    }
+
+    async function teacherClearInbox() {
+      if (!confirm('Очистить список сданных работ?')) return;
+      db.submissions = [];
+      await saveCloudDB();
+      renderTeacherControls();
+    }
+
+    boot();
   </script>
 </body>
 </html>
