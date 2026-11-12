@@ -12,8 +12,8 @@
       --surface-soft: #f8fafc;
       --text: #0f172a;
       --text-sec: #64748b;
-      --accent: #2563eb;
-      --accent-soft: rgba(37, 99, 235, 0.1);
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.12);
       --accent-grad: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
       --ai-grad: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
       --border: #e2e8f0;
@@ -23,15 +23,15 @@
       --red: #ef4444;
     }
     body.dark {
-      --bg: #0b0f19;
-      --surface: #131a2a;
-      --surface-soft: #1a2336;
+      --bg: #0b0d12;
+      --surface: #16181f;
+      --surface-soft: #1f222b;
       --text: #f8fafc;
-      --text-sec: #94a3b8;
-      --accent: #3b82f6;
-      --accent-soft: rgba(59, 130, 246, 0.16);
-      --border: #222d42;
-      --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+      --text-sec: #8e94a5;
+      --accent: #4f7df3;
+      --accent-soft: rgba(79, 125, 243, 0.18);
+      --border: #252934;
+      --shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 88px; }
@@ -90,13 +90,13 @@
     /* Верхняя шапка сервиса */
     .topbar {
       background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 14px 16px 12px; position: sticky; top: 0; z-index: 20;
+      padding: 12px 16px 12px; position: sticky; top: 0; z-index: 20;
     }
-    .topbar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .topbar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .user-meta { display: flex; align-items: center; gap: 11px; }
     .user-ava {
-      width: 42px; height: 42px; border-radius: 14px;
-      background: var(--accent-soft); border: 1px solid rgba(37, 99, 235, 0.2);
+      width: 40px; height: 40px; border-radius: 13px;
+      background: var(--accent-soft); border: 1px solid rgba(59, 130, 246, 0.22);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .user-name { font-weight: 800; font-size: 16px; letter-spacing: -0.2px; }
@@ -110,27 +110,85 @@
     .class-switcher { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
     .class-switcher::-webkit-scrollbar { display: none; }
     .cls-pill {
-      padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border);
-      background: var(--surface-soft); color: var(--text-sec); font-size: 13.5px; font-weight: 700;
+      padding: 7px 14px; border-radius: 11px; border: 1px solid var(--border);
+      background: var(--surface-soft); color: var(--text-sec); font-size: 13px; font-weight: 700;
       cursor: pointer; white-space: nowrap; transition: all 0.18s;
     }
     .cls-pill.active {
-      background: var(--accent-grad); color: #fff; border-color: transparent;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      background: var(--accent); color: #fff; border-color: transparent;
     }
 
-    /* Фильтр дней недели */
-    .day-filter { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 12px; padding-bottom: 2px; }
-    .day-filter::-webkit-scrollbar { display: none; }
-    .day-chip {
-      padding: 7px 13px; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--text-sec); font-size: 12.5px; font-weight: 700;
-      cursor: pointer; white-space: nowrap;
+    /* КАЛЕНДАРНАЯ ПОЛОСА НЕДЕЛИ (КАК НА СКРИНШОТЕ) */
+    .week-strip-wrap {
+      background: var(--bg); padding-bottom: 12px;
     }
-    .day-chip.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+    .week-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 4px;
+      margin-bottom: 14px;
+    }
+    .week-col {
+      display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 4px 0;
+    }
+    .w-dow { font-size: 12.5px; font-weight: 600; color: var(--text-sec); }
+    .w-num {
+      width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 16.5px; font-weight: 700; color: var(--text); position: relative; transition: all 0.15s;
+    }
+    .week-col.sunday .w-num { color: #e05263; }
+    .week-col.active .w-num {
+      background: #4f7df3; color: #ffffff !important; box-shadow: 0 4px 12px rgba(79, 125, 243, 0.4);
+    }
+    .w-dot {
+      width: 4px; height: 4px; border-radius: 50%; background: var(--accent);
+      position: absolute; bottom: 3px;
+    }
+    .week-col.active .w-dot { background: #fff; }
+
+    .cal-controls {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px;
+    }
+    .cal-left-btns, .cal-right-btns { display: flex; align-items: center; gap: 8px; }
+    .cal-pill-btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 9px 15px; border-radius: 13px; font-size: 14.5px; font-weight: 700; cursor: pointer;
+    }
+    .cal-pill-btn:active { opacity: 0.75; }
+    .cal-icon-btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      width: 40px; height: 38px; border-radius: 13px; display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+
+    /* КАРТОЧКИ УРОКОВ И ПЕРЕМЕН (КАК НА СКРИНШОТЕ) */
+    .diary-lesson-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 16px 18px; margin-bottom: 10px; box-shadow: var(--shadow);
+    }
+    .dl-meta {
+      font-size: 13.5px; color: var(--text-sec); font-weight: 500;
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+    }
+    .dl-subject {
+      font-size: 19px; font-weight: 800; color: var(--text); margin-bottom: 14px; letter-spacing: -0.3px;
+    }
+    .dl-hw-status {
+      display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600;
+      color: var(--text-sec); margin-bottom: 6px; cursor: pointer;
+    }
+    .dl-hw-status.done { color: var(--text-sec); }
+    .dl-hw-text {
+      font-size: 14.5px; color: var(--text); line-height: 1.45;
+    }
+    .dl-hw-sub {
+      font-size: 13px; color: var(--text-sec); margin-top: 4px;
+    }
+    .recess-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 10px; margin: 4px 0 10px; color: var(--text-sec); font-size: 13.5px; font-weight: 500;
+    }
 
     /* Контейнер контента */
-    .main-area { max-width: 640px; margin: 0 auto; padding: 16px; }
+    .main-area { max-width: 640px; margin: 0 auto; padding: 14px 16px; }
     .section-title { font-size: 17.5px; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.3px; }
     .card {
       background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
@@ -174,19 +232,10 @@
     .news-card {
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.06) 100%);
       border: 1.5px solid rgba(245, 158, 11, 0.35);
-      border-radius: 18px; padding: 14px 16px; margin-bottom: 14px;
+      border-radius: 18px; padding: 12px 14px; margin-bottom: 12px;
     }
-    .news-item { padding: 8px 0; border-bottom: 1px solid rgba(245, 158, 11, 0.2); }
+    .news-item { padding: 6px 0; border-bottom: 1px solid rgba(245, 158, 11, 0.2); }
     .news-item:last-child { border-bottom: none; padding-bottom: 0; }
-
-    /* Bento-сетка */
-    .bento-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
-    .bento-box {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
-      padding: 14px; box-shadow: var(--shadow);
-    }
-    .bento-val { font-size: 24px; font-weight: 800; margin: 4px 0 2px; letter-spacing: -0.5px; }
-    .bento-lbl { font-size: 12px; color: var(--text-sec); font-weight: 600; }
 
     /* Графики */
     .chart-box { width: 100%; overflow: hidden; padding-top: 6px; }
@@ -196,17 +245,7 @@
     .bar-fill { height: 100%; border-radius: 99px; background: var(--accent-grad); transition: width 0.5s ease; }
     .bar-num { width: 32px; text-align: right; font-size: 13px; font-weight: 800; }
 
-    /* Уроки и вложения */
-    .lesson-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
-      padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow);
-      border-left: 4px solid var(--accent);
-    }
-    .lesson-card.done { border-left-color: var(--green); opacity: 0.85; }
-    .hw-banner {
-      margin-top: 10px; padding: 10px 12px; border-radius: 12px;
-      background: var(--surface-soft); font-size: 13.5px; line-height: 1.45;
-    }
+    /* Вложения */
     .file-attach-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; padding: 11px; border-radius: 12px; border: 1.5px dashed var(--border);
@@ -284,14 +323,9 @@
     .sub-tab.active { background: var(--text); color: var(--surface); border-color: var(--text); }
 
     .del-btn {
-      background: rgba(239, 68, 68, 0.1); color: var(--red); border: none;
-      border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+      background: rgba(239, 68, 68, 0.12); color: var(--red); border: none;
+      border-radius: 8px; padding: 4px 9px; font-size: 11.5px; font-weight: 700; cursor: pointer;
     }
-    .done-btn {
-      background: var(--surface-soft); color: var(--text-sec); border: 1px solid var(--border);
-      border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer;
-    }
-    .done-btn.checked { background: rgba(16, 185, 129, 0.15); color: var(--green); border-color: var(--green); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -354,7 +388,7 @@
       <div class="topbar-head">
         <div class="user-meta">
           <div class="user-ava">
-            <svg width="26" height="26" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <line x1="25" y1="22" x2="21" y2="25" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
               <line x1="29" y1="24" x2="27" y2="28" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
               <line x1="33" y1="23" x2="34" y2="27" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
@@ -379,38 +413,26 @@
     </div>
 
     <div class="main-area">
-      <!-- ВКЛАДКА 1: УРОКИ, НОВОСТИ И ФИЛЬТР ПО ДНЯМ -->
+      <!-- ВКЛАДКА 1: КАЛЕНДАРНОЕ РАСПИСАНИЕ И УРОКИ (КАК В ПРИМЕРЕ) -->
       <div id="sec-lessons">
         <div id="classNewsBanner" class="news-card hidden"></div>
 
-        <div class="bento-grid">
-          <div class="bento-box">
-            <div class="bento-lbl">Средний балл</div>
-            <div class="bento-val" id="kpiAvg" style="color:var(--accent);">—</div>
-            <div class="muted" style="font-size:11.5px;">по всем предметам</div>
+        <!-- Недельная полоса Пн–Вс с числами -->
+        <div class="week-strip-wrap">
+          <div class="week-grid" id="weekStripGrid"></div>
+          <div class="cal-controls">
+            <div class="cal-left-btns">
+              <button type="button" class="cal-pill-btn" id="calMonthBtn" onclick="shiftWeek(-1)" title="Предыдущая неделя">Ноябрь</button>
+              <button type="button" class="cal-pill-btn" onclick="jumpToToday()">Сегодня</button>
+            </div>
+            <div class="cal-right-btns">
+              <button type="button" class="cal-icon-btn" onclick="shiftWeek(-1)" title="Неделя назад">‹</button>
+              <button type="button" class="cal-icon-btn" onclick="shiftWeek(1)" title="Неделя вперёд">›</button>
+            </div>
           </div>
-          <div class="bento-box">
-            <div class="bento-lbl">Активных тестов</div>
-            <div class="bento-val" id="kpiTests">0</div>
-            <div class="muted" style="font-size:11.5px;">доступно в классе</div>
-          </div>
         </div>
 
-        <div class="card-head">
-          <h2 class="section-title" style="margin:0;">Расписание и задания</h2>
-          <span class="chip" id="activeClassBadge">Класс</span>
-        </div>
-
-        <div class="day-filter" id="dayFilterBar">
-          <button type="button" class="day-chip active" onclick="setDayFilter('Все', this)">Все дни</button>
-          <button type="button" class="day-chip" onclick="setDayFilter('Понедельник', this)">Пн</button>
-          <button type="button" class="day-chip" onclick="setDayFilter('Вторник', this)">Вт</button>
-          <button type="button" class="day-chip" onclick="setDayFilter('Среда', this)">Ср</button>
-          <button type="button" class="day-chip" onclick="setDayFilter('Четверг', this)">Чт</button>
-          <button type="button" class="day-chip" onclick="setDayFilter('Пятница', this)">Пт</button>
-          <button type="button" class="day-chip" onclick="setDayFilter('Суббота', this)">Сб</button>
-        </div>
-
+        <!-- Список уроков и перемен на выбранный день -->
         <div id="lessonsFeed"></div>
       </div>
 
@@ -491,8 +513,8 @@
       <div id="sec-teacher" class="hidden">
         <div class="sub-tabs">
           <button type="button" class="sub-tab active" onclick="switchTeacherSub('t-classes', this)">👥 Ученики и классы</button>
-          <button type="button" class="sub-tab" onclick="switchTeacherSub('t-ai', this)">✨ Конструктор тестов</button>
           <button type="button" class="sub-tab" onclick="switchTeacherSub('t-lessons', this)">📅 Уроки и оценки</button>
+          <button type="button" class="sub-tab" onclick="switchTeacherSub('t-ai', this)">✨ Конструктор тестов</button>
           <button type="button" class="sub-tab" onclick="switchTeacherSub('t-inbox', this)">📥 Проверка ДЗ</button>
         </div>
 
@@ -548,7 +570,68 @@
           </div>
         </div>
 
-        <!-- Подвкладка 2: Создание тестов (ТОЛЬКО УЧИТЕЛЬ) -->
+        <!-- Подвкладка 2: Уроки (как в электронном дневнике) и оценки -->
+        <div id="t-lessons" class="hidden">
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">📅 Добавить урок в расписание</h3>
+            <select id="tLesClass" class="field"></select>
+            <div style="display:flex; gap:8px;">
+              <select id="tLesNum" class="field" style="width:120px;">
+                <option value="1">1 урок</option>
+                <option value="2">2 урок</option>
+                <option value="3">3 урок</option>
+                <option value="4">4 урок</option>
+                <option value="5">5 урок</option>
+                <option value="6">6 урок</option>
+                <option value="7">7 урок</option>
+              </select>
+              <input id="tLesRoom" class="field" placeholder="Кабинет (напр. 37)" />
+            </div>
+            <div style="display:flex; gap:8px;">
+              <input id="tLesStart" class="field" value="08:30" placeholder="Начало (08:30)" />
+              <input id="tLesEnd" class="field" value="09:15" placeholder="Конец (09:15)" />
+            </div>
+            <label class="muted" style="display:block; margin-bottom:4px;">Дата урока (или выберите повторяющийся день недели):</label>
+            <div style="display:flex; gap:8px;">
+              <input id="tLesDate" type="date" class="field" />
+              <select id="tLesRepeatDay" class="field">
+                <option value="">Только на эту дату</option>
+                <option value="Понедельник">Каждый Пн</option>
+                <option value="Вторник">Каждый Вт</option>
+                <option value="Среда">Каждую Ср</option>
+                <option value="Четверг">Каждый Чт</option>
+                <option value="Пятница">Каждую Пт</option>
+                <option value="Суббота">Каждую Сб</option>
+                <option value="Воскресенье">Каждое Вс</option>
+              </select>
+            </div>
+            <input id="tLesTopic" class="field" placeholder="Предмет (напр. История или Алгебра)" />
+            <textarea id="tLesTask" class="field" rows="3" placeholder="Домашнее задание (напр. п. 16 - читать. Вопросы 2 и 3 - устно)..."></textarea>
+            <label class="file-attach-btn">
+              <span>📎 <span id="tFileLabel">Прикрепить материалы к ДЗ (до 1.5 МБ)</span></span>
+              <input type="file" id="tFileInput" style="display:none;" onchange="handleFilePick(this, 'teacher')" />
+            </label>
+            <button type="button" class="btn-main" onclick="teacherCreateLesson()">Опубликовать урок</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title" style="margin-bottom:10px;">Выставить оценку</h3>
+            <select id="tGrStudent" class="field"></select>
+            <input id="tGrSubject" class="field" placeholder="Предмет" />
+            <div style="display:flex; gap:8px;">
+              <select id="tGrVal" class="field">
+                <option value="5">5 (Отлично)</option>
+                <option value="4">4 (Хорошо)</option>
+                <option value="3">3 (Удовл.)</option>
+                <option value="2">2 (Неуд.)</option>
+              </select>
+              <input id="tGrComment" class="field" placeholder="Комментарий" />
+            </div>
+            <button type="button" class="btn-main" onclick="teacherCreateGrade()">Поставить оценку</button>
+          </div>
+        </div>
+
+        <!-- Подвкладка 3: Создание тестов (ТОЛЬКО УЧИТЕЛЬ) -->
         <div id="t-ai" class="hidden">
           <div class="card" style="border: 1.5px solid rgba(124, 58, 237, 0.35);">
             <div class="card-head">
@@ -582,44 +665,6 @@
             <input id="tManO2" class="field" placeholder="Неправильный вариант 1" />
             <input id="tManO3" class="field" placeholder="Неправильный вариант 2" />
             <button type="button" class="btn-sec" onclick="teacherAddManualQuestion()">Добавить вопрос в тест</button>
-          </div>
-        </div>
-
-        <!-- Подвкладка 3: Уроки и оценки -->
-        <div id="t-lessons" class="hidden">
-          <div class="card">
-            <h3 class="card-title" style="margin-bottom:10px;">Добавить урок и ДЗ (текст + файл)</h3>
-            <select id="tLesClass" class="field"></select>
-            <div style="display:flex; gap:8px;">
-              <select id="tLesDay" class="field">
-                <option>Понедельник</option><option>Вторник</option><option>Среда</option>
-                <option>Четверг</option><option>Пятница</option><option>Суббота</option>
-              </select>
-              <input id="tLesTime" class="field" placeholder="Время (08:30)" />
-            </div>
-            <input id="tLesTopic" class="field" placeholder="Предмет и тема урока" />
-            <textarea id="tLesTask" class="field" rows="3" placeholder="Домашнее задание (текст или ссылка)..."></textarea>
-            <label class="file-attach-btn">
-              <span>📎 <span id="tFileLabel">Прикрепить файл или фото к ДЗ (до 1.5 МБ)</span></span>
-              <input type="file" id="tFileInput" style="display:none;" onchange="handleFilePick(this, 'teacher')" />
-            </label>
-            <button type="button" class="btn-main" onclick="teacherCreateLesson()">Опубликовать урок</button>
-          </div>
-
-          <div class="card">
-            <h3 class="card-title" style="margin-bottom:10px;">Выставить оценку</h3>
-            <select id="tGrStudent" class="field"></select>
-            <input id="tGrSubject" class="field" placeholder="Предмет" />
-            <div style="display:flex; gap:8px;">
-              <select id="tGrVal" class="field">
-                <option value="5">5 (Отлично)</option>
-                <option value="4">4 (Хорошо)</option>
-                <option value="3">3 (Удовл.)</option>
-                <option value="2">2 (Неуд.)</option>
-              </select>
-              <input id="tGrComment" class="field" placeholder="Комментарий" />
-            </div>
-            <button type="button" class="btn-main" onclick="teacherCreateGrade()">Поставить оценку</button>
           </div>
         </div>
 
@@ -684,12 +729,43 @@
 
     let isTeacher = false;
     let activeClassId = null;
-    let selectedDayFilter = 'Все';
+    let selectedDateStr = toISODate(new Date());
     let myProfile = null;
     let teacherPickedFile = null;
     let studentPickedFile = null;
     let completedLessons = JSON.parse(localStorage.getItem('diary_done_lessons') || '[]');
     let selectedStudentIds = new Set();
+
+    const DAYS_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    const DAYS_FULL_FROM_JS = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+    const MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+    function toISODate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function parseISODate(str) {
+      const [y, m, d] = str.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function getMondayOfWeek(d) {
+      const copy = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const day = copy.getDay();
+      const diff = day === 0 ? -6 : 1 - day;
+      copy.setDate(copy.getDate() + diff);
+      return copy;
+    }
+
+    function timeToMinutes(tStr) {
+      if (!tStr || !tStr.includes(':')) return null;
+      const [h, m] = tStr.split(':').map(Number);
+      if (isNaN(h) || isNaN(m)) return null;
+      return h * 60 + m;
+    }
 
     async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
       const controller = new AbortController();
@@ -891,6 +967,9 @@
       document.getElementById('topRoleTag').innerText = isTeacher ? 'Учитель (Выйти)' : 'Ученик';
       document.getElementById('navTeacherBtn').classList.toggle('hidden', !isTeacher);
 
+      const dateInp = document.getElementById('tLesDate');
+      if (dateInp && !dateInp.value) dateInp.value = selectedDateStr;
+
       renderTopClasses();
       renderAllData();
     }
@@ -930,11 +1009,11 @@
     function renderAllData() {
       const cls = db.classes.find(c => c.id === activeClassId);
       const clsName = cls ? cls.name : 'Не выбран';
-      document.getElementById('activeClassBadge').innerText = clsName;
-      document.getElementById('testsClassBadge').innerText = clsName;
+      const testsBadge = document.getElementById('testsClassBadge');
+      if (testsBadge) testsBadge.innerText = clsName;
 
       renderClassNews();
-      renderLessons();
+      renderWeekCalendarAndLessons();
       renderAnalyticsAndGrades();
       renderTestsCatalog();
       renderMySubmissions();
@@ -970,12 +1049,36 @@
       renderClassNews();
     }
 
-    // --- 1. УРОКИ И ФИЛЬТР ПО ДНЯМ НЕДЕЛИ ---
-    function setDayFilter(day, btn) {
-      selectedDayFilter = day;
-      document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      renderLessons();
+    // --- 1. НЕДЕЛЬНЫЙ КАЛЕНДАРЬ И КАРТОЧКИ УРОКОВ С ПЕРЕМЕНАМИ ---
+    function getLessonsForDate(dateStr) {
+      const dObj = parseISODate(dateStr);
+      const dayName = DAYS_FULL_FROM_JS[dObj.getDay()];
+      return db.lessons
+        .map((l, idx) => ({ ...l, idx }))
+        .filter(l => l.classId === activeClassId && (l.date === dateStr || (!l.date && l.day === dayName) || l.repeatDay === dayName))
+        .sort((a, b) => {
+          const nA = Number(a.lessonNum || 99);
+          const nB = Number(b.lessonNum || 99);
+          if (nA !== nB) return nA - nB;
+          return (a.startTime || a.time || '').localeCompare(b.startTime || b.time || '');
+        });
+    }
+
+    function selectCalendarDate(isoStr) {
+      selectedDateStr = isoStr;
+      const dateInp = document.getElementById('tLesDate');
+      if (dateInp) dateInp.value = isoStr;
+      renderWeekCalendarAndLessons();
+    }
+
+    function shiftWeek(delta) {
+      const cur = parseISODate(selectedDateStr);
+      cur.setDate(cur.getDate() + delta * 7);
+      selectCalendarDate(toISODate(cur));
+    }
+
+    function jumpToToday() {
+      selectCalendarDate(toISODate(new Date()));
     }
 
     function toggleLessonDone(key) {
@@ -985,48 +1088,96 @@
         completedLessons.push(key);
       }
       localStorage.setItem('diary_done_lessons', JSON.stringify(completedLessons));
-      renderLessons();
+      renderWeekCalendarAndLessons();
     }
 
-    function renderLessons() {
-      const feed = document.getElementById('lessonsFeed');
-      const items = db.lessons
-        .map((l, idx) => ({ ...l, idx }))
-        .filter(l => l.classId === activeClassId && (selectedDayFilter === 'Все' || l.day === selectedDayFilter));
+    function renderWeekCalendarAndLessons() {
+      const selObj = parseISODate(selectedDateStr);
+      document.getElementById('calMonthBtn').innerText = MONTHS_RU[selObj.getMonth()];
 
-      if (!items.length) {
-        feed.innerHTML = `<div class="card muted">На ${selectedDayFilter === 'Все' ? 'выбранный класс' : selectedDayFilter.toLowerCase()} уроков пока нет.</div>`;
-        return;
-      }
-      feed.innerHTML = items.map(l => {
-        const key = `${l.classId}_${l.day}_${l.topic}`;
-        const isDone = completedLessons.includes(key);
-        return `
-          <div class="lesson-card ${isDone ? 'done' : ''}">
-            <div class="card-head" style="margin-bottom:6px;">
-              <div>
-                <span class="chip">${l.day}</span>
-                ${l.time ? `<span class="muted" style="margin-left:6px; font-size:12px;">${l.time}</span>` : ''}
-              </div>
-              <div style="display:flex; gap:6px;">
-                ${!isTeacher ? `<button type="button" class="done-btn ${isDone ? 'checked' : ''}" onclick="toggleLessonDone('${key.replace(/'/g, '')}')">${isDone ? '✓ Сделано' : 'Отметить'}</button>` : ''}
-                ${isTeacher ? `<button type="button" class="del-btn" onclick="deleteLesson(${l.idx})">Удалить</button>` : ''}
-              </div>
-            </div>
-            <div style="font-weight:800; font-size:15.5px;">${l.topic}</div>
-            <div class="hw-banner">
-              📚 <b>Задание:</b> ${formatLinks(l.task)}
-              ${renderFileAttachment(l.file)}
+      const monday = getMondayOfWeek(selObj);
+      const grid = document.getElementById('weekStripGrid');
+      let gridHtml = '';
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
+        const iso = toISODate(d);
+        const isSelected = iso === selectedDateStr;
+        const isSunday = i === 6;
+        const hasLessons = getLessonsForDate(iso).length > 0;
+        gridHtml += `
+          <div class="week-col ${isSelected ? 'active' : ''} ${isSunday ? 'sunday' : ''}" onclick="selectCalendarDate('${iso}')">
+            <div class="w-dow">${DAYS_SHORT[i]}</div>
+            <div class="w-num">
+              ${d.getDate()}
+              ${hasLessons ? '<span class="w-dot"></span>' : ''}
             </div>
           </div>
         `;
-      }).join('');
+      }
+      grid.innerHTML = gridHtml;
+
+      const feed = document.getElementById('lessonsFeed');
+      const items = getLessonsForDate(selectedDateStr);
+
+      if (!items.length) {
+        feed.innerHTML = `<div class="card muted" style="text-align:center; padding:24px 16px;">На этот день уроков нет.</div>`;
+        return;
+      }
+
+      let html = '';
+      items.forEach((l, i) => {
+        const lessonNumber = l.lessonNum || (i + 1);
+        const startT = l.startTime || l.time || '';
+        const endT = l.endTime || '';
+        const timeRange = startT && endT ? `${startT} – ${endT}` : startT;
+        const roomText = l.room ? `каб. ${l.room}` : '';
+        const key = `${l.classId}_${selectedDateStr}_${lessonNumber}_${l.topic}`;
+        const isDone = completedLessons.includes(key);
+        const hasFile = l.file && l.file.data;
+
+        html += `
+          <div class="diary-lesson-card">
+            <div class="dl-meta">
+              <span>${lessonNumber} урок  ${timeRange}  ${roomText}</span>
+              ${isTeacher ? `<button type="button" class="del-btn" onclick="deleteLesson(${l.idx})">✕</button>` : ''}
+            </div>
+            <div class="dl-subject">${l.topic}</div>
+            <div class="dl-hw-status ${isDone ? 'done' : ''}" onclick="toggleLessonDone('${key.replace(/'/g, '')}')">
+              <span>🏠</span>
+              <span>${isDone ? 'Домашнее задание выполнено' : 'Домашнее задание'}</span>
+            </div>
+            <div class="dl-hw-text">${formatLinks(l.task)}</div>
+            ${hasFile ? `<div class="dl-hw-sub">1 для выполнения</div>` : ''}
+            ${renderFileAttachment(l.file)}
+          </div>
+        `;
+
+        // Перемена между текущим и следующим уроком
+        const nextLesson = items[i + 1];
+        if (nextLesson && endT && (nextLesson.startTime || nextLesson.time)) {
+          const nextStart = nextLesson.startTime || nextLesson.time;
+          const m1 = timeToMinutes(endT);
+          const m2 = timeToMinutes(nextStart);
+          if (m1 !== null && m2 !== null && m2 > m1) {
+            const diff = m2 - m1;
+            html += `
+              <div class="recess-row">
+                <span>🏃 Перемена ${diff} минут</span>
+                <span>${endT}–${nextStart}</span>
+              </div>
+            `;
+          }
+        }
+      });
+
+      feed.innerHTML = html;
     }
 
     async function deleteLesson(idx) {
       db.lessons.splice(idx, 1);
       await saveCloudDB();
-      renderLessons();
+      renderWeekCalendarAndLessons();
     }
 
     // --- 2. ГРАФИКИ И ОЦЕНКИ ---
@@ -1035,14 +1186,12 @@
         ? db.grades
         : db.grades.filter(g => g.studentId === myStudentId || (myProfile && g.studentName.toLowerCase() === myProfile.name.toLowerCase()));
 
-      const avgEl = document.getElementById('kpiAvg');
       const trendBadge = document.getElementById('chartTrendBadge');
       const lineBox = document.getElementById('lineChartBox');
       const barsBox = document.getElementById('subjectBarsBox');
       const feed = document.getElementById('gradesFeed');
 
       if (!myGrades.length) {
-        avgEl.innerText = '—';
         trendBadge.innerText = 'Нет данных';
         lineBox.innerHTML = '<div class="muted">График появится после выставления первых оценок.</div>';
         barsBox.innerHTML = '<div class="muted">Нет оценок по предметам.</div>';
@@ -1051,7 +1200,6 @@
       }
 
       const avg = (myGrades.reduce((s, g) => s + Number(g.val), 0) / myGrades.length).toFixed(2);
-      avgEl.innerText = avg;
       trendBadge.innerText = `Ср. балл: ${avg}`;
 
       const recent = [...myGrades].slice(0, 10).reverse();
@@ -1070,17 +1218,17 @@
         <svg viewBox="0 0 ${w} ${h}" style="width:100%; height:120px; display:block;">
           <defs>
             <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#2563eb" stop-opacity="0.28" />
-              <stop offset="100%" stop-color="#2563eb" stop-opacity="0.0" />
+              <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.28" />
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.0" />
             </linearGradient>
           </defs>
           <line x1="${padX}" y1="${padY}" x2="${w - padX}" y2="${padY}" stroke="var(--border)" stroke-dasharray="3 3" />
           <line x1="${padX}" y1="${h / 2}" x2="${w - padX}" y2="${h / 2}" stroke="var(--border)" stroke-dasharray="3 3" />
           <line x1="${padX}" y1="${h - padY}" x2="${w - padX}" y2="${h - padY}" stroke="var(--border)" stroke-dasharray="3 3" />
           ${pts.length > 1 ? `<polygon points="${areaPoints}" fill="url(#areaGrad)" />` : ''}
-          ${pts.length > 1 ? `<polyline fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />` : ''}
+          ${pts.length > 1 ? `<polyline fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />` : ''}
           ${pts.map(p => `
-            <circle cx="${p.x}" cy="${p.y}" r="5" fill="#ffffff" stroke="#2563eb" stroke-width="2.5" />
+            <circle cx="${p.x}" cy="${p.y}" r="5" fill="#ffffff" stroke="#3b82f6" stroke-width="2.5" />
             <text x="${p.x}" y="${p.y - 9}" text-anchor="middle" font-size="11" font-weight="800" fill="var(--text)">${p.val}</text>
           `).join('')}
         </svg>
@@ -1132,9 +1280,7 @@
         .map((t, idx) => ({ ...t, idx }))
         .filter(t => !t.classId || t.classId === activeClassId || isTeacher);
 
-      document.getElementById('kpiTests').innerText = clsTests.length;
       const feed = document.getElementById('testsCatalogFeed');
-
       if (!clsTests.length) {
         feed.innerHTML = '<div class="card muted">Для этого класса тестов пока нет.</div>';
         return;
@@ -1214,7 +1360,7 @@
         all[q.ans].classList.add('correct');
       }
       if (q.exp) {
-        document.getElementById('stepExplain').innerHTML = `<div class="hw-banner" style="margin-top:8px;">💡 ${q.exp}</div>`;
+        document.getElementById('stepExplain').innerHTML = `<div class="card" style="margin-top:8px; padding:10px;">💡 ${q.exp}</div>`;
       }
       setTimeout(() => { curQ++; renderTestStep(); }, q.exp ? 1600 : 850);
     }
@@ -1744,19 +1890,36 @@
 
     async function teacherCreateLesson() {
       const classId = document.getElementById('tLesClass').value;
-      const day = document.getElementById('tLesDay').value;
-      const time = document.getElementById('tLesTime').value.trim();
+      const lessonNum = document.getElementById('tLesNum').value;
+      const room = document.getElementById('tLesRoom').value.trim();
+      const startTime = document.getElementById('tLesStart').value.trim();
+      const endTime = document.getElementById('tLesEnd').value.trim();
+      const date = document.getElementById('tLesDate').value || selectedDateStr;
+      const repeatDay = document.getElementById('tLesRepeatDay').value;
       const topic = document.getElementById('tLesTopic').value.trim();
-      const task = document.getElementById('tLesTask').value.trim() || (teacherPickedFile ? 'Смотрите прикреплённый файл' : 'Без задания');
-      if (!classId || !topic) return alert('Выберите класс и укажите тему урока!');
-      db.lessons.push({ classId, day, time, topic, task, file: teacherPickedFile });
+      const task = document.getElementById('tLesTask').value.trim() || (teacherPickedFile ? 'Выполнить задания из прикрепленных материалов' : 'Без задания');
+      if (!classId || !topic) return alert('Выберите класс и укажите предмет!');
+
+      db.lessons.push({
+        classId,
+        lessonNum,
+        room,
+        startTime,
+        endTime,
+        date: repeatDay ? '' : date,
+        repeatDay,
+        topic,
+        task,
+        file: teacherPickedFile
+      });
       await saveCloudDB();
-      ['tLesTime', 'tLesTopic', 'tLesTask'].forEach(id => document.getElementById(id).value = '');
+      ['tLesTopic', 'tLesTask'].forEach(id => document.getElementById(id).value = '');
       teacherPickedFile = null;
       document.getElementById('tFileInput').value = '';
-      document.getElementById('tFileLabel').innerText = 'Прикрепить файл или фото к ДЗ (до 1.5 МБ)';
-      renderLessons();
-      alert('✅ Урок и ДЗ опубликованы!');
+      document.getElementById('tFileLabel').innerText = 'Прикрепить материалы к ДЗ (до 1.5 МБ)';
+      if (!repeatDay) selectedDateStr = date;
+      renderWeekCalendarAndLessons();
+      alert('✅ Урок добавлен в расписание!');
     }
 
     async function teacherCreateGrade() {
