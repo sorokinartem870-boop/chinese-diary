@@ -187,6 +187,16 @@
     }
     .month-opt.active { background: var(--accent); color: #fff; border-color: transparent; }
 
+    /* Пресеты времени */
+    .time-presets { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 10px; }
+    .time-presets::-webkit-scrollbar { display: none; }
+    .t-preset-btn {
+      padding: 6px 10px; border-radius: 9px; border: 1px solid var(--border);
+      background: var(--surface-soft); color: var(--text); font-size: 12px; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+    }
+    .t-preset-btn:active { background: var(--accent); color: #fff; }
+
     /* Плашка ближайшего урока */
     .next-lesson-pill {
       display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -231,20 +241,17 @@
       display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
       background: var(--accent-soft); color: var(--accent);
     }
-    .chip-warn {
-      display: inline-block; padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 700;
-      background: rgba(245, 158, 11, 0.14); color: #d97706;
-    }
     .muted { color: var(--text-sec); font-size: 13px; line-height: 1.45; }
 
-    /* Карточки заявок и учеников (понятный интерфейс) */
+    /* Карточки заявок и учеников */
     .req-card {
       background: var(--surface-soft); border: 1.5px solid rgba(245, 158, 11, 0.45);
       border-radius: 16px; padding: 12px; margin-bottom: 10px;
     }
     .st-item-card {
       background: var(--surface-soft); border: 1px solid var(--border);
-      border-radius: 15px; padding: 12px; margin-bottom: 8px;
+      border-radius: 15px; padding: 11px 12px; margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
     .mini-btn {
       padding: 7px 11px; border-radius: 10px; border: 1px solid var(--border);
@@ -286,7 +293,6 @@
     }
     .dm-msg {
       max-width: 82%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-wrap: break-word;
-      animation: popIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     .dm-mine { align-self: flex-end; background: var(--accent-grad); color: #fff; border-bottom-right-radius: 4px; }
     .dm-other { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
@@ -417,7 +423,7 @@
         </div>
         <button type="button" class="role-tag" id="topRoleTag" onclick="toggleTeacherRole()">Ученик</button>
       </div>
-      <!-- ВЕРХНИЙ ПЕРЕКЛЮЧАТЕЛЬ КЛАССОВ (РАБОТАЕТ ВО ВСЕХ РАЗДЕЛАХ) -->
+      <!-- ПЕРЕКЛЮЧАТЕЛЬ КЛАССОВ (УПРАВЛЯЕТ ВСЕМ ПРИЛОЖЕНИЕМ) -->
       <div class="class-switcher" id="topClassesList"></div>
     </div>
 
@@ -445,52 +451,48 @@
           <div id="monthPickerBox" class="month-picker-grid pop-in hidden"></div>
         </div>
 
-        <!-- Форма добавления урока (для учителя) -->
+        <!-- Удобное добавление урока и ДЗ в 2 клика (для учителя) -->
         <div id="teacherQuickAddBar" class="hidden" style="margin-bottom:12px;">
-          <button type="button" class="btn-main" style="padding:11px; font-size:13.5px;" onclick="toggleInlineLessonForm()">+ Добавить урок в расписание</button>
+          <button type="button" class="btn-main" style="padding:11px; font-size:13.5px;" onclick="toggleInlineLessonForm()">+ Добавить урок и ДЗ</button>
           <div id="inlineLessonForm" class="card pop-in hidden" style="margin-top:10px;">
             <div class="card-head">
-              <h3 class="card-title">Новый урок</h3>
+              <h3 class="card-title">Новый урок и задание</h3>
               <button type="button" class="del-btn" onclick="toggleInlineLessonForm()">Закрыть</button>
             </div>
-            <label class="muted" style="display:block; margin-bottom:4px;">Класс:</label>
+
             <select id="tLesClass" class="field"></select>
-            <div style="display:flex; gap:8px;">
-              <select id="tLesNum" class="field" style="width:120px;">
-                <option value="1">1 урок</option>
-                <option value="2">2 урок</option>
-                <option value="3">3 урок</option>
-                <option value="4">4 урок</option>
-                <option value="5">5 урок</option>
-                <option value="6">6 урок</option>
-                <option value="7">7 урок</option>
-              </select>
-              <input id="tLesRoom" class="field" placeholder="Кабинет (37)" />
+            <input id="tLesTopic" class="field" placeholder="Предмет / тема (напр. Китайский язык: Урок 5)" />
+
+            <!-- Быстрые кнопки времени -->
+            <div class="time-presets">
+              <button type="button" class="t-preset-btn" onclick="applyTimePreset('08:30','09:15','1')">1 ур (08:30)</button>
+              <button type="button" class="t-preset-btn" onclick="applyTimePreset('09:30','10:15','2')">2 ур (09:30)</button>
+              <button type="button" class="t-preset-btn" onclick="applyTimePreset('10:30','11:15','3')">3 ур (10:30)</button>
+              <button type="button" class="t-preset-btn" onclick="applyTimePreset('12:00','12:45','4')">4 ур (12:00)</button>
+              <button type="button" class="t-preset-btn" onclick="applyTimePreset('15:00','16:00','1')">15:00–16:00</button>
+              <button type="button" class="t-preset-btn" onclick="applyTimePreset('17:00','18:00','1')">17:00–18:00</button>
             </div>
+
             <div style="display:flex; gap:8px;">
               <input id="tLesStart" class="field" value="08:30" placeholder="Начало" />
               <input id="tLesEnd" class="field" value="09:15" placeholder="Конец" />
+              <input id="tLesRoom" class="field" placeholder="Каб." style="width:90px;" />
             </div>
+
             <div style="display:flex; gap:8px;">
               <input id="tLesDate" type="date" class="field" />
-              <select id="tLesRepeatDay" class="field">
-                <option value="">Только на дату</option>
-                <option value="Понедельник">Каждый Пн</option>
-                <option value="Вторник">Каждый Вт</option>
-                <option value="Среда">Каждую Ср</option>
-                <option value="Четверг">Каждый Чт</option>
-                <option value="Пятница">Каждую Пт</option>
-                <option value="Суббота">Каждую Сб</option>
-                <option value="Воскресенье">Каждое Вс</option>
+              <select id="tLesRepeatMode" class="field">
+                <option value="once">Только на эту дату</option>
+                <option value="weekly">Каждую неделю</option>
               </select>
             </div>
-            <input id="tLesTopic" class="field" placeholder="Предмет (напр. Китайский язык)" />
-            <textarea id="tLesTask" class="field" rows="2" placeholder="Домашнее задание..."></textarea>
+
+            <textarea id="tLesTask" class="field" rows="3" placeholder="Домашнее задание (прописи, слова, ссылка)..."></textarea>
             <label class="file-attach-btn">
-              <span>📎 <span id="tFileLabel">Прикрепить материалы к ДЗ (до 1.5 МБ)</span></span>
+              <span>📎 <span id="tFileLabel">Прикрепить файл или фото (до 1.5 МБ)</span></span>
               <input type="file" id="tFileInput" style="display:none;" onchange="handleFilePick(this, 'teacher')" />
             </label>
-            <button type="button" class="btn-main" onclick="teacherCreateLesson()">Сохранить урок</button>
+            <button type="button" class="btn-main" onclick="teacherCreateLesson()">Опубликовать урок и ДЗ</button>
           </div>
         </div>
 
@@ -515,7 +517,7 @@
         <div id="mySubmissionsFeed"></div>
       </div>
 
-      <!-- ВКЛАДКА 3: СООБЩЕНИЯ (ЧАТ) -->
+      <!-- ВКЛАДКА 3: СООБЩЕНИЯ (ЧАТ С АВТООБНОВЛЕНИЕМ) -->
       <div id="sec-messages" class="hidden">
         <div id="dmTeacherContactsView" class="hidden anim-in">
           <div class="card-head">
@@ -533,7 +535,7 @@
                 <button type="button" id="dmBackBtn" class="mini-btn hidden" onclick="backToChatContacts()">← Назад</button>
                 <div style="font-weight:800; font-size:15px;" id="dmChatPartnerTitle">Чат с преподавателем</div>
               </div>
-              <button type="button" class="mini-btn" onclick="refreshChatOnly()">🔄</button>
+              <span class="chip" style="font-size:10.5px; background:rgba(16,185,129,0.12); color:var(--green);">● Онлайн</span>
             </div>
             <div id="dmThreadBox" class="dm-thread"></div>
             <div style="display:flex; gap:8px;">
@@ -578,55 +580,57 @@
         </div>
       </div>
 
-      <!-- ВКЛАДКА 5: ПОНЯТНОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ -->
+      <!-- ВКЛАДКА 5: ПОНЯТНОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ (ПРИВЯЗАНО К ВЫБРАННОМУ КЛАССУ НАВЕРХУ) -->
       <div id="sec-teacher" class="hidden">
         <div class="seg-control">
-          <button type="button" class="seg-btn active" onclick="switchTeacherSub('t-classes', this)">👥 Классы и ученики</button>
+          <button type="button" class="seg-btn active" onclick="switchTeacherSub('t-classes', this)">👥 Класс и ученики</button>
           <button type="button" class="seg-btn" onclick="switchTeacherSub('t-inbox', this)">📥 Проверка ДЗ</button>
           <button type="button" class="seg-btn" onclick="switchTeacherSub('t-settings', this)">📢 Новости и бот</button>
         </div>
 
-        <!-- Экран 1: Классы, новые заявки и ученики -->
+        <!-- Экран 1: Управление выбранным классом и учениками -->
         <div id="t-classes" class="anim-in">
-          <!-- Блок 1: Создание и удаление классов -->
-          <div class="card">
-            <h3 class="card-title" style="margin-bottom:10px;">1. Классы</h3>
-            <div style="display:flex; gap:8px; margin-bottom:10px;">
-              <input id="tNewClassName" class="field" style="margin-bottom:0;" placeholder="Новый класс (напр. Китайский язык)" />
-              <button type="button" class="btn-main" style="width:auto; padding:0 18px;" onclick="createNewClass()">Создать</button>
-            </div>
-            <div id="tClassesBadgesList" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
-          </div>
-
-          <!-- Блок 2: Новые заявки (в одно нажатие) -->
+          <!-- Карточка создания / удаления класса -->
           <div class="card">
             <div class="card-head" style="margin-bottom:8px;">
-              <h3 class="card-title">2. Новые заявки от учеников</h3>
-              <button type="button" class="mini-btn" onclick="forceReloadFromCloud()">🔄 Проверить заявки</button>
+              <h3 class="card-title" id="tActiveClassHeader">Управление классами</h3>
+              <button type="button" id="tDeleteActiveClassBtn" class="del-btn hidden" onclick="deleteCurrentActiveClass()">🗑 Удалить этот класс</button>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <input id="tNewClassName" class="field" style="margin-bottom:0;" placeholder="Название нового класса..." />
+              <button type="button" class="btn-main" style="width:auto; padding:0 16px;" onclick="createNewClass()">+ Создать</button>
+            </div>
+          </div>
+
+          <!-- Блок новых заявок -->
+          <div class="card">
+            <div class="card-head" style="margin-bottom:8px;">
+              <h3 class="card-title">⏳ Новые заявки (<span id="tReqCountBadge">0</span>)</h3>
+              <button type="button" class="mini-btn" onclick="forceReloadFromCloud()">🔄 Обновить</button>
             </div>
             <div id="tPendingRequestsList"></div>
           </div>
 
-          <!-- Блок 3: Ученики в классах + добавление вручную -->
+          <!-- Блок учеников текущего выбранного класса -->
           <div class="card">
             <div class="card-head" style="margin-bottom:10px;">
-              <h3 class="card-title" id="tEnrolledTitle">3. Ученики</h3>
+              <h3 class="card-title" id="tEnrolledTitle">Ученики класса</h3>
               <span class="chip" id="tTotalStudentsBadge">0 чел.</span>
             </div>
 
             <div style="display:flex; gap:6px; margin-bottom:12px;">
-              <input id="tManualStudentName" class="field" style="margin-bottom:0;" placeholder="Добавить ученика вручную (Имя Фамилия)..." />
-              <button type="button" class="btn-main" style="width:auto; padding:0 14px;" onclick="teacherAddStudentManually()">+</button>
+              <input id="tManualStudentName" class="field" style="margin-bottom:0;" placeholder="Добавить ученика в этот класс..." />
+              <button type="button" class="btn-main" style="width:auto; padding:0 14px;" onclick="teacherAddStudentManually()">+ Добавить</button>
             </div>
 
             <div id="tEnrolledStudentsList"></div>
           </div>
         </div>
 
-        <!-- Экран 2: Проверка ДЗ -->
+        <!-- Экран 2: Проверка ДЗ (фильтруется по выбранному классу наверху) -->
         <div id="t-inbox" class="hidden anim-in">
           <div class="card-head">
-            <h3 class="section-title" style="margin:0;">Сданные работы</h3>
+            <h3 class="section-title" style="margin:0;" id="tInboxHeaderTitle">Проверка ДЗ</h3>
             <button type="button" class="del-btn" onclick="teacherClearInbox()">Очистить</button>
           </div>
           <div id="tInboxList"></div>
@@ -755,7 +759,6 @@
       return [];
     }
 
-    // --- АТОМАРНОЕ ЧТЕНИЕ И ЗАПИСЬ В FIREBASE (БЕЗ ЗАТИРАНИЯ ЧУЖИХ ДАННЫХ) ---
     async function loadCloudDB() {
       try {
         const res = await fetchWithTimeout(`${DB_URL}.json?t=${Date.now()}`);
@@ -930,7 +933,7 @@
         await writeNode(`students/${stKey}`, stObj);
         await loadCloudDB();
         myProfile = db.students.find(s => String(s.id) === String(myStudentId));
-        notifyTeacher(`🆕 Новая заявка в «Мой дневник»:\n👤 ${name}\n\nОткройте «Управление» -> «Классы и ученики», чтобы принять в класс.`);
+        notifyTeacher(`🆕 Новая заявка в «Мой дневник»:\n👤 ${name}\n\nОткройте «Управление» -> «Класс и ученики», чтобы принять в класс.`);
       } finally {
         btn.disabled = false;
         btn.innerText = 'Продолжить';
@@ -1009,19 +1012,31 @@
       }
     }
 
-    let teacherSyncTimer = null;
-    function startTeacherAutoSync() {
-      if (teacherSyncTimer) clearInterval(teacherSyncTimer);
-      if (!isTeacher) return;
-      teacherSyncTimer = setInterval(async () => {
-        const beforeCount = db.students.length;
-        const beforeSubs = db.submissions.length;
+    // ЖИВОЕ АВТООБНОВЛЕНИЕ ЧАТА И ДАННЫХ КАЖДЫЕ 3 СЕКУНДЫ
+    let liveSyncTimer = null;
+    function startLiveSync() {
+      if (liveSyncTimer) clearInterval(liveSyncTimer);
+      liveSyncTimer = setInterval(async () => {
+        const prevMsgLen = db.messages.length;
+        const prevStLen = db.students.length;
+        const prevSubLen = db.submissions.length;
+
         await loadCloudDB();
-        if (db.students.length !== beforeCount || db.submissions.length !== beforeSubs) {
-          renderTopClasses();
-          renderAllData();
+
+        // Если открыт чат — обновляем переписку автоматически при новых сообщениях
+        if (db.messages.length !== prevMsgLen) {
+          const msgSec = document.getElementById('sec-messages');
+          if (msgSec && !msgSec.classList.contains('hidden')) {
+            renderChatSection();
+          }
         }
-      }, 6000);
+
+        // Если открыта панель учителя и пришли новые заявки или ДЗ
+        if (isTeacher && (db.students.length !== prevStLen || db.submissions.length !== prevSubLen)) {
+          renderTopClasses();
+          renderTeacherControls();
+        }
+      }, 3000);
     }
 
     function enterService() {
@@ -1038,10 +1053,10 @@
       renderTopClasses();
       renderAllData();
       startLessonReminderWatcher();
-      startTeacherAutoSync();
+      startLiveSync();
     }
 
-    // --- ПЕРЕКЛЮЧАТЕЛЬ КЛАССОВ НАВЕРХУ (РАБОТАЕТ ВЕЗДЕ) ---
+    // --- ПЕРЕКЛЮЧАТЕЛЬ КЛАССОВ НАВЕРХУ ---
     function renderTopClasses() {
       const box = document.getElementById('topClassesList');
       if (isTeacher) {
@@ -1267,6 +1282,13 @@
     }
 
     // --- КАЛЕНДАРЬ И УРОКИ ---
+    let tempLessonNum = '1';
+    function applyTimePreset(start, end, num) {
+      document.getElementById('tLesStart').value = start;
+      document.getElementById('tLesEnd').value = end;
+      tempLessonNum = num;
+    }
+
     function toggleMonthPicker() {
       const box = document.getElementById('monthPickerBox');
       if (!box.classList.contains('hidden')) {
@@ -1290,9 +1312,16 @@
     function toggleInlineLessonForm() {
       const form = document.getElementById('inlineLessonForm');
       form.classList.toggle('hidden');
-      if (!form.classList.contains('hidden') && activeClassId && activeClassId !== 'ALL') {
+      if (!form.classList.contains('hidden')) {
         const sel = document.getElementById('tLesClass');
-        if (sel) sel.value = activeClassId;
+        if (sel && activeClassId && activeClassId !== 'ALL') {
+          sel.value = activeClassId;
+          const cObj = db.classes.find(c => c.id === activeClassId);
+          const topicInp = document.getElementById('tLesTopic');
+          if (cObj && topicInp && !topicInp.value) topicInp.value = cObj.name;
+        }
+        const dateInp = document.getElementById('tLesDate');
+        if (dateInp) dateInp.value = selectedDateStr;
       }
     }
 
@@ -1307,12 +1336,7 @@
           const dateMatches = (l.date === dateStr || (!l.date && l.day === dayName) || l.repeatDay === dayName);
           return classMatches && dateMatches;
         })
-        .sort((a, b) => {
-          const nA = Number(a.lessonNum || 99);
-          const nB = Number(b.lessonNum || 99);
-          if (nA !== nB) return nA - nB;
-          return (a.startTime || a.time || '').localeCompare(b.startTime || b.time || '');
-        });
+        .sort((a, b) => (a.startTime || a.time || '').localeCompare(b.startTime || b.time || ''));
     }
 
     function selectCalendarDate(isoStr) {
@@ -1340,6 +1364,19 @@
         completedLessons.push(key);
       }
       localStorage.setItem('diary_done_lessons', JSON.stringify(completedLessons));
+      renderWeekCalendarAndLessons();
+    }
+
+    async function editLessonHwQuick(lesKey) {
+      const les = db.lessons.find(l => l._key === lesKey);
+      if (!les) return;
+      const newTask = prompt(`Домашнее задание (${les.topic}):`, les.task || '');
+      if (newTask === null) return;
+      const cleanTask = newTask.trim() || 'Без задания';
+      await writeNode(`lessons/${lesKey}/task`, cleanTask);
+      const cls = db.classes.find(c => c.id === les.classId);
+      await notifyClassStudents(les.classId, `📝 Обновлено ДЗ (${cls ? cls.name : 'Класс'})\nПредмет: ${les.topic}\n🏠 Задание: ${cleanTask}`);
+      await loadCloudDB();
       renderWeekCalendarAndLessons();
     }
 
@@ -1397,7 +1434,8 @@
               <span>${lessonNumber} урок  ${timeRange}  ${roomText}</span>
               <div style="display:flex; align-items:center; gap:6px;">
                 ${isTeacher && clsObj ? `<span class="chip" style="padding:2px 8px; font-size:11px;">${clsObj.name}</span>` : ''}
-                ${isTeacher ? `<button type="button" class="del-btn" onclick="deleteLesson('${l._key}')">✕</button>` : ''}
+                ${isTeacher ? `<button type="button" class="mini-btn" style="padding:3px 8px; font-size:11px;" onclick="editLessonHwQuick('${l._key}')">✏️ ДЗ</button>` : ''}
+                ${isTeacher ? `<button type="button" class="del-btn" style="padding:3px 8px;" onclick="deleteLesson('${l._key}')">✕</button>` : ''}
               </div>
             </div>
             <div class="dl-subject">${l.topic}</div>
@@ -1406,7 +1444,7 @@
               <span>${isDone ? 'Домашнее задание выполнено' : 'Домашнее задание'}</span>
             </div>
             <div class="dl-hw-text">${formatLinks(l.task)}</div>
-            ${hasFile ? `<div class="dl-hw-sub">1 для выполнения</div>` : ''}
+            ${hasFile ? `<div class="dl-hw-sub">1 файл для выполнения</div>` : ''}
             ${renderFileAttachment(l.file)}
           </div>
         `;
@@ -1451,6 +1489,7 @@
       await writeNode(`submissions/${subId}`, {
         id: subId,
         studentId: String(myStudentId),
+        classId: activeClassId || '',
         subject: subj,
         type: `ДЗ • ${subj}`,
         name,
@@ -1498,7 +1537,7 @@
       `).join('');
     }
 
-    // --- ЧАТ ---
+    // --- ЧАТ С АВТООБНОВЛЕНИЕМ ---
     function renderChatSection() {
       const contactsView = document.getElementById('dmTeacherContactsView');
       const convView = document.getElementById('dmConversationView');
@@ -1547,7 +1586,7 @@
         return;
       }
 
-      box.innerHTML = filtered.map((s, idx) => {
+      box.innerHTML = filtered.map(s => {
         const stMsgs = db.messages.filter(m => String(m.studentId) === String(s.id));
         const lastMsg = stMsgs.length ? stMsgs[stMsgs.length - 1] : null;
         const initials = s.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
@@ -1557,7 +1596,7 @@
           .join(', ');
 
         return `
-          <div class="chat-contact-card anim-in" style="animation-delay:${idx * 0.03}s;" onclick="openChatWithStudent('${s.id}')">
+          <div class="chat-contact-card" onclick="openChatWithStudent('${s.id}')">
             <div style="display:flex; align-items:center; gap:12px; min-width:0; flex:1;">
               <div class="chat-ava">${initials || 'У'}</div>
               <div style="min-width:0; flex:1;">
@@ -1595,11 +1634,7 @@
       openChatWithStudent(newId);
     }
 
-    async function refreshChatOnly() {
-      await loadCloudDB();
-      renderDirectMessages();
-    }
-
+    let lastRenderedMsgCount = -1;
     function renderDirectMessages() {
       const thread = document.getElementById('dmThreadBox');
       const targetId = isTeacher ? activeDmStudentId : String(myStudentId);
@@ -1608,9 +1643,11 @@
       const msgs = db.messages.filter(m => String(m.studentId) === String(targetId));
       if (!msgs.length) {
         thread.innerHTML = '<div class="muted" style="text-align:center; padding:40px 0;">Сообщений пока нет. Напишите первым!</div>';
+        lastRenderedMsgCount = 0;
         return;
       }
 
+      const wasAtBottom = thread.scrollHeight - thread.scrollTop <= thread.clientHeight + 60;
       thread.innerHTML = msgs.map(m => {
         const isMine = (isTeacher && m.sender === 'teacher') || (!isTeacher && m.sender === 'student');
         return `
@@ -1620,7 +1657,11 @@
           </div>
         `;
       }).join('');
-      thread.scrollTop = thread.scrollHeight;
+
+      if (wasAtBottom || msgs.length !== lastRenderedMsgCount) {
+        thread.scrollTop = thread.scrollHeight;
+      }
+      lastRenderedMsgCount = msgs.length;
     }
 
     async function sendDirectMessage() {
@@ -1656,7 +1697,7 @@
       }
     }
 
-    // --- ПОНЯТНОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ ---
+    // --- ПОНЯТНОЕ УПРАВЛЕНИЕ УЧИТЕЛЯ (ПРИВЯЗАНО К ВЫБРАННОМУ КЛАССУ НАВЕРХУ) ---
     function switchTeacherSub(subId, btn) {
       ['t-classes', 't-inbox', 't-settings'].forEach(s => {
         const el = document.getElementById(s);
@@ -1693,7 +1734,6 @@
       inp.value = '';
       await loadCloudDB();
       renderAllData();
-      alert(`✅ Ученик «${name}» добавлен!`);
     }
 
     async function acceptStudentToClass(stKey) {
@@ -1701,7 +1741,7 @@
       const sel = document.getElementById(`reqCls_${stKey}`);
       const targetClassId = sel ? sel.value : '';
       const cls = db.classes.find(c => c.id === targetClassId);
-      if (!st || !cls) return alert('Сначала создайте класс в пункте 1!');
+      if (!st || !cls) return alert('Сначала создайте класс сверху!');
 
       const updatedClasses = Array.from(new Set([...(st.classes || []), targetClassId]));
       await writeNode(`students/${stKey}/classes`, updatedClasses);
@@ -1712,48 +1752,51 @@
       renderAllData();
     }
 
-    async function updateStudentClassInline(stKey) {
+    async function removeStudentFromCurrentClass(stKey) {
       const st = db.students.find(s => (s._key || s.id) === stKey);
-      const sel = document.getElementById(`enrCls_${stKey}`);
-      const newClassId = sel ? sel.value : '';
       if (!st) return;
-      const newClasses = newClassId ? [newClassId] : [];
-      await writeNode(`students/${stKey}/classes`, newClasses);
+      if (activeClassId && activeClassId !== 'ALL') {
+        const updated = (st.classes || []).filter(cid => cid !== activeClassId);
+        await writeNode(`students/${stKey}/classes`, updated);
+      } else {
+        if (!confirm(`Удалить ученика «${st.name}» из базы?`)) return;
+        await deleteNode(`students/${stKey}`);
+      }
       await loadCloudDB();
       renderAllData();
     }
 
-    async function deleteStudentByKey(stKey, stName) {
-      if (!confirm(`Удалить ученика «${stName}» из базы?`)) return;
-      await deleteNode(`students/${stKey}`);
-      await loadCloudDB();
-      renderAllData();
-    }
-
-    async function deleteClassByKey(clsKey, clsId, clsName) {
-      if (!confirm(`Удалить класс «${clsName}»?`)) return;
-      await deleteNode(`classes/${clsKey}`);
-      if (activeClassId === clsId) activeClassId = 'ALL';
+    async function deleteCurrentActiveClass() {
+      const cls = db.classes.find(c => c.id === activeClassId);
+      if (!cls) return;
+      if (!confirm(`Удалить класс «${cls.name}»?`)) return;
+      await deleteNode(`classes/${cls._key}`);
+      activeClassId = 'ALL';
+      localStorage.setItem('diary_active_class', 'ALL');
       await loadCloudDB();
       renderTopClasses();
       renderAllData();
     }
 
     function renderTeacherControls() {
-      // 1. Список созданных классов с возможностью удалить
-      const clsBadgesBox = document.getElementById('tClassesBadgesList');
-      clsBadgesBox.innerHTML = db.classes.length ? db.classes.map(c => `
-        <span class="chip" style="display:inline-flex; align-items:center; gap:6px; padding:5px 10px;">
-          ${c.name}
-          <span style="cursor:pointer; color:var(--red); font-weight:900;" onclick="deleteClassByKey('${c._key}', '${c.id}', '${c.name.replace(/'/g, '')}')">✕</span>
-        </span>
-      `).join('') : '<span class="muted">Создайте первый класс выше (например, «Китайский язык»).</span>';
+      const activeClsObj = db.classes.find(c => c.id === activeClassId);
+      const delClassBtn = document.getElementById('tDeleteActiveClassBtn');
+      const headerEl = document.getElementById('tActiveClassHeader');
 
-      // 2. Новые заявки (ученики без класса)
+      if (activeClsObj) {
+        headerEl.innerText = `Класс: ${activeClsObj.name}`;
+        delClassBtn.classList.remove('hidden');
+      } else {
+        headerEl.innerText = 'Все классы';
+        delClassBtn.classList.add('hidden');
+      }
+
+      // 1. Новые заявки
       const pendingStudents = db.students.filter(s => !s.classes || s.classes.length === 0);
+      document.getElementById('tReqCountBadge').innerText = pendingStudents.length;
       const reqBox = document.getElementById('tPendingRequestsList');
       if (!pendingStudents.length) {
-        reqBox.innerHTML = '<div class="muted">Новых заявок сейчас нет.</div>';
+        reqBox.innerHTML = '<div class="muted">Новых заявок нет.</div>';
       } else {
         reqBox.innerHTML = pendingStudents.map(st => {
           const stKey = st._key || st.id;
@@ -1761,7 +1804,7 @@
             <div class="req-card">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <div style="font-weight:800; font-size:15px;">👤 ${st.name} ${st.tgId ? '🔔' : ''}</div>
-                <button type="button" class="del-btn" onclick="deleteStudentByKey('${stKey}', '${st.name.replace(/'/g, '')}')">Отклонить</button>
+                <button type="button" class="del-btn" onclick="deleteNode('students/${stKey}').then(forceReloadFromCloud)">✕</button>
               </div>
               <div style="display:flex; gap:8px;">
                 <select id="reqCls_${stKey}" class="field" style="margin-bottom:0; padding:9px 12px;">
@@ -1776,61 +1819,56 @@
         }).join('');
       }
 
-      // 3. Ученики в классах (учитывает выбранный класс наверху!)
+      // 2. Ученики выбранного класса (или всех классов)
       const enrolledAll = db.students.filter(s => s.classes && s.classes.length > 0);
-      const filteredEnrolled = (activeClassId && activeClassId !== 'ALL')
-        ? enrolledAll.filter(s => s.classes.includes(activeClassId))
+      const filteredEnrolled = activeClsObj
+        ? enrolledAll.filter(s => s.classes.includes(activeClsObj.id))
         : enrolledAll;
 
-      const activeClsObj = db.classes.find(c => c.id === activeClassId);
       document.getElementById('tEnrolledTitle').innerText = activeClsObj
-        ? `3. Ученики класса «${activeClsObj.name}»`
-        : '3. Все ученики в классах';
+        ? `Ученики (${activeClsObj.name})`
+        : 'Все ученики';
       document.getElementById('tTotalStudentsBadge').innerText = `${filteredEnrolled.length} чел.`;
+      document.getElementById('tManualStudentName').placeholder = activeClsObj
+        ? `Добавить ученика в «${activeClsObj.name}»...`
+        : 'Добавить ученика (Имя Фамилия)...';
 
       const enrBox = document.getElementById('tEnrolledStudentsList');
       if (!filteredEnrolled.length) {
-        enrBox.innerHTML = '<div class="muted" style="text-align:center; padding:10px 0;">В этом классе пока нет учеников.</div>';
+        enrBox.innerHTML = '<div class="muted" style="text-align:center; padding:10px 0;">Учеников пока нет. Добавьте вручную выше или примите из заявок.</div>';
       } else {
         enrBox.innerHTML = filteredEnrolled.map(st => {
           const stKey = st._key || st.id;
-          const currentClsId = (st.classes && st.classes[0]) || '';
+          const clsNames = (st.classes || [])
+            .map(cid => (db.classes.find(c => c.id === cid) || {}).name)
+            .filter(Boolean)
+            .join(', ');
           return `
             <div class="st-item-card">
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px;">
+              <div style="min-width:0; flex:1;">
                 <div style="font-weight:700; font-size:14.5px;">${st.name} ${st.tgId ? '🔔' : ''}</div>
-                <div style="display:flex; gap:6px;">
-                  <button type="button" class="mini-btn" onclick="openChatDirectly('${st.id}')">💬 Чат</button>
-                  <button type="button" class="del-btn" onclick="deleteStudentByKey('${stKey}', '${st.name.replace(/'/g, '')}')">🗑</button>
-                </div>
+                <div class="muted" style="font-size:12px;">${clsNames}</div>
               </div>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span class="muted" style="font-size:12px; white-space:nowrap;">Класс:</span>
-                <select id="enrCls_${stKey}" class="field" style="margin-bottom:0; padding:7px 10px; font-size:13px;" onchange="updateStudentClassInline('${stKey}')">
-                  <option value="">Без класса (в заявки)</option>
-                  ${db.classes.map(c => `<option value="${c.id}" ${c.id === currentClsId ? 'selected' : ''}>${c.name}</option>`).join('')}
-                </select>
+              <div style="display:flex; gap:6px; flex-shrink:0;">
+                <button type="button" class="mini-btn" onclick="openChatDirectly('${st.id}')">💬 Чат</button>
+                <button type="button" class="del-btn" onclick="removeStudentFromCurrentClass('${stKey}')" title="Убрать">✕</button>
               </div>
             </div>
           `;
         }).join('');
       }
 
-      document.getElementById('tTgStatus').innerText = db.teacherChatId
-        ? `✅ Привязано (ID: ${db.teacherChatId}). Уведомления приходят в Telegram.`
-        : 'Привяжите аккаунт, чтобы получать уведомления о новых заявках, ДЗ и сообщениях.';
+      // 3. Проверка ДЗ (с учётом выбранного класса наверху!)
+      const filteredSubs = activeClsObj
+        ? db.submissions.filter(s => s.classId === activeClsObj.id || s.className === activeClsObj.name)
+        : db.submissions;
+      const subsReversed = [...filteredSubs].reverse();
 
-      const clsOptions = db.classes.length
-        ? db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('')
-        : '<option value="">Сначала создайте класс</option>';
-
-      ['tNewsClass', 'tLesClass'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = clsOptions;
-      });
+      document.getElementById('tInboxHeaderTitle').innerText = activeClsObj
+        ? `Проверка ДЗ (${activeClsObj.name})`
+        : 'Проверка ДЗ (все классы)';
 
       const inbox = document.getElementById('tInboxList');
-      const subsReversed = [...db.submissions].reverse();
       inbox.innerHTML = subsReversed.length ? subsReversed.map(s => `
         <div class="card" style="padding:14px;">
           <div class="card-head" style="margin-bottom:4px;">
@@ -1854,7 +1892,21 @@
             <button type="button" class="btn-sec" onclick="teacherReviewSubmission('${s._key}')">💾 Сохранить ответ</button>
           </div>
         </div>
-      `).join('') : '<div class="card muted">Сданных работ пока нет.</div>';
+      `).join('') : '<div class="card muted">Сданных работ по этому классу пока нет.</div>';
+
+      // Выпадающие списки классов для форм
+      const clsOptions = db.classes.length
+        ? db.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join('')
+        : '<option value="">Сначала создайте класс</option>';
+
+      ['tNewsClass', 'tLesClass'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = clsOptions;
+      });
+
+      document.getElementById('tTgStatus').innerText = db.teacherChatId
+        ? `✅ Привязано (ID: ${db.teacherChatId}). Уведомления приходят в Telegram.`
+        : 'Привяжите аккаунт, чтобы получать уведомления о новых заявках, ДЗ и сообщениях.';
     }
 
     function openChatDirectly(stId) {
@@ -1896,7 +1948,7 @@
       document.getElementById('tNewsText').value = '';
       await loadCloudDB();
       renderClassNews();
-      alert('✅ Новость опубликована и отправлена ученикам в Telegram!');
+      alert('✅ Новость опубликована!');
     }
 
     async function createNewClass() {
@@ -1905,10 +1957,11 @@
       const clsId = 'c_' + Date.now();
       await writeNode(`classes/${clsId}`, { id: clsId, name });
       document.getElementById('tNewClassName').value = '';
+      activeClassId = clsId;
+      localStorage.setItem('diary_active_class', clsId);
       await loadCloudDB();
       renderTopClasses();
       renderAllData();
-      alert(`✅ Класс «${name}» создан!`);
     }
 
     async function bindTeacherTg() {
@@ -1923,22 +1976,24 @@
 
     async function teacherCreateLesson() {
       const classId = document.getElementById('tLesClass').value;
-      const lessonNum = document.getElementById('tLesNum').value;
-      const room = document.getElementById('tLesRoom').value.trim();
       const startTime = document.getElementById('tLesStart').value.trim();
       const endTime = document.getElementById('tLesEnd').value.trim();
+      const room = document.getElementById('tLesRoom').value.trim();
       const date = document.getElementById('tLesDate').value || selectedDateStr;
-      const repeatDay = document.getElementById('tLesRepeatDay').value;
-      const topic = document.getElementById('tLesTopic').value.trim();
-      const task = document.getElementById('tLesTask').value.trim() || (teacherPickedFile ? 'Выполнить задания из прикрепленных материалов' : 'Без задания');
-      if (!classId || !topic) return alert('Выберите класс и укажите предмет!');
-
+      const repeatMode = document.getElementById('tLesRepeatMode').value;
       const cls = db.classes.find(c => c.id === classId);
+      const topic = document.getElementById('tLesTopic').value.trim() || (cls ? cls.name : 'Урок');
+      const task = document.getElementById('tLesTask').value.trim() || (teacherPickedFile ? 'Выполнить задания из прикрепленных материалов' : 'Без задания');
+      if (!classId) return alert('Сначала создайте класс во вкладке «Управление»!');
+
+      const dObj = parseISODate(date);
+      const repeatDay = repeatMode === 'weekly' ? DAYS_FULL_FROM_JS[dObj.getDay()] : '';
+
       const lesId = 'les_' + Date.now();
       await writeNode(`lessons/${lesId}`, {
         id: lesId,
         classId,
-        lessonNum,
+        lessonNum: tempLessonNum,
         room,
         startTime,
         endTime,
@@ -1949,7 +2004,7 @@
         file: teacherPickedFile
       });
 
-      const whenTxt = repeatDay ? `по расписанию (${repeatDay})` : `на ${date}`;
+      const whenTxt = repeatDay ? `каждую неделю (${repeatDay})` : `на ${date}`;
       await notifyClassStudents(
         classId,
         `📚 Новый урок и ДЗ (${cls ? cls.name : 'Класс'})\nПредмет: ${topic} (${whenTxt}, ${startTime})\n🏠 Задание: ${task}`
@@ -1958,12 +2013,11 @@
       ['tLesTopic', 'tLesTask'].forEach(id => document.getElementById(id).value = '');
       teacherPickedFile = null;
       document.getElementById('tFileInput').value = '';
-      document.getElementById('tFileLabel').innerText = 'Прикрепить материалы к ДЗ (до 1.5 МБ)';
+      document.getElementById('tFileLabel').innerText = 'Прикрепить файл или фото (до 1.5 МБ)';
       document.getElementById('inlineLessonForm').classList.add('hidden');
-      if (!repeatDay) selectedDateStr = date;
+      selectedDateStr = date;
       await loadCloudDB();
       renderWeekCalendarAndLessons();
-      alert('✅ Урок добавлен, а ученикам класса отправлено уведомление в Telegram!');
     }
 
     async function teacherClearInbox() {
