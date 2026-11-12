@@ -708,6 +708,9 @@
     if (!myStudentId) {
       myStudentId = currentTgUserId ? String(currentTgUserId) : 'st_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
       localStorage.setItem('diary_student_id', myStudentId);
+    } else if (currentTgUserId && String(myStudentId) !== String(currentTgUserId)) {
+      myStudentId = String(currentTgUserId);
+      localStorage.setItem('diary_student_id', myStudentId);
     }
 
     let db = {
@@ -720,8 +723,9 @@
       teacherChatId: null
     };
 
-    let isTeacher = false;
-    let activeClassId = 'ALL';
+    // Восстанавливаем сохранённую сессию преподавателя при запуске
+    let isTeacher = localStorage.getItem('diary_is_teacher') === '1';
+    let activeClassId = localStorage.getItem('diary_active_class') || 'ALL';
     let selectedDateStr = toISODate(new Date());
     let myProfile = null;
     let teacherPickedFile = null;
@@ -874,19 +878,44 @@
       return `<a href="${fileObj.data}" download="${fileObj.name}" class="file-download">📎 Скачать файл: ${fileObj.name}</a>`;
     }
 
-    // --- ИНИЦИАЛИЗАЦИЯ ---
+    // --- ИНИЦИАЛИЗАЦИЯ С АВТО-ВХОДОМ ---
     async function boot() {
-      await loadCloudDB();
+      // Мгновенно показываем кэшированную сессию, не заставляя ждать сеть
+      try {
+        const cached = localStorage.getItem('diary_v2_cache');
+        if (cached) Object.assign(db, JSON.parse(cached));
+      } catch (e) {}
+
       if (isTeacher) {
+        enterService();
+        loadCloudDB().then(() => {
+          renderTopClasses();
+          renderAllData();
+        });
+        return;
+      }
+
+      myProfile = db.students.find(s => String(s.id) === String(myStudentId));
+      if (myProfile && myProfile.classes && myProfile.classes.length > 0) {
+        enterService();
+      }
+
+      await loadCloudDB();
+
+      // Если учитель ранее привязал этот Telegram ID, автоматически восстанавливаем вход учителя
+      if (!isTeacher && currentTgUserId && db.teacherChatId && String(db.teacherChatId) === String(currentTgUserId)) {
+        isTeacher = true;
+        localStorage.setItem('diary_is_teacher', '1');
         enterService();
         return;
       }
+
       myProfile = db.students.find(s => String(s.id) === String(myStudentId));
-      // Автоматически обновляем tgId ученика, если он зашёл через Telegram
       if (myProfile && currentTgUserId && !myProfile.tgId) {
         myProfile.tgId = currentTgUserId;
         saveCloudDB();
       }
+
       if (!myProfile) {
         showView('viewRegister');
       } else if (!myProfile.classes || myProfile.classes.length === 0) {
@@ -969,7 +998,9 @@
       const pin = prompt('Введите ПИН-код преподавателя:');
       if (pin === TEACHER_PIN) {
         isTeacher = true;
+        localStorage.setItem('diary_is_teacher', '1');
         activeClassId = 'ALL';
+        localStorage.setItem('diary_active_class', 'ALL');
         enterService();
       } else if (pin !== null) {
         alert('Неверный ПИН-код');
@@ -983,7 +1014,9 @@
       }
       if (confirm('Выйти из режима преподавателя?')) {
         isTeacher = false;
+        localStorage.removeItem('diary_is_teacher');
         activeClassId = null;
+        localStorage.removeItem('diary_active_class');
         boot();
       }
     }
@@ -1017,7 +1050,8 @@
       if (dateInp && !dateInp.value) dateInp.value = selectedDateStr;
 
       renderNavbar();
-      switchTab('lessons', document.querySelector('#mainNavbar .nav-item'));
+      renderTopClasses();
+      renderAllData();
       startLessonReminderWatcher();
     }
 
@@ -1055,6 +1089,7 @@
 
     function selectClass(id) {
       activeClassId = id;
+      localStorage.setItem('diary_active_class', id);
       renderTopClasses();
       renderAllData();
     }
@@ -1157,7 +1192,6 @@
       const nowMins = now.getHours() * 60 + now.getMinutes();
       const remindWindow = Number(myProfile.remindMins || 30);
 
-      // Ищем ближайший урок по всем классам ученика на сегодня
       const dObj = parseISODate(todayIso);
       const dayName = DAYS_FULL_FROM_JS[dObj.getDay()];
       const myClasses = myProfile.classes || [];
@@ -1197,7 +1231,6 @@
         <span class="chip">Скоро урок</span>
       `;
 
-      // Если до урока осталось <= выбранного времени (например, 30 минут) — шлём сообщение в Telegram
       if (minDiff <= remindWindow && myProfile.tgId) {
         const remKey = `${todayIso}_${nearest.classId}_${nearest.topic}_${nearest.startTime}`;
         if (!firedReminders.includes(remKey)) {
@@ -1893,6 +1926,8 @@
     async function bindTeacherTg() {
       if (!currentTgUserId) return alert('Откройте приложение через Telegram.');
       db.teacherChatId = currentTgUserId;
+      isTeacher = true;
+      localStorage.setItem('diary_is_teacher', '1');
       await saveCloudDB();
       await notifyTeacher('✅ Уведомления сервиса «Мой дневник» успешно подключены!');
       renderTeacherControls();
@@ -1925,7 +1960,6 @@
       });
       await saveCloudDB();
 
-      // Рассылаем ученикам этого класса уведомление в Telegram о новом ДЗ
       const whenTxt = repeatDay ? `по расписанию (${repeatDay})` : `на ${date}`;
       await notifyClassStudents(
         classId,
